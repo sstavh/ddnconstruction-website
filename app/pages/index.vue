@@ -1,3 +1,11 @@
 <template>
-  <div>Home</div>
-</template>
+    <section class="home">
+      <Hero />
+      
+    </section>
+  </template>
+  
+  <style scoped>
+  
+  </style>
+  

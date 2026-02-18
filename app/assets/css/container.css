@@ -1,0 +1,62 @@
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  @media (max-width: 1024px) {
+    .container {
+      max-width: 960px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    .container {
+      max-width: 720px;
+    }
+  }
+  
+ 
+
+  
+  img {
+    max-width: 100%;
+    display: block;
+  }
+  
+  .user-wrapper {
+    position: relative;
+  }
+  
+  .user-icon {
+    cursor: pointer;
+  }
+  
+  .user-popup {
+    position: absolute;
+    right: 0;   
+    top: 2.188rem;
+    background: var( --color-praymeri-light);
+    box-shadow: 0 4px 1.125rem rgba(0,0,0,0.1);
+    border-radius: 0.625rem;
+    padding: 0.625rem;
+    z-index: 100;
+    width: 160px;
+  }
+  
+  .user-popup button {
+    width: 100%;
+    text-align: left;
+    padding: 8px 12px;
+    border: none;
+    background: transparent;
+    font-size: var(--font-desktop-button);
+    cursor: pointer;
+  }
+  
+  .user-popup button:hover {
+    background: var(--color-praymeri-light);
+    border-radius: 6px;
+  }
+  
