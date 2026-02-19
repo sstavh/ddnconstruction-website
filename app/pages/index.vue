@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import DirectorMes from '~/components/base/HiroPages/DirectorMes.vue';
 import Hero from '~/components/base/HiroPages/Hero.vue';
 
 </script>
@@ -6,6 +7,7 @@ import Hero from '~/components/base/HiroPages/Hero.vue';
 <template>
     <section class="home">
       <Hero /> 
+      <DirectorMes />
         
     </section>
   </template>

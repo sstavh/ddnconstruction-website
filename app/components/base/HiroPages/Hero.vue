@@ -17,7 +17,7 @@ console.log("hiro work");
                 <h1 class="hero-box__logo">
                       <TypeTextt text="текст слого для компанії з ефектом написаня " />
                 </h1>
-                <p class="hero-box__pidtext">підтекст для розумуня для чого це все і. прощо компанія короткий не велий</p>
+                <p  data-aos="fade-right" class="hero-box__pidtext">підтекст для розумуня для чого це все і. прощо компанія короткий не велий</p>
                 <Button />
             </div>
         </div>
@@ -27,6 +27,7 @@ console.log("hiro work");
 
 <style scoped>
 .hiro-container{
+    margin-left: 45px;
     padding-top: 120px;
 }
 
