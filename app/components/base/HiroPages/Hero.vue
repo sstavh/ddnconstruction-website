@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import Button from '../../ui/Button.vue';
 import ImdSwicher from '../../ui/bagFons/ImgSwitcher.vue';
+import TypeTextt  from '../../ui/TypedText.vue';
 console.log("hiro work");
 
 
@@ -14,7 +15,7 @@ console.log("hiro work");
         <div class="hiro-container">
             <div class="hero-container__box">
                 <h1 class="hero-box__logo">
-                    текст слого для компанії з ефектом написаня 
+                      <TypeTextt text="текст слого для компанії з ефектом написаня " />
                 </h1>
                 <p class="hero-box__pidtext">підтекст для розумуня для чого це все і. прощо компанія короткий не велий</p>
                 <Button />
