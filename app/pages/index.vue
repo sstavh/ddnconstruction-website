@@ -1,7 +1,7 @@
 <template>
     <section class="home">
       <Hero />
-      
+        
     </section>
   </template>
   

@@ -14,14 +14,15 @@ body {
   font-family: var(--font-f-Rob);
   line-height: 1.5;
   font-weight: 400;
-  font-size: var(--font-s-text);
+  font-size: var(--font-s-button);
 }
 
 a {
   text-decoration: none;
+  color:  var(--color-praymeri-blek);
   transition: color 0.2s ease;
 }
 
 a:hover {
-  color: var(--color-praymeri-blueHover);
+  color: var( --color-secondary-steel);
 }
