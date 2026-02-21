@@ -2,6 +2,7 @@
 import DirectorMes from '~/components/base/HiroPages/DirectorMes.vue';
 import Hero from '~/components/base/HiroPages/Hero.vue';
 import OurProcess from '~/components/base/HiroPages/OurProcess.vue';
+import PortfolioSece from '~/components/base/HiroPages/PortofolioSec.vue';
 </script>
 
 <template>
@@ -10,6 +11,8 @@ import OurProcess from '~/components/base/HiroPages/OurProcess.vue';
       <Hero /> 
       <OurProcess /> 
       <DirectorMes />
+      <PortfolioSece />
+      
       
     </section>
   </template>
