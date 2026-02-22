@@ -87,8 +87,8 @@ onBeforeUnmount(() => {
 <style scoped>
 .card {
   position: relative;
-  width: 320px;
-  height: 180px;
+  width: 380px;
+  height: 280px;
   border-radius: 18px;
   overflow: hidden;
   cursor: pointer;
