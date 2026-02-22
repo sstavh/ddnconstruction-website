@@ -62,13 +62,15 @@ import ButtonNextPort from '~/components/ui/ButtonNextPort.vue';
  background-color: var(--color-praymeri-blue);
     padding-top: 30px;
     padding-bottom: 50px;
+    margin-bottom: 10px;
 }
 
 
 .portfoliosec-box__logo{
 text-align: center;
-color: var(--color-praymeri-blek);
+color: var(--color-praymeri-light);
 font-size: var( --font-s-title);
+margin-bottom: 20px;
 }
 
 .box-galeri{
