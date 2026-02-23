@@ -5,6 +5,7 @@ import OurProcess from '~/components/base/HiroPages/OurProcess.vue';
 import PortofolioSec from "../components/base/HiroPages/PortofolioSec.vue";   
 import DetalsInformation from '~/components/base/HiroPages/DetalsInformation.vue';
 import Reviews from '~/components/base/HiroPages/Reviews.vue';
+import FormaHiroSection from '~/components/base/HiroPages/FormaHiroSection.vue';
 </script>
 
 <template>
@@ -15,6 +16,7 @@ import Reviews from '~/components/base/HiroPages/Reviews.vue';
       <DirectorMes />
       <DetalsInformation />
       <PortofolioSec />
+      <FormaHiroSection />
       <Reviews />
       
      
