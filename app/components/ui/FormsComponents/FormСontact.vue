@@ -1,7 +1,5 @@
 <template>
   <form class="form" @submit.prevent="handleSubmit">
-    <h2 class="title">Звʼяжіться з нами</h2>
-
     <div class="grid">
       <label class="field">
         <span class="label">Прізвище</span>
@@ -239,19 +237,15 @@ async function handleSubmit() {
 
 <style scoped>
 .form {
-  max-width: 860px;
-  margin: 0 auto;
-  padding: 20px;
-  border: 1px solid #e7e7e7;
+    margin-top: 70px;
+  width: 580px;
+  padding: 30px;
+  border: 1px solid rgb(247, 247, 247);
   border-radius: 16px;
-  background: #fff;
+  background: rgb(233, 232, 232);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
-.title {
-  margin: 0 0 14px;
-  font-size: 28px;
-  line-height: 1.2;
-}
 
 .grid {
   display: grid;
@@ -272,8 +266,7 @@ async function handleSubmit() {
 }
 
 .label {
-  font-size: 14px;
-  color: #333;
+    font-size: var(--font-s-button);
 }
 
 .input,
