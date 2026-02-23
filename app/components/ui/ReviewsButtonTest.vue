@@ -1,11 +1,12 @@
 <script lang="ts" setup>
-console.log("Cloud button");
+const emit = defineEmits<{
+  (e: "open"): void;
+}>();
 </script>
 
 <template>
-  <button class="cloud-btn" type="button" aria-label="Всі відгуки">
+  <button class="cloud-btn" type="button" aria-label="Відкрити форму" @click="emit('open')">
     <svg class="cloud-svg" viewBox="0 0 520 120" aria-hidden="true">
-      <!-- Зовнішній контур (stroke) -->
       <path
         class="cloud-stroke"
         d="M120 88
@@ -23,7 +24,6 @@ console.log("Cloud button");
            C135 110, 120 100, 120 88
            Z"
       />
-      <!-- Заливка -->
       <path
         class="cloud-fill"
         d="M120 88
@@ -43,7 +43,7 @@ console.log("Cloud button");
       />
     </svg>
 
-    <span class="cloud-text">&rarr;</span>
+    <span class="cloud-text">Всі відгуки →</span>
   </button>
 </template>
 
@@ -54,56 +54,35 @@ console.log("Cloud button");
   padding: 0;
   background: transparent;
   cursor: pointer;
-
-  /* контроль розміру кнопки */
   width: 300px;
-  height: 40px;
-
+  height: 64px;
   transition: transform 0.2s ease;
 }
-
 .cloud-svg {
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
 }
-
-.cloud-fill {
-  fill: #3b82f6;
-}
-
+.cloud-fill { fill: #3b82f6; }
 .cloud-stroke {
   fill: none;
-  stroke: #1e3a8a;      /* темніший контур */
+  stroke: #1e3a8a;
   stroke-width: 6;
   stroke-linejoin: round;
 }
-
 .cloud-text {
   position: relative;
   z-index: 1;
-
   height: 100%;
   width: 100%;
   display: grid;
   place-items: center;
-
   color: #fff;
-  font-size: 13px;
+  font-size: 14px;
   font-weight: 700;
-  letter-spacing: 0.2px;
 }
-
-.cloud-btn:hover {
-  transform: translateY(-2px);
-}
-
-.cloud-btn:hover .cloud-fill {
-  fill: #2563eb;
-}
-
-.cloud-btn:hover .cloud-stroke {
-  stroke: #1d4ed8;
-}
+.cloud-btn:hover { transform: translateY(-2px); }
+.cloud-btn:hover .cloud-fill { fill: #2563eb; }
+.cloud-btn:hover .cloud-stroke { stroke: #1d4ed8; }
 </style>

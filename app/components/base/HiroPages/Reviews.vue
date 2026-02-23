@@ -2,6 +2,8 @@
 console.log("good work Reviews");
 import ReviewsCompTest from '~/components/ui/ReviewsCompTest.vue';
 import ReviewsButtonTest from '~/components/ui/ReviewsButtonTest.vue';
+import ReviewsFormaTest from '~/components/ui/ReviewsFormaTest.vue';
+import BaseModalTest from '~/components/ui/BaseModalTest.vue';
 const reviews: Review[] = [
   {
     id: 1,
@@ -101,6 +103,12 @@ const reviews: Review[] = [
         workFallbackColor: '#374151',
     },  
 ]
+
+const open = ref(false);
+
+watch(open, (v) => {
+  document.body.style.overflow = v ? "hidden" : "";
+});
 </script>
 
 <template>
@@ -112,7 +120,11 @@ const reviews: Review[] = [
                     <div class="reviews-box__subtitle">
                         <div class="box__subtitle">
                         <p class="reviews-box__text">Залишіть свій відгук про нашу роботу.  </p>
-                        <ReviewsButtonTest />  
+                        <ReviewsButtonTest @open="open = true" />
+
+  <BaseModalTest :open="open" @close="open = false">
+    <ReviewsFormaTest />
+  </BaseModalTest> 
                     </div>
                          <ReviewsCompTest   
       :reviews="reviews"
