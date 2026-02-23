@@ -1,9 +1,6 @@
 <template>
   <section class="reviews">
-    <div class="header">
-      <h3 class="title">{{ title }}</h3>
-      <p v-if="subtitle" class="subtitle">{{ subtitle }}</p>
-    </div>
+   
 
     <div class="wrap" @mouseenter="pause" @mouseleave="resume">
       <button class="nav left" type="button" @click="prev" aria-label="Попередні відгуки">‹</button>
@@ -296,7 +293,7 @@ watch(
   width: 54px; height: 54px;
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(17, 24, 39, 0.88);
+  background: rgba(10, 59, 164, 0.88);
   color: rgba(255,255,255,0.95);
   font-size: 30px;
   cursor: pointer;
@@ -304,7 +301,7 @@ watch(
   user-select: none;
   transition: transform 120ms ease, background 120ms ease;
 }
-.nav:hover { transform: scale(1.04); background: rgba(17,24,39,0.98); }
+.nav:hover { transform: scale(1.04); background: rgba(21, 82, 214, 0.98); }
 .nav:active { transform: scale(0.98); }
 
 @media (max-width: 900px) {

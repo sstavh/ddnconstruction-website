@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 console.log("good work Reviews");
 import ReviewsCompTest from '~/components/ui/ReviewsCompTest.vue';
+import ReviewsButtonTest from '~/components/ui/ReviewsButtonTest.vue';
 const reviews: Review[] = [
   {
     id: 1,
@@ -103,17 +104,59 @@ const reviews: Review[] = [
 </script>
 
 <template>
-<div class="container">
-    <ReviewsCompTest
-      title="Відгуки"
-      subtitle="Фото роботи + оцінка + текст. Показує 3 одночасно."
+    <section>
+        <div class="container">
+            <div class="reviews-container__box">
+                <div class="reviews-box">
+                    <h2 class="reviews-box__title">Відгуки клієнтів</h2>
+                    <div class="reviews-box__subtitle">
+                        <div class="box__subtitle">
+                        <p class="reviews-box__text">Залишіть свій відгук про нашу роботу.  </p>
+                        <ReviewsButtonTest />  
+                    </div>
+                         <ReviewsCompTest   
       :reviews="reviews"
       :visible-count="3"
       :interval-ms="30000"
       :transition-ms="450"
     />
-  </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+    </section>
 </template>
 <style scoped>
 
+
+
+
+
+
+
+
+.reviews-box__title{
+    font-size: var(--font-s-title);
+    font-weight: 700;
+    text-align: center;
+    margin-top: 75px;
+}
+
+.box__subtitle{
+    display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 20px;
+        margin-bottom: 30px;
+}
+
+.reviews-box__subtitle{ 
+    text-align: center;
+}
+
+.reviews-box__text{
+    font-size: var(--font-s-button);
+    margin-left: 28%;
+}
 </style>
