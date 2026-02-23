@@ -58,18 +58,18 @@ const socials = {
 }
 
 .contactItem {
-
+  color: var(--color-praymeri-light);
   text-decoration: none;
   transition: 0.2s ease;
 }
 
 .contactItem:hover {
-  border-color: #ccc;
+  color: rgb(225, 223, 223);
 }
 
 .label {
   font-size: 17px;
-  color: #666;
+  color: #ffffff;
 }
 
 .value {
@@ -84,7 +84,7 @@ const socials = {
 
 .socialTitle {
   font-size: 14px;
-  color: #666;
+  color:  #ffffff;
 }
 
 .socialRow {
