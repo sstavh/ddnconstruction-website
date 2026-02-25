@@ -5,6 +5,7 @@ import ButtonBlef from "./ui/ButtonBlef.vue";
 import BaseModalTest from "./ui/BaseModalTest.vue";
 import FormСontact from "./ui/FormsComponents/FormСontact.vue";
 
+
 const open = ref(false);
 const origin = ref<{ x: number; y: number } | null>(null);
 
@@ -14,7 +15,7 @@ const openFromClick = (e: MouseEvent) => {
 };
 
 const menu = [
-  { title: "Про нас", link: "/" },
+  { title: "Про нас", link: "/about" },
   { title: "Портфоліо", link: "/" },
   { title: "Каркулятор", link: "/" },
   { title: "Послуги", link: "/services" },

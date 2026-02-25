@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import DirectorMes from '~/components/base/HiroPages/DirectorMes.vue';
-import Hero from '~/components/base/HiroPages/Hero.vue';
-import OurProcess from '~/components/base/HiroPages/OurProcess.vue';
+import DirectorMes from '../components/base/HiroPages/DirectorMes.vue';
+import Hero from '../components/base/HiroPages/Hero.vue';
+import OurProcess from '../components/base/HiroPages/OurProcess.vue';
 import PortofolioSec from "../components/base/HiroPages/PortofolioSec.vue";   
-import DetalsInformation from '~/components/base/HiroPages/DetalsInformation.vue';
-import Reviews from '~/components/base/HiroPages/Reviews.vue';
-import FormaHiroSection from '~/components/base/HiroPages/FormaHiroSection.vue';
-import QuickChatWidget from '~/components/base/HiroPages/QuickChatWidget.vue';
+import DetalsInformation from '../components/base/HiroPages/DetalsInformation.vue';
+import Reviews from '../components/base/HiroPages/Reviews.vue';
+import FormaHiroSection from '../components/base/HiroPages/FormaHiroSection.vue';
+import QuickChatWidget from '../components/base/HiroPages/QuickChatWidget.vue';
+
 </script>
 
 <template>
