@@ -10,8 +10,10 @@ console.log("director mes work");
         <div class="directorMes-container">
              <h3 class="directorMes-box__logo">Слова Директора</h3>
             <div class="directorMes-box">
-               
+               <div data-aos="fade-up-right">
                 <div data-aos="zoom-out-right" class="img-cont">IMGS</div>
+               </div>
+                
                 <div class="directorMes-box__container">
                     <p class="directorMes-box__text">Тут може бути текст, який буде відображатися у розділі "Слова Директора".</p>
                     <Button />
@@ -36,10 +38,8 @@ console.log("director mes work");
 }
 
 .directorMes-box__logo{
-    font-size: var( --font-s-title);
-    font-family: var(--font-f-Rudik);
     text-align: center;
-    margin-bottom: 35px;
+    margin-bottom: 55px;
 }
 
 .img-cont{
