@@ -17,7 +17,8 @@
 
 <style scoped>
 .heroAbaut-section{
-    height: 400px;
+    margin-top: -60px;
+    height: 470px;
     background: linear-gradient(
         to top,
         rgba(0, 0, 0, 0.8),
@@ -27,7 +28,7 @@
 }
 
 .heroAbout-box__title{
-    padding-top: 11%;
+    padding-top: 14%;
     text-align: center;
     width: 100%;
     display: inline-block;

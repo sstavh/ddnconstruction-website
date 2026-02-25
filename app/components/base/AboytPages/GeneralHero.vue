@@ -24,7 +24,7 @@ import Button from "../../ui/Button.vue";
 
 .general-container__box{
     display: flex;  
-    gap: 30px;
+    gap: 55px;
     justify-content: center;
 }
 
