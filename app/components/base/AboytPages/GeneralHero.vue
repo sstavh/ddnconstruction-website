@@ -20,6 +20,7 @@ import Button from "../../ui/Button.vue";
 <style scoped>
 .general-container{
     margin-top: 160px;
+    margin-bottom: 100px;
 }
 
 .general-container__box{
