@@ -7,10 +7,10 @@ import ImgsBlocFoto from '~/components/ui/informationBlok/blokImgs/ImgsBlocFoto.
   <div class="container">
     <div class="form-container">
       <div class="form-container__box">
-        <h2 class="form-container__title">Зв'яжіться з нами</h2>
+        <h3 class="form-container__title">Зв'яжіться з нами</h3>
         <div class="form-box">
           <FormСontact />
-          <ImgsBlocFoto />
+          <ImgsBlocFoto  data-aos="fade-left"/>
         </div>
         
       </div>
@@ -21,11 +21,8 @@ import ImgsBlocFoto from '~/components/ui/informationBlok/blokImgs/ImgsBlocFoto.
 <style scoped>
 
 .form-container__title{
-  margin-top: 60px;
-  margin-bottom: -35px;
-  font-size: var(--font-s-title);
+  margin-top: 160px;
   text-align: center;
-
 }
 
 .form-box{
@@ -33,6 +30,6 @@ import ImgsBlocFoto from '~/components/ui/informationBlok/blokImgs/ImgsBlocFoto.
     gap: 30px;
     align-items: center;
     justify-content: center;
-
+    margin-bottom: 100px;
 }
 </style>

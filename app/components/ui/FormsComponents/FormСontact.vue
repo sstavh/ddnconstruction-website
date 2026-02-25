@@ -261,16 +261,19 @@ async function handleSubmit() {
 }
 
 .field {
+  color: var(--color-praymeri-blek);
   display: grid;
   gap: 6px;
 }
 
 .label {
+  color: var(--color-praymeri-blek);
     font-size: var(--font-s-button);
 }
 
 .input,
 .textarea {
+  color: var(--color-praymeri-blek);
   width: 100%;
   border: 1px solid #d9d9d9;
   border-radius: 12px;
@@ -318,7 +321,7 @@ async function handleSubmit() {
 
 .accordionHint {
   font-size: 13px;
-  color: #666;
+  color: var( --color-praymeri-blek);
   white-space: nowrap;
 }
 
@@ -354,12 +357,12 @@ async function handleSubmit() {
 .help {
   margin: 0 0 10px;
   font-size: 13px;
-  color: #666;
+  color: var( --color-praymeri-blek);
 }
 
 .jobs {
   display: grid;
-  gap: 8px;
+  gap: 8px;color: var(--color-praymeri-blek);
 }
 
 .jobItem {
@@ -389,13 +392,14 @@ async function handleSubmit() {
 }
 
 .subtitle {
+  color: var(--color-praymeri-blek);
   margin: 0 0 10px;
   font-size: 16px;
 }
 
 .empty {
   font-size: 14px;
-  color: #666;
+  color: var(--color-praymeri-blek);
 }
 
 .areasGrid {
@@ -422,7 +426,7 @@ async function handleSubmit() {
   font-size: 16px;
   cursor: pointer;
   background: #111;
-  color: #fff;
+  color: var(--color-praymeri-blek);
 }
 
 .btn:disabled {
