@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-console.log("Footer good Work");
 import ButtonBlef from "./ui/ButtonBlef.vue";
 import SocialMediaTest from "./ui/footerComponents/SocialMediaTest.vue";
 import FooterCopyright from "./ui/footerComponents/FooterCopyright.vue";
@@ -20,7 +19,10 @@ const menu = [
         <div class="top">
           <div class="brand">
             <ButtonBlef />
-            <p class="tagline">Ремонт та оздоблення. <br/>Працюємо швидко, акуратно і прозоро.</p>
+            <p class="tagline">
+              Ремонт та оздоблення. <br />
+              Працюємо швидко, акуратно і прозоро.
+            </p>
           </div>
 
           <div class="navBox" aria-label="Навігація футера">
@@ -39,7 +41,9 @@ const menu = [
 
           <div class="socialBox" aria-label="Соцмережі">
             <h4 class="title">Ми на звʼязку</h4>
-            <SocialMediaTest />
+            <div class="socialCard">
+              <SocialMediaTest />
+            </div>
           </div>
         </div>
 
@@ -47,7 +51,6 @@ const menu = [
 
         <div class="bottom">
           <FooterCopyright companyName="My Company" privacyTo="/privacy" />
-          
         </div>
       </div>
     </div>
@@ -55,86 +58,146 @@ const menu = [
 </template>
 
 <style scoped>
-/* Якщо в проєкті вже є .container — можеш видалити цей блок */
+/* Якщо у тебе вже є .container глобально — цей блок можеш прибрати */
+.container {
+  width: min(1160px, 100%);
+  margin: 0 auto;
+  padding: 0 16px;
+}
 
-
+/* Фон футера */
 .footer {
-    background: rgb(30, 32, 144);
-    padding: 40px 0;
+  padding: 56px 0;
+  background:
+    radial-gradient(1200px 600px at 20% 0%, rgba(255,255,255,0.10), transparent 60%),
+    radial-gradient(1000px 600px at 90% 40%, rgba(255,255,255,0.08), transparent 55%),
+    linear-gradient(135deg, rgb(24, 29, 120), rgb(18, 22, 80));
 }
 
+/* “Скляна” картка */
+.footer-card {
+  backdrop-filter: blur(10px);
+}
 
+/* Верх */
 .top {
-    display: grid;
-    gap: 32px;  
+  display: grid;
+  gap: 28px;
+  align-items: start;
 }
 
-/* 3 колонки на десктопі */
 @media (min-width: 900px) {
   .top {
-    grid-template-columns: 1.2fr 1fr 1fr;
-    align-items: start;
+    grid-template-columns: 1.25fr 1fr 1fr;
     gap: 22px;
   }
 }
 
+/* Бренд */
 .brand {
-  gap: 10px;
-  color: var(--color-praymeri-light);
+  display: grid;
+  gap: 12px;
 }
 
 .tagline {
   margin: 0;
   font-size: 14px;
-  line-height: 1.5;
-  color: var(--color-praymeri-light);
+  line-height: 1.55;
+  color: rgba(255, 255, 255, 0.82);
 }
 
+/* Колонки */
 .navBox,
 .socialBox {
-  
-  gap: 10px;
+  display: grid;
+  gap: 12px;
 }
 
 .title {
   margin: 0;
-  font-size: 18px;
-  color: var(--color-praymeri-light);
+  font-size: 16px;
+  letter-spacing: 0.2px;
+  color: rgba(255, 255, 255, 0.92);
 }
 
+/* Навігація */
 .nav {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-
+  display: grid;
+  gap: 10px;
 }
 
 @media (min-width: 520px) {
   .nav {
-    
-    gap: 10px 14px;
+    gap: 10px;
   }
 }
 
 .nav-link {
+  position: relative;
+  width: fit-content;
   text-decoration: none;
-  color: var(--color-praymeri-blue);
-  font-size: 18px;
-  transition: transform 0.12s ease, border-color 0.12s ease;
+  font-size: 15px;
+  color: rgba(220, 235, 255, 0.9);
+  transition: transform 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+  padding: 2px 0;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 2px;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: var(--color-praymeri-blueHover);
+  border-radius: 999px;
+  transition: transform 0.18s ease;
 }
 
 .nav-link:hover {
-color: var(--color-praymeri-blueHover);
+  color: var(--color-praymeri-light);
   transform: translateY(-1px);
 }
 
-.divider {
-  height: 1px;
-  background: #ededed;
-  margin: 16px 0;
+.nav-link:hover::after {
+  transform: scaleX(1);
 }
 
+/* Соцблок — акуратна плашка */
+.socialCard {
+ 
+}
+
+/* Divider */
+.divider {
+  height: 1px;
+  margin: 18px 0 14px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255,255,255,0.25),
+    transparent
+  );
+}
+
+/* Низ */
+.bottom {
+  justify-content: start;
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* Якщо FooterCopyright має внутрішній клас .inner */
 .bottom :deep(.inner) {
   padding: 0;
+}
+
+/* Трохи “дрібної” типографіки всередині */
+.bottom :deep(*) {
+  color: rgba(255, 255, 255, 0.78);
 }
 </style>

@@ -147,4 +147,41 @@ onBeforeUnmount(() => {
     justify-content: space-between;
   }
 }
+
+
+
+
+.nav-link {
+  position: relative;
+  width: fit-content;
+  text-decoration: none;
+  font-size: 15px;
+  color: rgba(220, 235, 255, 0.9);
+  transition: transform 0.15s ease, color 0.15s ease, opacity 0.15s ease;
+  padding: 2px 0;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  height: 2px;
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: left;
+  background: var(--color-praymeri-blueHover);
+  border-radius: 999px;
+  transition: transform 0.18s ease;
+}
+
+.nav-link:hover {
+  color: var(--color-praymeri-light);
+  transform: translateY(-1px);
+}
+
+.nav-link:hover::after {
+  transform: scaleX(1);
+}
+
 </style>

@@ -145,7 +145,10 @@ const openFromClick = (e: MouseEvent) => {
     </section>
 </template>
 <style scoped>
-
+.reviews-container__box{
+    margin-top: 160px;
+    margin-bottom: 80px;
+}
 
 
 
