@@ -104,11 +104,16 @@ const reviews: Review[] = [
     },  
 ]
 
-const open = ref(false);
 
-watch(open, (v) => {
-  document.body.style.overflow = v ? "hidden" : "";
-});
+
+
+const open = ref(false);
+const origin = ref<{ x: number; y: number } | null>(null);
+
+const openFromClick = (e: MouseEvent) => {
+  origin.value = { x: e.clientX, y: e.clientY };
+  open.value = true;
+};
 </script>
 
 <template>
@@ -116,13 +121,13 @@ watch(open, (v) => {
         <div class="container">
             <div class="reviews-container__box">
                 <div class="reviews-box">
-                    <h2 class="reviews-box__title">Відгуки клієнтів</h2>
+                    <h3 class="reviews-box__title">Відгуки клієнтів</h3>
                     <div class="reviews-box__subtitle">
                         <div class="box__subtitle">
                         <p class="reviews-box__text">Залишіть свій відгук про нашу роботу.  </p>
-                        <ReviewsButtonTest @open="open = true" />
+                        <ReviewsButtonTest @click="openFromClick" />
 
-  <BaseModalTest :open="open" @close="open = false">
+  <BaseModalTest :open="open" :origin="origin" @close="open = false">
     <ReviewsFormaTest />
   </BaseModalTest> 
                     </div>
@@ -149,10 +154,8 @@ watch(open, (v) => {
 
 
 .reviews-box__title{
-    font-size: var(--font-s-title);
-    font-weight: 700;
     text-align: center;
-    margin-top: 75px;
+    margin-top: 160px;
 }
 
 .box__subtitle{

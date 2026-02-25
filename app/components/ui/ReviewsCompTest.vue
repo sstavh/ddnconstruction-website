@@ -3,7 +3,7 @@
    
 
     <div class="wrap" @mouseenter="pause" @mouseleave="resume">
-      <button class="nav left" type="button" @click="prev" aria-label="Попередні відгуки">‹</button>
+      <button class="nav left" type="button" @click="prev" aria-label="Попередні відгуки">	&lt;</button>
 
       <div class="viewport">
         <div
@@ -76,7 +76,7 @@
         </div>
       </div>
 
-      <button class="nav right" type="button" @click="next" aria-label="Наступні відгуки">›</button>
+      <button class="nav right" type="button" @click="next" aria-label="Наступні відгуки">	&gt;</button>
     </div>
   </section>
 </template>
@@ -293,7 +293,7 @@ watch(
   width: 54px; height: 54px;
   border-radius: 999px;
   border: 1px solid rgba(255,255,255,0.18);
-  background: rgba(10, 59, 164, 0.88);
+  background: var(--color-praymeri-blue);
   color: rgba(255,255,255,0.95);
   font-size: 30px;
   cursor: pointer;
@@ -301,7 +301,7 @@ watch(
   user-select: none;
   transition: transform 120ms ease, background 120ms ease;
 }
-.nav:hover { transform: scale(1.04); background: rgba(21, 82, 214, 0.98); }
+.nav:hover { transform: scale(1.04); background: var(--color-praymeri-blueHovers); }
 .nav:active { transform: scale(0.98); }
 
 @media (max-width: 900px) {

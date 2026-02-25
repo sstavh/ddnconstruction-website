@@ -240,9 +240,9 @@ async function handleSubmit() {
     margin-top: 70px;
   width: 580px;
   padding: 30px;
-  border: 1px solid rgb(247, 247, 247);
+  border: 1px solid rgb(66, 62, 62);
   border-radius: 16px;
-  background: rgb(233, 232, 232);
+  background: rgb(66, 62, 62);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
@@ -261,19 +261,16 @@ async function handleSubmit() {
 }
 
 .field {
-  color: var(--color-praymeri-blek);
   display: grid;
   gap: 6px;
 }
 
-.label {
-  color: var(--color-praymeri-blek);
+.label {  
     font-size: var(--font-s-button);
 }
 
 .input,
 .textarea {
-  color: var(--color-praymeri-blek);
   width: 100%;
   border: 1px solid #d9d9d9;
   border-radius: 12px;
@@ -292,7 +289,7 @@ async function handleSubmit() {
   margin: 10px 0 14px;
   border: 1px solid #e7e7e7;
   border-radius: 16px;
-  background: #fafafa;
+  background: #f4f4f4;
 }
 
 /* relative anchor for absolute dropdown */
@@ -388,18 +385,19 @@ async function handleSubmit() {
   padding: 12px 14px 14px;
   border: 1px solid #e7e7e7;
   border-radius: 16px;
-  background: #fff;
+  background: #ffffff;
+  color: var(--color-praymeri-blek);
 }
 
 .subtitle {
-  color: var(--color-praymeri-blek);
+  
   margin: 0 0 10px;
   font-size: 16px;
 }
 
 .empty {
   font-size: 14px;
-  color: var(--color-praymeri-blek);
+
 }
 
 .areasGrid {
@@ -425,8 +423,14 @@ async function handleSubmit() {
   padding: 12px 14px;
   font-size: 16px;
   cursor: pointer;
-  background: #111;
+  background: var(--color-praymeri-blue);
   color: var(--color-praymeri-blek);
+  transition: all 0.3s ease;
+}
+
+.btn:hover{
+  background-color: var(--color-praymeri-blueHover);
+
 }
 
 .btn:disabled {

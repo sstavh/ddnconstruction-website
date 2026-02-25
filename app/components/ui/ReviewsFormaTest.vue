@@ -91,14 +91,13 @@ input, textarea { width:100%; padding:12px; border:1px solid #d1d5db; border-rad
 button[type="submit"] { padding:12px; border-radius:12px; border:none; background:#3b82f6; color:#fff; font-weight:600; cursor:pointer; }
 
 .review-form__title{
+  color: var(--color-praymeri-blek);
   margin-top: -45px;
-    font-size: var(--font-s-title);
-    font-weight: 700;
     text-align: center;
 }
 
 .review-form__subtitle{
-    font-size: 16px;
+  color: var(--color-praymeri-blek);
     text-align: center;
     margin-bottom: 30px;
 }
