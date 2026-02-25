@@ -106,7 +106,7 @@ onBeforeUnmount(() => {
             </template>
           </nav>
 
-          <Button @click="openFromClick" />
+          <Button  @click="openFromClick" />
 
           <BaseModalTest :open="open" :origin="origin" @close="open = false">
             <FormСontact class="header-form" />
@@ -277,4 +277,13 @@ onBeforeUnmount(() => {
   opacity: 1;
   transform: translateX(-50%) translateY(0) scale(1);
 }
+
+.header-form{
+  background-color: var(--color-praymeri-light);
+  border: none;
+  border-radius: none;
+  color: var(--color-praymeri-blek);
+  width: 100%;padding: 0;
+  margin: 0;
+   }
 </style>

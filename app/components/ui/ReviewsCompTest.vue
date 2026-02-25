@@ -301,7 +301,7 @@ watch(
   user-select: none;
   transition: transform 120ms ease, background 120ms ease;
 }
-.nav:hover { transform: scale(1.04); background: var(--color-praymeri-blueHovers); }
+.nav:hover { transform: scale(1.04); background: var(--color-praymeri-blueHover); }
 .nav:active { transform: scale(0.98); }
 
 @media (max-width: 900px) {
