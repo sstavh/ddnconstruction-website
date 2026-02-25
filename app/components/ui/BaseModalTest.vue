@@ -70,7 +70,7 @@ const overlayStyle = computed(() => {
   width: min(680px, 100%);
   max-height: 90vh;
   overflow: auto;
-  background: #fff;
+  background: var(--color-praymeri-light);
   border-radius: 20px;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
 }

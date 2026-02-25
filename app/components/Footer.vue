@@ -136,7 +136,6 @@ const menu = [
   position: relative;
   width: fit-content;
   text-decoration: none;
-  font-size: 15px;
   color: rgba(220, 235, 255, 0.9);
   transition: transform 0.15s ease, color 0.15s ease, opacity 0.15s ease;
   padding: 2px 0;
