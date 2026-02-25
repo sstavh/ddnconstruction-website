@@ -3,8 +3,6 @@ import { computed, onMounted, nextTick } from 'vue'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 
-console.log('Information good work')
-
 import FotoImgTest from '~/components/ui/informationBlok/FotoImgTest.vue'
 import FotosPortaolio from '~/components/ui/FotosPortaolio.vue'
 import ButtonInformationTest from '~/components/ui/informationBlok/ButtonInformationTest.vue'
@@ -26,51 +24,103 @@ type Item = {
   props?: Record<string, any>
   aos?: string
   duration?: number
-  delay?: number
   easing?: string
   anchorPlacement?: string
+
+  // КАСТОМНИЙ ПОРЯДОК появи:
+  // 1 = першим, 2 = другим, ...
+  order: number
 }
 
 const items: Item[] = [
-  { key: 'foto', component: FotoImgTest, aos: 'fade-right', duration: 1400, easing: 'ease-out-cubic' },
+  // 1) foto — має з’явитись 3-м
+  {
+    key: 'foto',
+    component: FotoImgTest,
+    aos: 'fade-right',
+    duration: 1200,
+    easing: 'ease-out-cubic',
+    order: 3
+  },
 
+  // 2) portfolio — має з’явитись 5-м
   {
     key: 'portfolio',
     component: FotosPortaolio,
     props: { class: 'update' },
     aos: 'zoom-in',
-    duration: 10000,
-    delay: 150,
-    easing: 'ease-out-back'
+    duration: 1200,
+    easing: 'ease-out-back',
+    order: 5
   },
 
-  { key: 'btn', component: ButtonInformationTest, aos: 'fade-left', duration: 10600, delay: 250, easing: 'ease-out-cubic' },
+  // 3) btn — має з’явитись 1-м
+  {
+    key: 'btn',
+    component: ButtonInformationTest,
+    aos: 'fade-up',
+    duration: 1200,
+    easing: 'ease-out-cubic',
+    order: 1
+  },
 
+  // 4) beforeAfter — має з’явитись 2-м
   {
     key: 'beforeAfter',
     component: beforeAfter,
     props: { 'left-color': '#ff0000', 'right-color': '#0000ff', class: 'h-56' },
-    aos: 'zoom-out-right',
-    duration: 8500,
-    easing: 'ease-out-cubic'
+    aos: 'flip-left',
+    duration: 1200,
+    easing: 'ease-out-cubic',
+    order: 2
   },
 
-  { key: 'carousel', component: caruseProgektTest, props: { slides }, aos: 'fade-left', duration: 1300, delay: 100 },
+  // 5) carousel — має з’явитись 6-м
+  {
+    key: 'carousel',
+    component: caruseProgektTest,
+    props: { slides },
+    aos: 'fade-left',
+    duration: 1200,
+    easing: 'ease-out-cubic',
+    order: 6
+  },
 
-  { key: 'text', component: TextBlok, aos: 'fade-up', duration: 1900, delay: 200, easing: 'ease-out-cubic' }
+  // 6) text — має з’явитись 4-м
+  {
+    key: 'text',
+    component: TextBlok,
+    aos: 'fade-up',
+    duration: 1200,
+    easing: 'ease-out-cubic',
+    order: 4
+  }
 ]
 
+// крок між появами (чим більше — тим повільніше каскад)
+const STEP = 300
+
+// додаємо delay на основі order
+const itemsWithDelay = computed(() =>
+  items.map((it) => ({
+    ...it,
+    delay: (it.order - 1) * STEP
+  }))
+)
+
+// групи по 3
 const groups = computed(() => {
-  const out: Item[][] = []
-  for (let i = 0; i < items.length; i += 3) out.push(items.slice(i, i + 3))
+  const out: any[][] = []
+  for (let i = 0; i < itemsWithDelay.value.length; i += 3) {
+    out.push(itemsWithDelay.value.slice(i, i + 3))
+  }
   return out
 })
 
 onMounted(async () => {
   AOS.init({
-    once: true, // анімація 1 раз
-    offset: 60, // коли починати
-    duration: 800 // дефолт, якщо не задано на елементі
+    once: true,
+    offset: 60
   })
 
   await nextTick()
@@ -107,14 +157,13 @@ onMounted(async () => {
 
 <style scoped>
 .info-container {
-  margin-bottom: 60px;
-  margin-top: 70px;
+  margin-bottom: 160px;
+  margin-top: 150px;
   border-radius: 20px;
   padding: 10px;
   background-color: rgb(55, 55, 55);
 }
 
-/* твій стиль */
 .update {
   width: 600px;
   height: 350px;

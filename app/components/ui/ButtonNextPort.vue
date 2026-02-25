@@ -4,7 +4,7 @@ console.log("button Good Work");
 </script>
 
 <template>
-    <div class="container">"
+    <div class="container">
         <button class="button-next">
             <div>Натискай щоб пореглянути більше!!!</div>
             <div>></div>
