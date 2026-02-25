@@ -9,20 +9,18 @@ html {
 }
 
 body {
- color: aliceblue;
- background-color: rgb(7, 7, 7);
-  font-family: var(--font-f-Rob);
-  line-height: 1.5;
+  color: var(--color-praymeri-light);
+  background-color: var( --color-praymeri-bg);
+  font-family: var( --font-f-Inter);
   font-weight: 400;
-  font-size: var(--font-s-button);
 }
 
 a {
   text-decoration: none;
-  color:  var(--color-praymeri-blek);
+  color:  var(--color-praymeri-light);
   transition: color 0.2s ease;
 }
 
 a:hover {
-  color: var( --color-secondary-steel);
+  color: var( --color-praymeri-blueHover);
 }

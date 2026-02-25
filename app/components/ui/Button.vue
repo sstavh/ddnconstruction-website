@@ -21,4 +21,8 @@ console.log("good Button");
     border: 1px solid var(--color-praymeri-blueHover);
     background-color: var(--color-praymeri-blueHover);
 }
+
+.button:active{
+     transform: translateY(1.4px);
+}
 </style>

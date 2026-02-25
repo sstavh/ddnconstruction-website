@@ -20,7 +20,7 @@
     --font-f-Inter:"Inter", sans-serif;;
 
 
-    --font-s-h1:48px;
+    --font-s-h1:60px;
     --font-s-h3:36px;
     --font-s-h4:28px;
     --font-s-text:16px;
@@ -41,7 +41,7 @@
     --font-w-text:400;
     --font-w-button:500;
 
-    --padding-size-basis: 0.6rem 1.7rem;
+    --padding-size-basis: 15px 35px ;
 }
 
 h1{ font-size: var(--fs-h1); font-weight: 600; line-height: 1.15; }
