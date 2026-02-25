@@ -1,0 +1,60 @@
+:root{
+    --color-praymeri-light:#F5F5F5;
+    --color-praymeri-blek:#0a0a0a;
+    --color-praymeri-bg:#121212;
+    --color-praymeri-blue: #3b82f6;
+    --color-praymeri-blueHover:#2563eb;
+    --color-praymeri-blekText:#595B6D;
+
+
+    --color-secondary-cream: #FFFAF3;
+    --color-secondary-lavender-light: #F1F3FF;
+    --color-secondary-steel: #A0A0A0;   
+    --color-secondary-grau:#1A1A1A;
+    --color-seconadry-blueBg:#39a3e672;
+    --color-secondary-purple-light: #F9F9FF;
+    
+
+    --font-f-Rob:"Roboto", sans-serif;
+    --font-f-Rudik:"Rubik", sans-serif;
+    --font-f-Inter:"Inter", sans-serif;;
+
+
+    --font-s-h1:60px;
+    --font-s-h3:38px;
+    --font-s-h4:28px;
+    --font-s-text:18px;
+    --font-s-textSmoll:14px;
+    --font-s-button:18px;
+    --font-s-navigation:16px;
+
+    --font-s-Mobalh1:32px;
+    --font-s-Mobalh3:26px;
+    --font-s-Mobalh4:22px;
+    --font-s-MobalText:16px;
+    --font-s-MobalSmoll:14px;
+
+
+
+    --font-w-h1:600;
+    --font-w-h3:500;
+    --font-w-text:400;
+    --font-w-button:500;
+
+    --padding-size-basis: 15px 35px ;
+}
+
+h1{ font-size: var(--font-s-h1); font-weight: var(--font-w-h1); line-height: 1.15; }
+h3{ font-size: var(--font-s-h3); font-weight: var(--font-w-h3); line-height: 1.2; }
+h4{ font-size: var(--font-s-h4); font-weight: var(--font-w-h3); line-height: 1.25; }
+p{  font-size: var(--font-s-text);  font-weight:var(--font-w-text); line-height: 1.6; }
+.small{ font-size: var(--font-s-textSmoll); line-height: 1.6; }
+
+@media (max-width: 768px){
+  :root{
+    --fs-h1: 32px;
+    --fs-h2: 26px;
+    --fs-h3: 22px;
+    --fs-h4: 18px;
+  }
+}   

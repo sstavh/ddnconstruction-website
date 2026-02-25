@@ -1,0 +1,26 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  color: var(--color-praymeri-light);
+  background-color: var( --color-praymeri-bg);
+  font-family: var( --font-f-Inter);
+  font-weight: 400;
+}
+
+a {
+  text-decoration: none;
+  color:  var(--color-praymeri-light);
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var( --color-praymeri-blueHover);
+}
