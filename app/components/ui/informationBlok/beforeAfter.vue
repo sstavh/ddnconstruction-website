@@ -99,17 +99,20 @@ function onUp() {
   top: 0;
   bottom: 0;
   left: 50%;
-  width: 2px;
+  width: 5px;
   transform: translateX(-50%);
   background: white;
 }
 
 .knob {
+  color: var(--color-praymeri-blek);
+  font-size: var(--font-s-h4);
+  font-weight: var(--font-w-h1);
   position: absolute;
   top: 50%;
   left: 50%;
-  width: 40px;
-  height: 40px;
+  width: 60px;
+  height: 60px;
   transform: translate(-50%, -50%);
   border-radius: 50%;
   background: white;
