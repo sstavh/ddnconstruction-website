@@ -35,15 +35,13 @@ console.log("hiro work");
 }
 
 .hero-box__logo {
-    font-size: var(--font-s-h1);
-    font-family: var(--font-f-Inter);
+
     max-width: 570px;
     font-weight: 700px;
     margin-bottom: 15px;
 }
 
 .hero-box__pidtext{
-    font-size: var(--font-s-text);
     color: var( --color-praymeri-blekText);
     max-width: 440px;
     margin-bottom: 15px;

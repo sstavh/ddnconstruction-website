@@ -69,9 +69,10 @@ onBeforeUnmount(() => {
 
 <style scoped>
 .slider {
+  margin-top: -95px;
 z-index: -50;
   width: 100%;
-  height: 730px;
+  height: 830px;
   overflow: hidden;
   position: absolute;
 }

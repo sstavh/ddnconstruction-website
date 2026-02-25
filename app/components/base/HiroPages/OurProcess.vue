@@ -144,7 +144,7 @@ function cardStyle(i: number): CSSProperties {
 
 <template>
   <section ref="sectionEl" class="stackSection" :style="{ height: sectionHeight + 'px' }">
-    <h2 class="our-title">Наш процес</h2>
+    <h3 class="our-title">Наш процес</h3>
     <div class="pin">
       <div class="content">
         
@@ -172,7 +172,7 @@ function cardStyle(i: number): CSSProperties {
 
 .pin {
   position: sticky;
-  top: 50px; /* PIN_TOP */
+  top: 50px; 
   height: calc(100vh - 100px);
   z-index: 50;
 }
@@ -184,11 +184,12 @@ function cardStyle(i: number): CSSProperties {
   padding-top: 12px;
 }
 
-.our-title{
+.our-title{ 
     align-items: center;
     justify-content: center;
     display: flex;                                                     ;
-    margin-top: 150px;
+    margin-top: 300px;
+    margin-bottom: -100px;
 }
 .stage {
   position: relative;
@@ -210,21 +211,19 @@ function cardStyle(i: number): CSSProperties {
   border: 4px solid #070707;
   box-sizing: border-box;
 
-  color: #fff;
   will-change: transform, opacity;
 }
 
 .cardTitle {
   margin: 0 0 10px;
-  font-size: 22px;
+  color: var(--color-praymeri-blek);
 }
 
 .cardText {
-      position: absolute;
+  position: absolute;
   bottom: 0;
-  font-size: 16px;
   line-height: 1.55;
   opacity: 0.95;
-  
+  color: var(--color-praymeri-blek);
 }
 </style>

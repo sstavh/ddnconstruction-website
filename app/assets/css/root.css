@@ -21,11 +21,11 @@
 
 
     --font-s-h1:60px;
-    --font-s-h3:36px;
+    --font-s-h3:38px;
     --font-s-h4:28px;
-    --font-s-text:16px;
+    --font-s-text:18px;
     --font-s-textSmoll:14px;
-    --font-s-button:16px;
+    --font-s-button:18px;
     --font-s-navigation:16px;
 
     --font-s-Mobalh1:32px;
@@ -44,12 +44,11 @@
     --padding-size-basis: 15px 35px ;
 }
 
-h1{ font-size: var(--fs-h1); font-weight: 600; line-height: 1.15; }
-h2{ font-size: var(--fs-h2); font-weight: 600; line-height: 1.2; }
-h3{ font-size: var(--fs-h3); font-weight: 600; line-height: 1.25; }
-h4{ font-size: var(--fs-h4); font-weight: 600; line-height: 1.3; }
-p{  font-size: var(--fs-p);  font-weight: 400; line-height: 1.6; }
-.small{ font-size: var(--fs-small); line-height: 1.6; }
+h1{ font-size: var(--font-s-h1); font-weight: var(--font-w-h1); line-height: 1.15; }
+h3{ font-size: var(--font-s-h3); font-weight: var(--font-w-h3); line-height: 1.2; }
+h4{ font-size: var(--font-s-h4); font-weight: var(--font-w-h3); line-height: 1.25; }
+p{  font-size: var(--font-s-text);  font-weight:var(--font-w-text); line-height: 1.6; }
+.small{ font-size: var(--font-s-textSmoll); line-height: 1.6; }
 
 @media (max-width: 768px){
   :root{
