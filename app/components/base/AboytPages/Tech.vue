@@ -28,7 +28,7 @@ onBeforeUnmount(() => {
 <template>
   <section ref="sectionRef" class="tech-section">
     <div class="container">
-      <h3 class="tech-title">Технології виробництва</h3>
+      <h3 data-aos="fade-up" class="tech-title">Технології виробництва</h3>
 
       <div class="tech-list">
         <div
@@ -54,8 +54,9 @@ onBeforeUnmount(() => {
 }
 
 .tech-title{
+    margin-top: 60px;
   text-align: center;
-  margin-bottom: 40px;
+  margin-bottom: 80px;
 }
 
 .tech-list{
