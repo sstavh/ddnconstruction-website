@@ -1,4 +1,5 @@
  <script lang="ts" setup>
+import GeneralHeroPortfolio from '../components/base/PortfolioPage/GeneralHeroPortfolio.vue';
 import HeroPortfolio from '../components/base/PortfolioPage/HeroPortfolio.vue';
 
 
@@ -6,6 +7,7 @@ import HeroPortfolio from '../components/base/PortfolioPage/HeroPortfolio.vue';
 
 <template>
     <HeroPortfolio/>
+    <GeneralHeroPortfolio/> 
 </template>
 
 
