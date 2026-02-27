@@ -2,6 +2,7 @@
 import ButtonNAvigation from '../components/base/PortfolioPage/ButtonNAvigation.vue';
 import GeneralHeroPortfolio from '../components/base/PortfolioPage/GeneralHeroPortfolio.vue';
 import HeroPortfolio from '../components/base/PortfolioPage/HeroPortfolio.vue';
+import PortfolioContainer from '../components/base/PortfolioPage/PortfolioContainer.vue';
 
 
 </script>
@@ -10,6 +11,7 @@ import HeroPortfolio from '../components/base/PortfolioPage/HeroPortfolio.vue';
     <HeroPortfolio/>
     <GeneralHeroPortfolio/> 
     <ButtonNAvigation/>
+    <PortfolioContainer/>
 </template>
 
 
