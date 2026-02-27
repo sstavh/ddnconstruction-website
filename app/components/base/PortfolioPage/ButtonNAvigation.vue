@@ -104,7 +104,6 @@ function handleAction(action: BtnAction) {
   padding: 14px;
   background: rgba(255, 255, 255, .06);
   border: 1px solid rgba(255, 255, 255, .10);
-  box-shadow: 0 18px 60px rgba(0,0,0,.25);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
 }
@@ -184,7 +183,7 @@ function handleAction(action: BtnAction) {
 /* Sub buttons */
 .btn--sub{
 background-color: var(--color-praymeri-blue);
-  box-shadow: 0 10px 24px rgba(0,0,0,.18);
+  box-shadow: 0 10px 14px rgba(0,0,0,.18);
   transition: 1s all ease;
 }
 

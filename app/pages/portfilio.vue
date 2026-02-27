@@ -12,6 +12,12 @@ import PortfolioContainer from '../components/base/PortfolioPage/PortfolioContai
     <GeneralHeroPortfolio/> 
     <ButtonNAvigation/>
     <PortfolioContainer/>
+    <PortfolioContainer/>
+    <PortfolioContainer/>
+    <PortfolioContainer/>
+    <PortfolioContainer/>
+    <PortfolioContainer/>
+    <PortfolioContainer/>
 </template>
 
 
