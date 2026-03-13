@@ -17,7 +17,7 @@ const openFromClick = (e: MouseEvent) => {
 const menu = [
   { title: "Про нас", link: "/about" },
   { title: "Портфоліо", link: "/portfilio" },
-  { title: "Каркулятор", link: "/" },
+  { title: "Каркулятор", link: "/calculator" },
   { title: "Послуги", link: "/services" },
   { title: "Прайс", link: "/" },
 ];
