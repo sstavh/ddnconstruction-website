@@ -192,7 +192,7 @@ function submitForm(payload: ContactForm) {
 }
 </script>
 
-<style>:root {
+<!--<style>:root {
   --bg: #f4f1ea;
   --surface: #ffffff;
   --border: #e5ddd0;
@@ -545,4 +545,4 @@ select {
 
 
 
-</style>
+</style>-->
