@@ -10,7 +10,8 @@ import Button from "../../ui/Button.vue";
                 <div class="generel-box">
                     <h1 class="generel-box__title">Текст слого для <br/>цієї сторінки</h1>
                     <p class="generel-box__pidtext">текст для доповнненя</p>
-                    <Button order: 2 data-aos="fade-up"/>
+                    <Button text="Button"
+  link="/catalog" order: 2 data-aos="fade-up"/>
                 </div>
             </div>
         </div>

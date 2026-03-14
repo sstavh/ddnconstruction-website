@@ -19,7 +19,8 @@ console.log("hiro work");
                 </h1>
                 <p  data-aos="fade-right" class="hero-box__pidtext">підтекст для розумуня для чого це все і. прощо компанія короткий не велий</p>
                 <div data-aos="fade-up" data-aos-duration="10500">
-                    <Button />
+                    <Button ext="Button"
+  link="/catalog" />
                 </div>
                 
             </div>

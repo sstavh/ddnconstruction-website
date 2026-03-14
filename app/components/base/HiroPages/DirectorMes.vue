@@ -16,7 +16,8 @@ console.log("director mes work");
                 
                 <div class="directorMes-box__container">
                     <p class="directorMes-box__text">Тут може бути текст, який буде відображатися у розділі "Слова Директора".</p>
-                    <Button />
+                    <Button ext="Button"
+  link="/catalog"/>
                 </div>
             </div>
         </div>
