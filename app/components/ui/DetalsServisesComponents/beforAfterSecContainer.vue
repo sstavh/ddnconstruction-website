@@ -19,12 +19,12 @@ const value = ref(50)
   <div class="container">
     <div class="befAft-container">
 
-      <h3 class="befAft-container-title">
+      <h3  data-aos="fade-up" order: 2 class="befAft-container-title">
         {{ title }}
       </h3>
 
       <ul class="befAft-list">
-        <li
+        <li     data-aos="fade-up" data-aos-delay="300"
           v-for="(item, index) in items"
           :key="index"
         >
@@ -42,6 +42,10 @@ const value = ref(50)
 </template>
 
 <style scoped>
+
+.befAft-container{
+    margin-bottom: 120px;
+}
 .befAft-container-title{
     text-align: center;
     margin-top: 120px;
