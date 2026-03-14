@@ -7,16 +7,26 @@
     @mouseleave="hideCloud"
   >
     <div class="card-darkness"></div>
+  </div>
 
+  <Teleport to="body">
     <div
+      v-if="isHovered || isClosing"
       class="info-cloud"
       :class="[
-        `pos-x-${cloudX}`,
-        `pos-y-${cloudY}`,
-        { visible: isHovered }
+        `side-${cloudSide}`,
+        { visible: isHovered, closing: isClosing }
       ]"
-      :style="cloudCssVars"
+      :style="cloudStyle"
+      @mouseenter="showCloud"
+      @mouseleave="hideCloud"
     >
+      <div class="cloud-bg bg-1"></div>
+      <div class="cloud-bg bg-2"></div>
+      <div class="cloud-bg bg-3"></div>
+
+      <div class="cloud-tail"></div>
+
       <div v-if="logo" class="logo-wrap">
         <img :src="logo" :alt="title || 'logo'" class="logo" />
       </div>
@@ -26,11 +36,11 @@
         <p v-if="description" class="cloud-description">{{ description }}</p>
       </div>
     </div>
-  </div>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
 
 interface Props {
   logo?: string
@@ -56,67 +66,172 @@ const props = withDefaults(defineProps<Props>(), {
 
 const cardRef = ref<HTMLElement | null>(null)
 const isHovered = ref(false)
-const cloudX = ref<'left' | 'right'>('left')
-const cloudY = ref<'top' | 'bottom'>('bottom')
+const isClosing = ref(false)
+
+const cloudSide = ref<'left' | 'right' | 'top' | 'bottom'>('right')
+const cloudTop = ref(0)
+const cloudLeft = ref(0)
+
+const GAP = 18
+const CLOUD_WIDTH = 720
+const CLOUD_HEIGHT = 440
+const VIEWPORT_PADDING = 12
+const ANIMATION_DURATION = 320
+
+let hideTimer: ReturnType<typeof setTimeout> | null = null
+let closeTimer: ReturnType<typeof setTimeout> | null = null
 
 const cardStyle = computed(() => ({
   backgroundColor: props.blockColor,
   backgroundImage: props.bgImage ? `url(${props.bgImage})` : 'none',
   backgroundSize: 'cover',
   backgroundPosition: 'center',
+  backgroundRepeat: 'no-repeat',
   height: props.height,
   borderRadius: props.radius
 }))
 
-const cloudCssVars = computed(() => {
+const cloudStyle = computed(() => {
   const fallback = ['#3b82f6', '#8b5cf6', '#22c55e']
   const safeColors = [...props.colors, ...fallback].slice(0, 3)
+  const width = Math.min(CLOUD_WIDTH, window.innerWidth - VIEWPORT_PADDING * 2)
 
   return {
+    top: `${cloudTop.value}px`,
+    left: `${cloudLeft.value}px`,
+    '--cloud-width': `${width}px`,
     '--cloud-color-1': safeColors[0],
     '--cloud-color-2': safeColors[1],
     '--cloud-color-3': safeColors[2]
   }
 })
 
+function clamp(value: number, min: number, max: number) {
+  return Math.max(min, Math.min(value, max))
+}
+
 function updateCloudPosition() {
   if (!cardRef.value) return
 
   const rect = cardRef.value.getBoundingClientRect()
-  const centerX = rect.left + rect.width / 2
-  const centerY = rect.top + rect.height / 2
+  const vw = window.innerWidth
+  const vh = window.innerHeight
 
-  const viewportCenterX = window.innerWidth / 2
-  const viewportCenterY = window.innerHeight / 2
+  const cloudWidth = Math.min(CLOUD_WIDTH, vw - VIEWPORT_PADDING * 2)
+  const cloudHeight = Math.min(CLOUD_HEIGHT, vh - VIEWPORT_PADDING * 2)
 
-  cloudX.value = centerX > viewportCenterX ? 'right' : 'left'
-  cloudY.value = centerY > viewportCenterY ? 'top' : 'bottom'
+  const freeSpace = {
+    right: vw - rect.right,
+    left: rect.left,
+    bottom: vh - rect.bottom,
+    top: rect.top
+  }
+
+  const candidates = [
+    { side: 'right', fits: freeSpace.right >= cloudWidth + GAP },
+    { side: 'left', fits: freeSpace.left >= cloudWidth + GAP },
+    { side: 'bottom', fits: freeSpace.bottom >= cloudHeight + GAP },
+    { side: 'top', fits: freeSpace.top >= cloudHeight + GAP }
+  ] as const
+
+  const fitted = candidates.find((item) => item.fits)
+
+  if (fitted) {
+    cloudSide.value = fitted.side
+  } else {
+    const best = Object.entries(freeSpace).sort((a, b) => b[1] - a[1])[0]
+    cloudSide.value = best[0] as 'left' | 'right' | 'top' | 'bottom'
+  }
+
+  let top = 0
+  let left = 0
+
+  switch (cloudSide.value) {
+    case 'right':
+      left = rect.right + GAP
+      top = rect.top + rect.height / 2 - cloudHeight / 2
+      break
+
+    case 'left':
+      left = rect.left - cloudWidth - GAP
+      top = rect.top + rect.height / 2 - cloudHeight / 2
+      break
+
+    case 'bottom':
+      left = rect.left + rect.width / 2 - cloudWidth / 2
+      top = rect.bottom + GAP
+      break
+
+    case 'top':
+      left = rect.left + rect.width / 2 - cloudWidth / 2
+      top = rect.top - cloudHeight - GAP
+      break
+  }
+
+  cloudLeft.value = clamp(left, VIEWPORT_PADDING, vw - cloudWidth - VIEWPORT_PADDING)
+  cloudTop.value = clamp(top, VIEWPORT_PADDING, vh - cloudHeight - VIEWPORT_PADDING)
+}
+
+function clearTimers() {
+  if (hideTimer) {
+    clearTimeout(hideTimer)
+    hideTimer = null
+  }
+
+  if (closeTimer) {
+    clearTimeout(closeTimer)
+    closeTimer = null
+  }
 }
 
 async function showCloud() {
+  clearTimers()
+  isClosing.value = false
+  isHovered.value = true
+
   await nextTick()
   updateCloudPosition()
-  isHovered.value = true
+}
+
+function startCloseAnimation() {
+  if (!isHovered.value && !isClosing.value) return
+
+  clearTimers()
+  isHovered.value = false
+  isClosing.value = true
+
+  closeTimer = setTimeout(() => {
+    isClosing.value = false
+  }, ANIMATION_DURATION)
 }
 
 function hideCloud() {
-  isHovered.value = false
+  hideTimer = setTimeout(() => {
+    startCloseAnimation()
+  }, 60)
 }
 
 function handleResize() {
-  if (isHovered.value) {
+  if (isHovered.value || isClosing.value) {
     updateCloudPosition()
+  }
+}
+
+function handleScroll() {
+  if (isHovered.value) {
+    startCloseAnimation()
   }
 }
 
 onMounted(() => {
   window.addEventListener('resize', handleResize)
-  window.addEventListener('scroll', handleResize, true)
+  window.addEventListener('scroll', handleScroll, true)
 })
 
 onBeforeUnmount(() => {
   window.removeEventListener('resize', handleResize)
-  window.removeEventListener('scroll', handleResize, true)
+  window.removeEventListener('scroll', handleScroll, true)
+  clearTimers()
 })
 </script>
 
@@ -135,7 +250,7 @@ onBeforeUnmount(() => {
 }
 
 .smart-card:hover {
-  transform: translateY(-10px);
+  transform: translateY(-8px);
   box-shadow: 0 28px 60px rgba(0, 0, 0, 0.34);
 }
 
@@ -152,65 +267,29 @@ onBeforeUnmount(() => {
 }
 
 .info-cloud {
-  position: absolute;
-  z-index: 10;
-  width: min(340px, calc(100% - 32px));
-  min-height: 170px;
-  padding: 20px;
-  border-radius: 22px;
+  position: fixed;
+  z-index: 9999;
+  width: var(--cloud-width);
+  min-height: 440px;
+
+   max-width: min(720px, calc(100vw - 24px));
+  padding: 24px;
+  border-radius: 26px;
+  overflow: visible;
+
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
+
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.34),
+    0 10px 24px rgba(0, 0, 0, 0.18);
+
+  background: #111827;
 
   opacity: 0;
   pointer-events: none;
-  transition:
-    opacity 0.35s ease,
-    transform 0.35s ease;
-
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow:
-    0 18px 50px rgba(0, 0, 0, 0.28),
-    inset 0 1px 0 rgba(255,255,255,0.08);
-
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-
-  animation: cloudColorSwitch 6s infinite ease-in-out;
-}
-
-/* позиція всередині блоку */
-.pos-x-left {
-  left: 16px;
-}
-
-.pos-x-right {
-  right: 16px;
-}
-
-.pos-y-top {
-  top: 16px;
-}
-
-.pos-y-bottom {
-  bottom: 16px;
-}
-
-/* стартова анімація */
-.pos-x-left.pos-y-bottom {
-  transform: translate(-8px, 8px) scale(0.96);
-}
-
-.pos-x-right.pos-y-bottom {
-  transform: translate(8px, 8px) scale(0.96);
-}
-
-.pos-x-left.pos-y-top {
-  transform: translate(-8px, -8px) scale(0.96);
-}
-
-.pos-x-right.pos-y-top {
-  transform: translate(8px, -8px) scale(0.96);
 }
 
 .info-cloud.visible {
@@ -218,24 +297,162 @@ onBeforeUnmount(() => {
   pointer-events: auto;
 }
 
-.info-cloud.visible.pos-x-left.pos-y-bottom,
-.info-cloud.visible.pos-x-right.pos-y-bottom,
-.info-cloud.visible.pos-x-left.pos-y-top,
-.info-cloud.visible.pos-x-right.pos-y-top {
-  transform: translate(0, 0) scale(1);
+.info-cloud,
+.logo-wrap {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* ФОНИ */
+.cloud-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bg-1 {
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.06), transparent 35%),
+    linear-gradient(
+      135deg,
+      var(--cloud-color-1),
+      color-mix(in srgb, var(--cloud-color-1) 68%, #000 32%)
+    );
+  animation: cloudLayer1 12s infinite ease-in-out;
+}
+
+.bg-2 {
+  background:
+    radial-gradient(circle at 80% 25%, rgba(255, 255, 255, 0.05), transparent 35%),
+    linear-gradient(
+      135deg,
+      var(--cloud-color-2),
+      color-mix(in srgb, var(--cloud-color-2) 68%, #000 32%)
+    );
+  animation: cloudLayer2 12s infinite ease-in-out;
+}
+
+.bg-3 {
+  background:
+    radial-gradient(circle at 50% 80%, rgba(255, 255, 255, 0.04), transparent 35%),
+    linear-gradient(
+      135deg,
+      var(--cloud-color-3),
+      color-mix(in srgb, var(--cloud-color-3) 68%, #000 32%)
+    );
+  animation: cloudLayer3 12s infinite ease-in-out;
+}
+
+.logo-wrap,
+.cloud-texts {
+  position: relative;
+  z-index: 2;
+}
+
+/* ХВІСТ */
+.cloud-tail {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  filter: none;
+  opacity: -20;
+}
+
+/* справа */
+.side-right .cloud-tail {
+  left: -22px;
+  top: 50%;
+  width: 34px;
+  height: 88px;
+  border-radius: 24px 0 0 24px;
+  
+}
+
+/* зліва */
+.side-left .cloud-tail {
+  right: -22px;
+  top: 50%;
+  width: 34px;
+  height: 88px;
+  border-radius: 0 24px 24px 0;
+  
+}
+
+/* зверху */
+.side-top .cloud-tail {
+  left: 50%;
+  bottom: -22px;
+  width: 88px;
+  height: 34px;
+  border-radius: 0 0 24px 24px;
+  
+}
+
+/* знизу */
+.side-bottom .cloud-tail {
+  left: 50%;
+  top: -22px;
+  width: 88px;
+  height: 34px;
+  border-radius: 24px 24px 0 0;
+ 
+}
+
+/* світіння */
+.side-right::before,
+.side-left::before,
+.side-top::before,
+.side-bottom::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+  filter: blur(18px);
+  opacity: 0.65;
+}
+
+.side-right::before {
+  left: -14px;
+  top: 50%;
+  width: 26px;
+  height: 96px;
+}
+
+.side-left::before {
+  right: -14px;
+  top: 50%;
+  width: 26px;
+  height: 96px;
+}
+
+.side-top::before {
+  left: 50%;
+  bottom: -14px;
+  width: 96px;
+  height: 26px;
+}
+
+.side-bottom::before {
+  left: 50%;
+  top: -14px;
+  width: 96px;
+  height: 26px;
 }
 
 .logo-wrap {
   width: fit-content;
-  padding: 10px;
-  border-radius: 16px;
-  background: rgba(255,255,255,0.10);
-  border: 1px solid rgba(255,255,255,0.14);
+  padding: 12px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .logo {
-  width: 62px;
-  height: 62px;
+  width: 74px;
+  height: 74px;
   object-fit: contain;
   display: block;
 }
@@ -243,61 +460,232 @@ onBeforeUnmount(() => {
 .cloud-texts {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .cloud-title {
   margin: 0;
-  font-size: 24px;
+  font-size: 28px;
   line-height: 1.15;
   font-weight: 800;
   color: #ffffff;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.24);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.24);
 }
 
 .cloud-description {
   margin: 0;
-  font-size: 15px;
-  line-height: 1.6;
+  font-size: 16px;
+  line-height: 1.7;
   color: #f8fafc;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
-@keyframes cloudColorSwitch {
-  0% {
-    background: rgba(59, 130, 246, 0.28);
+/* напрямок */
+.side-right {
+  transform-origin: left center;
+}
+
+.side-left {
+  transform-origin: right center;
+}
+
+.side-top {
+  transform-origin: center bottom;
+}
+
+.side-bottom {
+  transform-origin: center top;
+}
+
+/* ВИЛІТАННЯ */
+.side-right.visible {
+  animation: flyOutRight 0.32s ease forwards;
+}
+
+.side-left.visible {
+  animation: flyOutLeft 0.32s ease forwards;
+}
+
+.side-top.visible {
+  animation: flyOutTop 0.32s ease forwards;
+}
+
+.side-bottom.visible {
+  animation: flyOutBottom 0.32s ease forwards;
+}
+
+/* ПОВЕРНЕННЯ В БЛОК */
+.side-right.closing {
+  animation: flyBackRight 0.32s ease forwards;
+}
+
+.side-left.closing {
+  animation: flyBackLeft 0.32s ease forwards;
+}
+
+.side-top.closing {
+  animation: flyBackTop 0.32s ease forwards;
+}
+
+.side-bottom.closing {
+  animation: flyBackBottom 0.32s ease forwards;
+}
+
+@keyframes flyOutRight {
+  from {
+    opacity: 0;
+    transform: translateX(-40px) scale(0.82);
   }
-  33% {
-    background: rgba(139, 92, 246, 0.28);
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
   }
-  66% {
-    background: rgba(34, 197, 94, 0.28);
+}
+
+@keyframes flyOutLeft {
+  from {
+    opacity: 0;
+    transform: translateX(40px) scale(0.82);
   }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes flyOutTop {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes flyOutBottom {
+  from {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.82);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes flyBackRight {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-40px) scale(0.82);
+  }
+}
+
+@keyframes flyBackLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(40px) scale(0.82);
+  }
+}
+
+@keyframes flyBackTop {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(40px) scale(0.82);
+  }
+}
+
+@keyframes flyBackBottom {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-40px) scale(0.82);
+  }
+}
+
+/* кольори */
+@keyframes cloudLayer1 {
+  0%,
+  30% {
+    opacity: 1;
+  }
+  45%,
   100% {
-    background: rgba(59, 130, 246, 0.28);
+    opacity: 0;
+  }
+}
+
+@keyframes cloudLayer2 {
+  0%,
+  20% {
+    opacity: 0;
+  }
+  35%,
+  65% {
+    opacity: 1;
+  }
+  80%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes cloudLayer3 {
+  0%,
+  55% {
+    opacity: 0;
+  }
+  70%,
+  100% {
+    opacity: 1;
   }
 }
 
 @media (max-width: 768px) {
   .info-cloud {
-    width: calc(100% - 24px);
-    left: 12px !important;
-    right: 12px !important;
-    bottom: 12px !important;
-    top: auto !important;
+    width: calc(100vw - 24px) !important;
+    min-height: auto;
+    padding: 18px;
   }
 
   .cloud-title {
-    font-size: 20px;
+    font-size: 22px;
   }
 
   .cloud-description {
     font-size: 14px;
+    line-height: 1.6;
   }
 
   .logo {
-    width: 54px;
-    height: 54px;
+    width: 58px;
+    height: 58px;
+  }
+
+  .side-right .cloud-tail,
+  .side-left .cloud-tail {
+    height: 72px;
+  }
+
+  .side-top .cloud-tail,
+  .side-bottom .cloud-tail {
+    width: 72px;
   }
 }
 </style>
