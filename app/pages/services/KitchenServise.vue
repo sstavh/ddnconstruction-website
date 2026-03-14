@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import HeroSECComponent from '../../components/base/DetalsServises/HeroSECComponent.vue';
 import InformationCards from '../../components/ui/DetalsServisesComponents/Information-Cards.vue';
+import TextTeclolojig from '../../components/ui/DetalsServisesComponents/textTeclolojig.vue';
 
 const cards = [
   {
@@ -56,6 +57,10 @@ const cards = [
   />
 
   <InformationCards :cards="cards"/>
+  <TextTeclolojig
+title="Наші технології"
+text="Новий текст який буде відображатись"
+/>
 </template>
 
 <style scoped></style>
