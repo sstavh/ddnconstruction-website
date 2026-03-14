@@ -5,7 +5,6 @@ import ButtonBlef from "./ui/ButtonBlef.vue";
 import BaseModalTest from "./ui/BaseModalTest.vue";
 import FormСontact from "./ui/FormsComponents/FormСontact.vue";
 
-
 const open = ref(false);
 const origin = ref<{ x: number; y: number } | null>(null);
 
@@ -23,7 +22,7 @@ const menu = [
 ];
 
 const services = [
-  { title: "Кухні", link: "/services/kitchens" },
+  { title: "Кухні", link: "/services/KitchenServise" },
   { title: "Ванна кімната", link: "/services/bathroom" },
   { title: "Плитка", link: "/services/tiles" },
   { title: "Шпаклівка / фарбування", link: "/services/painting" },
@@ -107,7 +106,8 @@ onBeforeUnmount(() => {
             </template>
           </nav>
 
-          <Button  @click="openFromClick" />
+          <Button ext="Button"
+    @click="openFromClick" />
 
           <BaseModalTest :open="open" :origin="origin" @close="open = false">
             <FormСontact class="header-form" />
