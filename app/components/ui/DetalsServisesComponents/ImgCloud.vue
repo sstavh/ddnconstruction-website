@@ -1,4 +1,5 @@
 <template>
+  
   <div
     ref="cardRef"
     class="smart-card"
@@ -246,12 +247,12 @@ onBeforeUnmount(() => {
   transition:
     transform 0.35s ease,
     box-shadow 0.35s ease;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.24);
+  
 }
 
 .smart-card:hover {
   transform: translateY(-8px);
-  box-shadow: 0 28px 60px rgba(0, 0, 0, 0.34);
+  box-shadow: 0 28px 30px rgba(0, 0, 0, 0.34);
 }
 
 .card-darkness {
