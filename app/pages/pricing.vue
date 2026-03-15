@@ -21,11 +21,8 @@ const activeCategory = computed(() =>
         data-aos="fade-up"
         data-aos-delay="100"
       >
-        <p class="pricing-subtitle">Pricing Plans</p>
         <h2 class="pricing-title">Choose a Service Category</h2>
-        <p class="pricing-text">
-          Натисни на категорію, щоб побачити перелік робіт і ціну за квадратний фут
-        </p>
+        
       </div>
 
       <div
@@ -42,7 +39,6 @@ const activeCategory = computed(() =>
           @click="setActiveCategory(category.id)"
         >
           <h3 class="pricing-card-title">{{ category.title }}</h3>
-          <p class="pricing-card-uk">{{ category.titleUk }}</p>
           <p class="pricing-card-desc">{{ category.description }}</p>
         </button>
       </div>
@@ -55,7 +51,6 @@ const activeCategory = computed(() =>
         <div v-if="activeCategory" class="pricing-panel">
           <div class="pricing-details-head">
             <h3>{{ activeCategory.title }}</h3>
-            <p>{{ activeCategory.titleUk }}</p>
           </div>
 
           <div class="pricing-list">
@@ -81,15 +76,10 @@ const activeCategory = computed(() =>
 </template>
 
 <style scoped>
-.pricing-section {
-  padding: 100px 0;
-  background: #0f172a;
-  color: #ffffff;
-}
+
 
 .container {
-  width: min(1200px, calc(100% - 32px));
-  margin: 0 auto;
+margin-bottom: 80px;
 }
 
 .pricing-header {
@@ -108,7 +98,7 @@ const activeCategory = computed(() =>
 }
 
 .pricing-title {
-  margin: 0 0 14px;
+  margin-top: 120px;
   font-size: clamp(32px, 5vw, 52px);
   line-height: 1.1;
   font-weight: 700;
