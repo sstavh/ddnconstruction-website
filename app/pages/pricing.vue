@@ -90,9 +90,9 @@ margin-bottom: 80px;
 
 .pricing-subtitle {
   margin: 0 0 12px;
-  color: #facc15;
-  font-size: 14px;
-  font-weight: 700;
+  color: var( --color-praymeri-blue);
+  font-size: var( --font-s-textSmoll);
+  font-weight: var(--font-w-h1);
   text-transform: uppercase;
   letter-spacing: 0.18em;
 }
@@ -101,13 +101,11 @@ margin-bottom: 80px;
   margin-top: 120px;
   font-size: clamp(32px, 5vw, 52px);
   line-height: 1.1;
-  font-weight: 700;
+  font-weight: var(--font-w-h1);
 }
 
 .pricing-text {
   margin: 0;
-  color: #cbd5e1;
-  font-size: 17px;
   line-height: 1.6;
 }
 
@@ -125,7 +123,7 @@ margin-bottom: 80px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 22px;
   background: rgba(255, 255, 255, 0.05);
-  color: #ffffff;
+  color: var(--color-praymeri-light);
   text-align: left;
   cursor: pointer;
   appearance: none;
@@ -141,38 +139,38 @@ margin-bottom: 80px;
 
 .pricing-card:hover {
   transform: translateY(-6px);
-  border-color: rgba(250, 204, 21, 0.45);
+  border-color: #3b83f65d;
   background: rgba(255, 255, 255, 0.08);
 }
 
 .pricing-card:focus-visible {
-  border-color: #facc15;
-  box-shadow: 0 0 0 3px rgba(250, 204, 21, 0.2);
+  border-color: var(--color-praymeri-blue);
+  box-shadow: 0 0 0 3px #3b83f65d;
 }
 
 .pricing-card.active {
-  background: #facc15;
+  background: var(--color-praymeri-blue);
   color: #111827;
-  border-color: #facc15;
-  box-shadow: 0 16px 40px rgba(250, 204, 21, 0.2);
+  border-color: var(--color-praymeri-blue);
+  box-shadow: 0 16px 40px #3b83f65d;
 }
 
 .pricing-card-title {
   margin: 0 0 10px;
-  font-size: 22px;
+  font-size: var(--font-s-Mobalh4);
   line-height: 1.3;
-  font-weight: 700;
+  font-weight: var( --font-w-h1);
 }
 
 .pricing-card-uk {
   margin: 0 0 10px;
-  font-size: 16px;
-  font-weight: 600;
+  font-size: var(--font-s-navigation);
+  font-weight: var(--font-w-h1);
 }
 
 .pricing-card-desc {
   margin: 0;
-  font-size: 14px;
+  font-size: var(--font-s-textSmoll);
   line-height: 1.5;
   opacity: 0.9;
 }
@@ -202,9 +200,9 @@ margin-bottom: 80px;
 
 .pricing-details-head p {
   margin: 0;
-  color: #facc15;
-  font-size: 18px;
-  font-weight: 600;
+  color: var(--color-praymeri-blue);
+  font-size: var(--font-s-button);
+  font-weight: var(--font-w-h1);
 }
 
 .pricing-list {
@@ -225,24 +223,24 @@ margin-bottom: 80px;
 
 .pricing-item-info h4 {
   margin: 0 0 6px;
-  font-size: 18px;
+  font-size: var(--font-s-button);
   line-height: 1.3;
-  font-weight: 600;
+  font-weight: var(--font-w-h1);
 }
 
 .pricing-item-info p {
   margin: 0;
   color: #94a3b8;
-  font-size: 15px;
+  font-size:var( --font-s-textSmoll);
   line-height: 1.5;
 }
 
 .pricing-item-price {
   flex-shrink: 0;
   white-space: nowrap;
-  color: #facc15;
-  font-size: 22px;
-  font-weight: 700;
+  color: var(--color-praymeri-blue);
+  font-size: var( --font-s-Mobalh4);
+  font-weight: var(--font-w-h1);
 }
 
 @media (max-width: 1100px) {
