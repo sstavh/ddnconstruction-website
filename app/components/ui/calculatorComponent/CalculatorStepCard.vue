@@ -5,20 +5,139 @@
     <p class="step-card__subtitle">{{ step.subtitle }}</p>
     <p class="step-card__description">{{ step.description }}</p>
 
-    <CalculatorFields
-      v-if="!isLastStep"
-      :fields="step.fields"
-      @update="updateDraft"
-    />
+    <div v-if="step.key === 'roomCount'" class="count-grid">
+      <button
+        v-for="count in roomCountOptions"
+        :key="count"
+        type="button"
+        class="select-card"
+        :class="{ 'select-card--active': draft.roomCount === count }"
+        @click="draft.roomCount = count"
+      >
+        {{ count }}
+      </button>
+    </div>
+
+    <div v-else-if="step.key === 'rooms'" class="rooms-box">
+      <div class="helper-box">
+        Можна вибрати не більше ніж <strong>{{ formData.roomCount }}</strong> кімнат(и).
+      </div>
+
+      <div class="rooms-grid">
+        <button
+          v-for="room in roomOptions"
+          :key="room.value"
+          type="button"
+          class="select-card"
+          :class="{ 'select-card--active': draft.selectedRooms.includes(room.value) }"
+          @click="toggleRoom(room.value)"
+        >
+          {{ room.label }}
+        </button>
+      </div>
+    </div>
+
+    <div v-else-if="step.key === 'services'" class="services-box">
+      <div
+        v-for="room in draft.selectedRooms"
+        :key="room"
+        class="service-room-card"
+      >
+        <h3 class="service-room-card__title">{{ getRoomLabel(room) }}</h3>
+
+        <div class="chips-grid">
+          <button
+            v-for="service in getServicesForRoom(room)"
+            :key="service.id"
+            type="button"
+            class="chip-button"
+            :class="{ 'chip-button--active': isServiceSelected(room, service.id) }"
+            @click="toggleService(room, service.id)"
+          >
+            <span class="chip-button__title">{{ service.title }}</span>
+            <span class="chip-button__price">
+              {{ formatPriceLabel(service) }}
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div v-else-if="step.key === 'areas'" class="areas-box">
+      <div
+        v-for="room in draft.selectedRooms"
+        :key="room"
+        class="field-group"
+      >
+        <label class="field-group__label">
+          {{ getRoomLabel(room) }} — площа, м²
+        </label>
+
+        <input
+          class="field-group__control"
+          type="number"
+          min="1"
+          placeholder="Наприклад 12"
+          :value="draft.areasByRoom[room] || ''"
+          @input="updateArea(room, ($event.target as HTMLInputElement).value)"
+        >
+      </div>
+    </div>
+
+    <div v-else-if="step.key === 'summary'" class="summary-box">
+      <div class="receipt-card">
+        <div class="receipt-card__row">
+          <span>Кількість кімнат</span>
+          <strong>{{ formData.roomCount }}</strong>
+        </div>
+
+        <div
+          v-for="room in formData.selectedRooms"
+          :key="room"
+          class="receipt-room"
+        >
+          <div class="receipt-room__head">
+            <h3>{{ getRoomLabel(room) }}</h3>
+            <span>{{ formData.areasByRoom[room] || 0 }} м²</span>
+          </div>
+
+          <div
+            v-for="serviceId in formData.servicesByRoom[room] || []"
+            :key="serviceId"
+            class="receipt-line"
+          >
+            <div class="receipt-line__info">
+              <strong>{{ getServiceById(room, serviceId)?.title }}</strong>
+              <small>{{ getServiceCalculationText(room, serviceId) }}</small>
+            </div>
+
+            <div class="receipt-line__price">
+              {{ formatCurrency(getServiceTotal(room, serviceId)) }}
+            </div>
+          </div>
+
+          <div class="receipt-room__subtotal">
+            <span>Разом по кімнаті</span>
+            <strong>{{ formatCurrency(getRoomTotal(room)) }}</strong>
+          </div>
+        </div>
+
+        <div class="receipt-total">
+          <span>Загальна сума</span>
+          <strong>{{ formatCurrency(grandTotal) }}</strong>
+        </div>
+      </div>
+    </div>
 
     <ContactForm
-      v-else
+      v-else-if="step.key === 'contact'"
       @submit-form="handleSubmitForm"
     />
 
     <button
-      v-if="!isLastStep"
+      v-if="step.key !== 'contact'"
       class="step-card__button"
+      :disabled="!isStepValid"
       @click="handleComplete"
     >
       {{ step.buttonText }}
@@ -27,32 +146,511 @@
 </template>
 
 <script setup lang="ts">
-import { reactive } from 'vue'
-import CalculatorFields from './CalculatorFields.vue'
+import { computed, reactive, watch } from 'vue'
 import ContactForm from './ContactForm.vue'
-import type { CalculatorStep, ContactForm as ContactFormType } from '../../../types/calculator'
+import type {
+  CalculatorData,
+  CalculatorStep,
+  ContactForm as ContactFormType,
+  RoomOption,
+  ServiceCatalog,
+  ServiceItem,
+} from '../../../types/calculator'
 
 const props = defineProps<{
   step: CalculatorStep
   isLastStep: boolean
+  formData: CalculatorData
+  roomOptions: RoomOption[]
+  serviceCatalog: ServiceCatalog
 }>()
 
 const emit = defineEmits<{
-  (e: 'complete-step', payload?: Record<string, string | number>): void
+  (e: 'complete-step', payload?: Partial<CalculatorData>): void
   (e: 'submit-form', payload: ContactFormType): void
 }>()
 
-const draft = reactive<Record<string, string | number>>({})
+const roomCountOptions = [1, 2, 3, 4, 5, 6]
 
-function updateDraft(payload: Record<string, string | number>) {
-  Object.assign(draft, payload)
+const draft = reactive<CalculatorData>({
+  roomCount: 1,
+  selectedRooms: [],
+  servicesByRoom: {},
+  areasByRoom: {},
+})
+
+watch(
+  () => [props.step.key, props.formData],
+  () => {
+    draft.roomCount = props.formData.roomCount
+    draft.selectedRooms = [...props.formData.selectedRooms]
+    draft.servicesByRoom = Object.fromEntries(
+      Object.entries(props.formData.servicesByRoom).map(([key, value]) => [key, [...value]])
+    )
+    draft.areasByRoom = { ...props.formData.areasByRoom }
+  },
+  { immediate: true, deep: true }
+)
+
+const isStepValid = computed(() => {
+  if (props.step.key === 'roomCount') {
+    return draft.roomCount > 0
+  }
+
+  if (props.step.key === 'rooms') {
+    return draft.selectedRooms.length > 0 && draft.selectedRooms.length <= props.formData.roomCount
+  }
+
+  if (props.step.key === 'services') {
+    return draft.selectedRooms.length > 0 &&
+      draft.selectedRooms.every((room) => (draft.servicesByRoom[room] || []).length > 0)
+  }
+
+  if (props.step.key === 'areas') {
+    return draft.selectedRooms.length > 0 &&
+      draft.selectedRooms.every((room) => Number(draft.areasByRoom[room]) > 0)
+  }
+
+  if (props.step.key === 'summary') {
+    return true
+  }
+
+  return false
+})
+
+const grandTotal = computed(() => {
+  return props.formData.selectedRooms.reduce((roomAcc, room) => {
+    return roomAcc + getRoomTotal(room)
+  }, 0)
+})
+
+function getRoomLabel(roomValue: string) {
+  return props.roomOptions.find((room) => room.value === roomValue)?.label || roomValue
+}
+
+function getRoomGroup(roomValue: string) {
+  return props.roomOptions.find((room) => room.value === roomValue)?.serviceGroup || 'interior'
+}
+
+function getServicesForRoom(roomValue: string): ServiceItem[] {
+  const group = getRoomGroup(roomValue)
+  return props.serviceCatalog[group] || []
+}
+
+function getServiceById(roomValue: string, serviceId: string) {
+  return getServicesForRoom(roomValue).find((service) => service.id === serviceId)
+}
+
+function toggleRoom(roomValue: string) {
+  const exists = draft.selectedRooms.includes(roomValue)
+
+  if (exists) {
+    draft.selectedRooms = draft.selectedRooms.filter((room) => room !== roomValue)
+    delete draft.servicesByRoom[roomValue]
+    delete draft.areasByRoom[roomValue]
+    return
+  }
+
+  if (draft.selectedRooms.length >= props.formData.roomCount) return
+
+  draft.selectedRooms = [...draft.selectedRooms, roomValue]
+}
+
+function isServiceSelected(roomValue: string, serviceId: string) {
+  return (draft.servicesByRoom[roomValue] || []).includes(serviceId)
+}
+
+function toggleService(roomValue: string, serviceId: string) {
+  const current = draft.servicesByRoom[roomValue] || []
+
+  if (current.includes(serviceId)) {
+    draft.servicesByRoom = {
+      ...draft.servicesByRoom,
+      [roomValue]: current.filter((item) => item !== serviceId),
+    }
+    return
+  }
+
+  draft.servicesByRoom = {
+    ...draft.servicesByRoom,
+    [roomValue]: [...current, serviceId],
+  }
+}
+
+function updateArea(roomValue: string, value: string) {
+  draft.areasByRoom = {
+    ...draft.areasByRoom,
+    [roomValue]: value === '' ? '' : Number(value),
+  }
+}
+
+function getServiceTotal(roomValue: string, serviceId: string) {
+  const service = getServiceById(roomValue, serviceId)
+  if (!service) return 0
+
+  const area = Number(props.formData.areasByRoom[roomValue] || 0)
+
+  if (service.priceType === 'm2') {
+    return service.price * area
+  }
+
+  return service.price
+}
+
+function getRoomTotal(roomValue: string) {
+  const roomServices = props.formData.servicesByRoom[roomValue] || []
+
+  return roomServices.reduce((sum, serviceId) => {
+    return sum + getServiceTotal(roomValue, serviceId)
+  }, 0)
+}
+
+function getServiceCalculationText(roomValue: string, serviceId: string) {
+  const service = getServiceById(roomValue, serviceId)
+  if (!service) return ''
+
+  const area = Number(props.formData.areasByRoom[roomValue] || 0)
+
+  if (service.priceType === 'm2') {
+    return `${service.price}$/м² × ${area} м²`
+  }
+
+  return `Фіксована ціна: ${service.price}$`
+}
+
+function formatPriceLabel(service: ServiceItem) {
+  if (service.priceType === 'm2') {
+    return `${service.price}$/м²`
+  }
+
+  return `${service.price}$`
+}
+
+function formatCurrency(value: number) {
+  return `$${value.toLocaleString('en-US')}`
 }
 
 function handleComplete() {
-  emit('complete-step', { ...draft })
+  if (!isStepValid.value) return
+
+  if (props.step.key === 'roomCount') {
+    emit('complete-step', {
+      roomCount: draft.roomCount,
+      selectedRooms: [],
+      servicesByRoom: {},
+      areasByRoom: {},
+    })
+    return
+  }
+
+  if (props.step.key === 'rooms') {
+    const allowedRooms = draft.selectedRooms.slice(0, props.formData.roomCount)
+    const filteredServices = Object.fromEntries(
+      Object.entries(draft.servicesByRoom).filter(([room]) => allowedRooms.includes(room))
+    )
+    const filteredAreas = Object.fromEntries(
+      Object.entries(draft.areasByRoom).filter(([room]) => allowedRooms.includes(room))
+    )
+
+    emit('complete-step', {
+      selectedRooms: allowedRooms,
+      servicesByRoom: filteredServices,
+      areasByRoom: filteredAreas,
+    })
+    return
+  }
+
+  if (props.step.key === 'services') {
+    emit('complete-step', {
+      servicesByRoom: { ...draft.servicesByRoom },
+    })
+    return
+  }
+
+  if (props.step.key === 'areas') {
+    emit('complete-step', {
+      areasByRoom: { ...draft.areasByRoom },
+    })
+    return
+  }
+
+  if (props.step.key === 'summary') {
+    emit('complete-step')
+  }
 }
 
 function handleSubmitForm(payload: ContactFormType) {
   emit('submit-form', payload)
 }
 </script>
+
+<style scoped>
+.step-card {
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(229, 221, 208, 0.9);
+  border-radius: 32px;
+  padding: 34px;
+  box-shadow: var(--shadow);
+}
+
+.step-card__label {
+  margin: 0 0 12px;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+}
+
+.step-card__title {
+  margin: 0 0 8px;
+  font-size: 32px;
+}
+
+.step-card__subtitle {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 18px;
+}
+
+.step-card__description {
+  margin: 0 0 24px;
+  line-height: 1.65;
+  color: #544c43;
+}
+
+.step-card__button {
+  width: 100%;
+  margin-top: 24px;
+  min-height: 58px;
+  border: none;
+  border-radius: 999px;
+  background: var(--accent);
+  color: #fff;
+  cursor: pointer;
+  font-weight: 700;
+  transition: 0.2s ease;
+}
+
+.step-card__button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.count-grid,
+.rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.select-card {
+  min-height: 64px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: #fff;
+  padding: 16px;
+  text-align: left;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.select-card:hover {
+  border-color: var(--accent-2);
+  transform: translateY(-1px);
+}
+
+.select-card--active {
+  border-color: var(--accent);
+  background: #f7f2ea;
+}
+
+.helper-box {
+  margin-bottom: 16px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  background: #f7f2ea;
+  border: 1px solid var(--border);
+  color: #544c43;
+}
+
+.services-box,
+.areas-box,
+.summary-box {
+  display: grid;
+  gap: 18px;
+}
+
+.service-room-card,
+.receipt-card {
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 18px;
+  background: #fff;
+}
+
+.service-room-card__title {
+  margin: 0 0 14px;
+  font-size: 20px;
+}
+
+.chips-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip-button {
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 18px;
+  padding: 12px 14px;
+  cursor: pointer;
+  line-height: 1.35;
+  transition: 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  text-align: left;
+  max-width: 340px;
+}
+
+.chip-button:hover {
+  border-color: var(--accent-2);
+}
+
+.chip-button--active {
+  background: #1d1d1d;
+  color: #fff;
+  border-color: #1d1d1d;
+}
+
+.chip-button__title {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.chip-button__price {
+  font-size: 13px;
+  opacity: 0.85;
+}
+
+.field-group {
+  display: grid;
+  gap: 8px;
+}
+
+.field-group__label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field-group__control {
+  width: 100%;
+  min-height: 56px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: #fff;
+  padding: 14px 16px;
+  outline: none;
+}
+
+.receipt-card__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+}
+
+.receipt-room + .receipt-room {
+  margin-top: 18px;
+  padding-top: 18px;
+  border-top: 1px solid var(--border);
+}
+
+.receipt-room__head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 14px;
+}
+
+.receipt-room__head h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.receipt-room__head span {
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.receipt-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 0;
+  border-top: 1px solid #f1e9dd;
+}
+
+.receipt-line__info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.receipt-line__info small {
+  color: var(--muted);
+}
+
+.receipt-line__price {
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+.receipt-room__subtotal {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed var(--border);
+  font-size: 16px;
+}
+
+.receipt-total {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 2px solid var(--border);
+  font-size: 20px;
+}
+
+@media (max-width: 720px) {
+  .step-card {
+    padding: 20px;
+  }
+
+  .step-card__title {
+    font-size: 26px;
+  }
+
+  .count-grid,
+  .rooms-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .receipt-card__row,
+  .receipt-room__head,
+  .receipt-line,
+  .receipt-room__subtotal,
+  .receipt-total {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+</style>

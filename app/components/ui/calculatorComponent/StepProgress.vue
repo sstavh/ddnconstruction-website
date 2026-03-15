@@ -1,5 +1,5 @@
 <template>
-  <div class="step-progress">
+  <div class="step-progress" :style="{ gridTemplateColumns: `repeat(${steps.length}, 1fr)` }">
     <div
       v-for="(step, index) in steps"
       :key="step.id"
@@ -22,3 +22,26 @@ defineProps<{
   currentStep: number
 }>()
 </script>
+
+<style scoped>
+.step-progress {
+  display: grid;
+  gap: 10px;
+}
+
+.step-progress__item {
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(29, 29, 29, 0.12);
+  overflow: hidden;
+}
+
+.step-progress__item--active,
+.step-progress__item--done {
+  background: var(--accent-2);
+}
+
+.step-progress__number {
+  display: none;
+}
+</style>
