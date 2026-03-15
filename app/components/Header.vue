@@ -18,7 +18,7 @@ const menu = [
   { title: "Портфоліо", link: "/portfilio" },
   { title: "Каркулятор", link: "/calculator" },
   { title: "Послуги", link: "/service" },
-  { title: "Прайс", link: "/" },
+  { title: "Прайс", link: "/pricing" },
 ];
 
 const services = [
