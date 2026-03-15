@@ -21,6 +21,9 @@
         <CalculatorStepCard
           :step="steps[currentStep]"
           :is-last-step="currentStep === steps.length - 1"
+          :form-data="calculatorForm"
+          :room-options="roomOptions"
+          :service-catalog="serviceCatalog"
           @complete-step="completeStep"
           @submit-form="submitForm"
         />
@@ -41,115 +44,140 @@ import CalculatorAside from '../components/ui/calculatorComponent/CalculatorAsid
 import StepProgress from '../components/ui/calculatorComponent/StepProgress.vue'
 import CalculatorStepCard from '../components/ui/calculatorComponent/CalculatorStepCard.vue'
 import StepsInfo from '../components/ui/calculatorComponent/StepsInfo.vue'
-import type { CalculatorStep, ContactForm } from '../types/calculator'
+import type {
+  CalculatorData,
+  CalculatorStep,
+  ContactForm,
+  RoomOption,
+  ServiceCatalog,
+} from '../types/calculator'
+
+const roomOptions: RoomOption[] = [
+  { value: 'bathroom', label: 'Bathroom / Ванна кімната', serviceGroup: 'bathroom' },
+  { value: 'kitchen', label: 'Kitchen / Кухня', serviceGroup: 'kitchen' },
+  { value: 'bedroom', label: 'Bedroom / Спальня', serviceGroup: 'interior' },
+  { value: 'living-room', label: 'Living Room / Вітальня', serviceGroup: 'interior' },
+  { value: 'hallway', label: 'Hallway / Коридор', serviceGroup: 'interior' },
+  { value: 'office', label: 'Office / Кабінет', serviceGroup: 'interior' },
+  { value: 'exterior', label: 'Exterior / Зовнішні роботи', serviceGroup: 'exterior' },
+]
+
+const serviceCatalog: ServiceCatalog = {
+  bathroom: [
+    { id: 'bathroom-demolition', title: 'Bathroom demolition — Демонтаж ванної кімнати', price: 18, priceType: 'm2' },
+    { id: 'shower-installation', title: 'Shower installation — Встановлення душу', price: 900, priceType: 'fixed' },
+    { id: 'bathtub-installation', title: 'Bathtub installation — Встановлення ванни', price: 1100, priceType: 'fixed' },
+    { id: 'walk-in-shower-installation', title: 'Walk-in shower installation — Встановлення walk-in душу', price: 1400, priceType: 'fixed' },
+    { id: 'shower-tile-installation', title: 'Shower tile installation — Укладання плитки в душі', price: 45, priceType: 'm2' },
+    { id: 'bathroom-floor-tile-installation', title: 'Bathroom floor tile installation — Укладання плитки на підлогу у ванній', price: 35, priceType: 'm2' },
+    { id: 'shower-niche-installation', title: 'Shower niche installation — Монтаж ніші в душі', price: 250, priceType: 'fixed' },
+    { id: 'shower-bench-installation', title: 'Shower bench installation — Монтаж лавки в душі', price: 350, priceType: 'fixed' },
+    { id: 'linear-drain-installation', title: 'Linear drain installation — Встановлення лінійного трапу', price: 300, priceType: 'fixed' },
+    { id: 'bathroom-vanity-installation', title: 'Bathroom vanity installation — Встановлення тумби з умивальником', price: 450, priceType: 'fixed' },
+    { id: 'sink-installation', title: 'Sink installation — Встановлення умивальника', price: 220, priceType: 'fixed' },
+    { id: 'toilet-installation', title: 'Toilet installation — Встановлення туалету', price: 250, priceType: 'fixed' },
+    { id: 'faucet-installation', title: 'Faucet installation — Встановлення змішувачів', price: 120, priceType: 'fixed' },
+    { id: 'glass-shower-door-installation', title: 'Glass shower door installation — Встановлення скляних дверей душу', price: 650, priceType: 'fixed' },
+  ],
+  kitchen: [
+    { id: 'kitchen-demolition', title: 'Kitchen demolition — Демонтаж кухні', price: 16, priceType: 'm2' },
+    { id: 'kitchen-cabinet-installation', title: 'Kitchen cabinet installation — Монтаж кухонних шаф', price: 1200, priceType: 'fixed' },
+    { id: 'kitchen-countertop-installation', title: 'Kitchen countertop installation — Монтаж кухонної стільниці', price: 850, priceType: 'fixed' },
+    { id: 'kitchen-backsplash-tile-installation', title: 'Kitchen backsplash tile installation — Укладання плитки backsplash', price: 40, priceType: 'm2' },
+    { id: 'kitchen-floor-tile-installation', title: 'Kitchen floor tile installation — Укладання плитки на підлогу кухні', price: 35, priceType: 'm2' },
+    { id: 'kitchen-sink-installation', title: 'Kitchen sink installation — Встановлення кухонної мийки', price: 240, priceType: 'fixed' },
+    { id: 'kitchen-faucet-installation', title: 'Kitchen faucet installation — Встановлення кухонного змішувача', price: 120, priceType: 'fixed' },
+  ],
+  interior: [
+    { id: 'tile-floor-installation', title: 'Tile floor installation — Укладання плитки на підлогу', price: 32, priceType: 'm2' },
+    { id: 'laminate-flooring-installation', title: 'Laminate flooring installation — Монтаж ламінату', price: 18, priceType: 'm2' },
+    { id: 'vinyl-plank-flooring-installation', title: 'Vinyl plank flooring installation — Монтаж вінілової підлоги', price: 20, priceType: 'm2' },
+    { id: 'drywall-installation', title: 'Drywall installation — Монтаж гіпсокартону', price: 28, priceType: 'm2' },
+    { id: 'drywall-repair', title: 'Drywall repair — Ремонт гіпсокартону', price: 16, priceType: 'm2' },
+    { id: 'interior-painting', title: 'Interior painting — Фарбування приміщень', price: 14, priceType: 'm2' },
+    { id: 'trim-baseboard-installation', title: 'Trim and baseboard installation — Монтаж плінтусів та лиштв', price: 8, priceType: 'm2' },
+    { id: 'interior-door-installation', title: 'Interior door installation — Встановлення міжкімнатних дверей', price: 350, priceType: 'fixed' },
+  ],
+  exterior: [
+    { id: 'deck-installation', title: 'Deck installation — Монтаж тераси (deck)', price: 65, priceType: 'm2' },
+    { id: 'deck-repair', title: 'Deck repair — Ремонт тераси', price: 35, priceType: 'm2' },
+    { id: 'fence-installation', title: 'Fence installation — Встановлення паркану', price: 55, priceType: 'm2' },
+    { id: 'exterior-door-installation', title: 'Exterior door installation — Встановлення зовнішніх дверей', price: 500, priceType: 'fixed' },
+    { id: 'exterior-painting', title: 'Exterior painting — Фарбування будинку зовні', price: 18, priceType: 'm2' },
+    { id: 'power-washing', title: 'Power washing — Мийка будинку pressure washer', price: 10, priceType: 'm2' },
+  ],
+}
 
 const steps = reactive<CalculatorStep[]>([
   {
     id: 1,
-    title: 'Оберіть місто',
-    subtitle: 'Локація для розрахунку',
-    description: 'Вкажіть місто, де планується ремонт.',
-    buttonText: 'Підтвердити місто',
-    shortText: 'Оберіть місто для старту розрахунку.',
+    key: 'roomCount',
+    title: 'Скільки кімнат?',
+    subtitle: 'Перший крок',
+    description: 'Оберіть загальну кількість кімнат або зон, для яких потрібен розрахунок.',
+    buttonText: 'Підтвердити кількість кімнат',
+    shortText: 'Вкажіть кількість кімнат.',
     completed: false,
-    fields: [
-      {
-        key: 'city',
-        label: 'Місто',
-        type: 'select',
-        placeholder: 'Оберіть місто',
-        options: ['Київ', 'Львів', 'Одеса', 'Дніпро'],
-      },
-    ],
   },
   {
     id: 2,
-    title: 'Статус об’єкта',
-    subtitle: 'Тип нерухомості',
-    description: 'Оберіть, який саме у вас об’єкт.',
-    buttonText: 'Підтвердити статус',
-    shortText: 'Вкажіть статус об’єкта.',
+    key: 'rooms',
+    title: 'Оберіть кімнати',
+    subtitle: 'Список приміщень',
+    description: 'Оберіть кімнати. Кількість вибраних кімнат не може бути більшою, ніж ви вказали на попередньому кроці.',
+    buttonText: 'Підтвердити кімнати',
+    shortText: 'Оберіть кімнати для робіт.',
     completed: false,
-    fields: [
-      {
-        key: 'objectStatus',
-        label: 'Статус об’єкта',
-        type: 'radio',
-        options: ['Новобудова', 'Вторинне житло', 'Приватний будинок'],
-      },
-    ],
   },
   {
     id: 3,
-    title: 'Площа приміщення',
-    subtitle: 'Основний параметр',
-    description: 'Вкажіть площу в квадратних метрах.',
-    buttonText: 'Зберегти площу',
-    shortText: 'Додайте площу приміщення.',
+    key: 'services',
+    title: 'Оберіть види робіт',
+    subtitle: 'Роботи по кожній кімнаті',
+    description: 'Для кожної кімнати оберіть одну або кілька послуг.',
+    buttonText: 'Підтвердити роботи',
+    shortText: 'Оберіть послуги по кімнатах.',
     completed: false,
-    fields: [
-      {
-        key: 'area',
-        label: 'Площа, м²',
-        type: 'number',
-        placeholder: 'Наприклад 65',
-      },
-    ],
   },
   {
     id: 4,
-    title: 'Кількість кімнат',
-    subtitle: 'Планування об’єкта',
-    description: 'Оберіть або введіть кількість кімнат.',
-    buttonText: 'Підтвердити дані',
-    shortText: 'Вкажіть кількість кімнат.',
+    key: 'areas',
+    title: 'Вкажіть площу',
+    subtitle: 'Квадратні метри',
+    description: 'Введіть площу для кожної вибраної кімнати.',
+    buttonText: 'Підтвердити площу',
+    shortText: 'Додайте площу по кімнатах.',
     completed: false,
-    fields: [
-      {
-        key: 'rooms',
-        label: 'Кількість кімнат',
-        type: 'radio',
-        options: ['1', '2', '3', '4+'],
-      },
-    ],
   },
   {
     id: 5,
-    title: 'Тип ремонту',
-    subtitle: 'Формат робіт',
-    description: 'Оберіть, який рівень ремонту вас цікавить.',
-    buttonText: 'Підтвердити тип ремонту',
-    shortText: 'Оберіть формат ремонту.',
+    key: 'summary',
+    title: 'Ваш чек',
+    subtitle: 'Підсумок заявки',
+    description: 'Перевірте всі вибрані дані перед відправкою.',
+    buttonText: 'Зв’язатися з нами',
+    shortText: 'Перевірте чек.',
     completed: false,
-    fields: [
-      {
-        key: 'repairType',
-        label: 'Тип ремонту',
-        type: 'radio',
-        options: ['Косметичний', 'Капітальний', 'Дизайнерський'],
-      },
-    ],
   },
   {
     id: 6,
+    key: 'contact',
     title: 'Контактні дані',
-    subtitle: 'Отримати розрахунок',
-    description: 'Залиште контакти, щоб отримати вартість ремонту.',
+    subtitle: 'Надіслати заявку',
+    description: 'Заповніть форму, а ми отримаємо всі дані з вашого чеку.',
     buttonText: 'Надіслати форму',
-    shortText: 'Залиште контакти для отримання результату.',
+    shortText: 'Залиште контакти.',
     completed: false,
-    fields: [],
   },
 ])
 
 const currentStep = ref(0)
 
-const calculatorForm = reactive<Record<string, string | number>>({
-  city: '',
-  objectStatus: '',
-  area: '',
-  rooms: '',
-  repairType: '',
+const calculatorForm = reactive<CalculatorData>({
+  roomCount: 1,
+  selectedRooms: [],
+  servicesByRoom: {},
+  areasByRoom: {},
 })
 
 const contactForm = reactive<ContactForm>({
@@ -171,8 +199,24 @@ function goNext() {
   if (canGoNext.value) currentStep.value += 1
 }
 
-function completeStep(payload?: Record<string, string | number>) {
-  if (payload) Object.assign(calculatorForm, payload)
+function completeStep(payload?: Partial<CalculatorData>) {
+  if (payload) {
+    if (typeof payload.roomCount === 'number') {
+      calculatorForm.roomCount = payload.roomCount
+    }
+
+    if (payload.selectedRooms) {
+      calculatorForm.selectedRooms = [...payload.selectedRooms]
+    }
+
+    if (payload.servicesByRoom) {
+      calculatorForm.servicesByRoom = { ...payload.servicesByRoom }
+    }
+
+    if (payload.areasByRoom) {
+      calculatorForm.areasByRoom = { ...payload.areasByRoom }
+    }
+  }
 
   steps[currentStep.value].completed = true
 
@@ -185,14 +229,24 @@ function submitForm(payload: ContactForm) {
   Object.assign(contactForm, payload)
   steps[currentStep.value].completed = true
 
-  console.log('Calculator submit:', {
-    calculator: calculatorForm,
-    contacts: contactForm,
-  })
+  const requestPayload = {
+    calculator: {
+      roomCount: calculatorForm.roomCount,
+      selectedRooms: calculatorForm.selectedRooms,
+      servicesByRoom: calculatorForm.servicesByRoom,
+      areasByRoom: calculatorForm.areasByRoom,
+    },
+    contacts: {
+      ...contactForm,
+    },
+  }
+
+  console.log('Calculator submit:', requestPayload)
 }
 </script>
 
-<!--<style>:root {
+<style>
+:root {
   --bg: #f4f1ea;
   --surface: #ffffff;
   --border: #e5ddd0;
@@ -201,6 +255,8 @@ function submitForm(payload: ContactForm) {
   --accent: #1d1d1d;
   --accent-2: #c7a97f;
   --shadow: 0 24px 60px rgba(30, 26, 22, 0.08);
+  --success: #d8f0df;
+  --success-border: #a7d7b5;
 }
 
 * {
@@ -226,58 +282,6 @@ select {
   padding: 24px;
 }
 
-.page-header {
-  max-width: 1320px;
-  margin: 0 auto 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 20px;
-}
-
-.page-header__label {
-  margin: 0 0 8px;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.18em;
-  color: var(--muted);
-}
-
-.page-header__title {
-  margin: 0;
-  font-size: 34px;
-  line-height: 1.15;
-}
-
-.page-header__actions {
-  display: flex;
-  gap: 12px;
-}
-
-.top-button {
-  min-width: 120px;
-  border-radius: 999px;
-  padding: 14px 18px;
-  border: none;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.top-button--light {
-  background: #fff;
-  border: 1px solid var(--border);
-}
-
-.top-button--dark {
-  background: var(--accent);
-  color: #fff;
-}
-
-.top-button:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
 .calculator-layout {
   max-width: 1320px;
   margin: 0 auto;
@@ -287,224 +291,15 @@ select {
   align-items: stretch;
 }
 
-.calculator-aside {
-  min-height: 760px;
-  border-radius: 32px;
-  overflow: hidden;
-  background:
-    linear-gradient(rgba(24, 20, 16, 0.42), rgba(24, 20, 16, 0.42)),
-    url('https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=1200&q=80') center/cover no-repeat;
-  box-shadow: var(--shadow);
-  display: flex;
-  align-items: end;
-}
-
-.calculator-aside__overlay {
-  padding: 40px;
-  color: #fff;
-}
-
-.calculator-aside__caption {
-  margin: 0 0 12px;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.16em;
-  color: rgba(255,255,255,0.74);
-}
-
-.calculator-aside__title {
-  margin: 0 0 12px;
-  font-size: 42px;
-  line-height: 1.05;
-}
-
-.calculator-aside__text {
-  margin: 0 0 20px;
-  max-width: 460px;
-  line-height: 1.6;
-  color: rgba(255,255,255,0.88);
-}
-
-.calculator-aside__list {
-  margin: 0;
-  padding-left: 18px;
-  color: rgba(255,255,255,0.88);
-  display: grid;
-  gap: 8px;
-}
-
 .calculator-panel {
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
 
-.step-progress {
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 10px;
-}
-
-.step-progress__item {
-  height: 8px;
-  border-radius: 999px;
-  background: rgba(29,29,29,0.12);
-  overflow: hidden;
-}
-
-.step-progress__item--active,
-.step-progress__item--done {
-  background: var(--accent-2);
-}
-
-.step-progress__number {
-  display: none;
-}
-
-.step-card {
-  background: rgba(255,255,255,0.96);
-  border: 1px solid rgba(229,221,208,0.9);
-  border-radius: 32px;
-  padding: 34px;
-  box-shadow: var(--shadow);
-}
-
-.step-card__label {
-  margin: 0 0 12px;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--muted);
-}
-
-.step-card__title {
-  margin: 0 0 8px;
-  font-size: 32px;
-}
-
-.step-card__subtitle {
-  margin: 0 0 12px;
-  color: var(--muted);
-  font-size: 18px;
-}
-
-.step-card__description {
-  margin: 0 0 24px;
-  line-height: 1.65;
-  color: #544c43;
-}
-
-.fields-box,
-.contact-form {
-  display: grid;
-  gap: 18px;
-}
-
-.field-group {
-  display: grid;
-  gap: 8px;
-}
-
-.field-group__label {
-  font-size: 14px;
-  font-weight: 600;
-}
-
-.field-group__control {
-  width: 100%;
-  min-height: 56px;
-  border-radius: 18px;
-  border: 1px solid var(--border);
-  background: #fff;
-  padding: 14px 16px;
-  outline: none;
-}
-
-.field-group__control--textarea {
-  min-height: 120px;
-  resize: vertical;
-}
-
-.radio-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.radio-grid__item {
-  min-height: 58px;
-  border-radius: 18px;
-  border: 1px solid var(--border);
-  background: #fff;
-  padding: 14px 16px;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.radio-grid__item:hover {
-  border-color: var(--accent-2);
-}
-
-.step-card__button {
-  width: 100%;
-  margin-top: 22px;
-  min-height: 58px;
-  border: none;
-  border-radius: 999px;
-  background: var(--accent);
-  color: #fff;
-  cursor: pointer;
-  font-weight: 700;
-}
-
-.steps-info {
-  background: rgba(255,255,255,0.82);
-  border: 1px solid rgba(229,221,208,0.9);
-  border-radius: 28px;
-  padding: 20px;
-}
-
-.steps-info__row {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.steps-info__item {
-  text-align: center;
-}
-
-.steps-info__dot {
-  display: inline-block;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: #d7cabc;
-  margin-bottom: 10px;
-}
-
-.steps-info__dot--active {
-  background: #1d1d1d;
-}
-
-.steps-info__dot--done {
-  background: var(--accent-2);
-}
-
-.steps-info__text {
-  margin: 0;
-  font-size: 13px;
-  line-height: 1.5;
-  color: var(--muted);
-}
-
 @media (max-width: 1100px) {
   .calculator-layout {
     grid-template-columns: 1fr;
-  }
-
-  .calculator-aside {
-    min-height: 420px;
   }
 }
 
@@ -512,37 +307,5 @@ select {
   .calculator-page {
     padding: 16px;
   }
-
-  .page-header {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .page-header__title {
-    font-size: 28px;
-  }
-
-  .step-card,
-  .steps-info {
-    padding: 20px;
-  }
-
-  .step-card__title,
-  .calculator-aside__title {
-    font-size: 26px;
-  }
-
-  .radio-grid,
-  .steps-info__row {
-    grid-template-columns: 1fr;
-  }
-
-  .step-progress {
-    grid-template-columns: repeat(6, 1fr);
-  }
 }
-
-
-
-
-</style>-->
+</style>
