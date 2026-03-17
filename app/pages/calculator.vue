@@ -246,36 +246,6 @@ function submitForm(payload: ContactForm) {
 </script>
 
 <style>
-:root {
-  --bg: #f4f1ea;
-  --surface: #ffffff;
-  --border: #e5ddd0;
-  --text: #1e1a16;
-  --muted: #7a7066;
-  --accent: #1d1d1d;
-  --accent-2: #c7a97f;
-  --shadow: 0 24px 60px rgba(30, 26, 22, 0.08);
-  --success: #d8f0df;
-  --success-border: #a7d7b5;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  font-family: Inter, Arial, sans-serif;
-  background: linear-gradient(180deg, #f6f2eb 0%, #efe7da 100%);
-  color: var(--text);
-}
-
-button,
-input,
-textarea,
-select {
-  font: inherit;
-}
 
 .calculator-page {
   min-height: 100vh;

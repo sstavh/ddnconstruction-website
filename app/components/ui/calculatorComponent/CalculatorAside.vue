@@ -35,7 +35,7 @@
 
 .calculator-aside__overlay {
   padding: 40px;
-  color: #fff;
+  color: var(--color-praymeri-light)
 }
 
 .calculator-aside__caption {
@@ -43,12 +43,12 @@
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.16em;
-  color: rgba(255, 255, 255, 0.74);
+  color: var(--color-praymeri-light);
 }
 
 .calculator-aside__title {
   margin: 0 0 12px;
-  font-size: 42px;
+  font-size: var( --font-s-h3);
   line-height: 1.05;
 }
 
@@ -56,13 +56,13 @@
   margin: 0 0 20px;
   max-width: 460px;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--color-praymeri-light);
 }
 
 .calculator-aside__list {
   margin: 0;
   padding-left: 18px;
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--color-praymeri-light);
   display: grid;
   gap: 8px;
 }

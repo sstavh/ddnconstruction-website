@@ -386,91 +386,111 @@ function handleSubmitForm(payload: ContactFormType) {
 
 <style scoped>
 .step-card {
-  background: rgba(255, 255, 255, 0.96);
-  border: 1px solid rgba(229, 221, 208, 0.9);
-  border-radius: 32px;
-  padding: 34px;
-  box-shadow: var(--shadow);
+  position: relative;
+  overflow: hidden;
+  padding: 40px;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.14), transparent 30%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.01)),
+    var(--color-praymeri-bg);
+  border: 1px solid rgba(59, 130, 246, 0.28);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  color: var(--color-praymeri-light);
+}
+
+.step-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    135deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    transparent 35%,
+    transparent 65%,
+    rgba(59, 130, 246, 0.05) 100%
+  );
 }
 
 .step-card__label {
-  margin: 0 0 12px;
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 14px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: rgba(57, 163, 230, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.2);
   font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  letter-spacing: 0.15em;
-  color: var(--muted);
+  color: #9ec5ff;
 }
 
 .step-card__title {
-  margin: 0 0 8px;
-  font-size: 32px;
+  margin: 0 0 10px;
+  font-size: clamp(30px, 4vw, 42px);
+  font-weight: 600;
+  line-height: 1.15;
+  color: #ffffff;
 }
 
 .step-card__subtitle {
-  margin: 0 0 12px;
-  color: var(--muted);
+  margin: 0 0 10px;
   font-size: 18px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.82);
 }
 
 .step-card__description {
-  margin: 0 0 24px;
-  line-height: 1.65;
-  color: #544c43;
+  margin: 0 0 28px;
+  max-width: 760px;
+  font-size: 16px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .step-card__button {
   width: 100%;
-  margin-top: 24px;
   min-height: 58px;
+  margin-top: 28px;
   border: none;
-  border-radius: 999px;
-  background: var(--accent);
+  border-radius: 18px;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, var(--color-praymeri-blue), var(--color-praymeri-blueHover));
   color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
   cursor: pointer;
-  font-weight: 700;
-  transition: 0.2s ease;
+  transition: all 0.25s ease;
+  box-shadow: 0 10px 30px rgba(59, 130, 246, 0.25);
+}
+
+.step-card__button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 35px rgba(59, 130, 246, 0.32);
+}
+
+.step-card__button:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .step-card__button:disabled {
   opacity: 0.45;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
+/* grids */
 .count-grid,
 .rooms-grid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.select-card {
-  min-height: 64px;
-  border-radius: 18px;
-  border: 1px solid var(--border);
-  background: #fff;
-  padding: 16px;
-  text-align: left;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.select-card:hover {
-  border-color: var(--accent-2);
-  transform: translateY(-1px);
-}
-
-.select-card--active {
-  border-color: var(--accent);
-  background: #f7f2ea;
-}
-
-.helper-box {
-  margin-bottom: 16px;
-  padding: 14px 16px;
-  border-radius: 18px;
-  background: #f7f2ea;
-  border: 1px solid var(--border);
-  color: #544c43;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
 }
 
 .services-box,
@@ -480,60 +500,124 @@ function handleSubmitForm(payload: ContactFormType) {
   gap: 18px;
 }
 
+/* common card/button style */
+.select-card,
 .service-room-card,
-.receipt-card {
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 18px;
-  background: #fff;
+.receipt-card,
+.helper-box,
+.field-group__control,
+.chip-button {
+  backdrop-filter: blur(10px);
+}
+
+/* selectable cards */
+.select-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 72px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  color: #ffffff;
+  padding: 16px 18px;
+  text-align: center;
+  font-size: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.22s ease;
+}
+
+.select-card:hover {
+  border-color: rgba(59, 130, 246, 0.45);
+  background: linear-gradient(180deg, rgba(59,130,246,0.12), rgba(255,255,255,0.03));
+  transform: translateY(-2px);
+}
+
+.select-card--active {
+  border-color: var(--color-praymeri-blue);
+  background: linear-gradient(180deg, rgba(59,130,246,0.22), rgba(59,130,246,0.1));
+  box-shadow: 0 10px 24px rgba(59, 130, 246, 0.2);
+  color: #fff;
+}
+
+/* helper */
+.helper-box {
+  margin-bottom: 18px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(59, 130, 246, 0.18);
+  background: rgba(57, 163, 230, 0.08);
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.55;
+}
+
+.helper-box strong {
+  color: #fff;
+}
+
+/* services */
+.service-room-card {
+  padding: 22px;
+  border-radius: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02));
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.03);
 }
 
 .service-room-card__title {
-  margin: 0 0 14px;
-  font-size: 20px;
+  margin: 0 0 16px;
+  font-size: 22px;
+  font-weight: 500;
+  color: #fff;
 }
 
 .chips-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 12px;
 }
 
 .chip-button {
-  border: 1px solid var(--border);
-  background: #fff;
-  border-radius: 18px;
-  padding: 12px 14px;
-  cursor: pointer;
-  line-height: 1.35;
-  transition: 0.2s ease;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  align-items: flex-start;
+  gap: 8px;
+  min-height: 90px;
+  padding: 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  color: #fff;
   text-align: left;
-  max-width: 340px;
+  cursor: pointer;
+  transition: all 0.22s ease;
 }
 
 .chip-button:hover {
-  border-color: var(--accent-2);
+  transform: translateY(-2px);
+  border-color: rgba(59, 130, 246, 0.45);
+  background: rgba(59, 130, 246, 0.08);
 }
 
 .chip-button--active {
-  background: #1d1d1d;
-  color: #fff;
-  border-color: #1d1d1d;
+  border-color: var(--color-praymeri-blue);
+  background: linear-gradient(180deg, rgba(59,130,246,0.22), rgba(59,130,246,0.1));
+  box-shadow: 0 10px 24px rgba(59, 130, 246, 0.18);
 }
 
 .chip-button__title {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
+  line-height: 1.4;
 }
 
 .chip-button__price {
   font-size: 13px;
-  opacity: 0.85;
+  color: rgba(255,255,255,0.68);
 }
 
+/* fields */
 .field-group {
   display: grid;
   gap: 8px;
@@ -541,58 +625,86 @@ function handleSubmitForm(payload: ContactFormType) {
 
 .field-group__label {
   font-size: 14px;
-  font-weight: 600;
+  font-weight: 500;
+  color: rgba(255,255,255,0.84);
 }
 
 .field-group__control {
   width: 100%;
-  min-height: 56px;
+  min-height: 58px;
   border-radius: 18px;
-  border: 1px solid var(--border);
-  background: #fff;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
   padding: 14px 16px;
+  font-size: 16px;
+  color: #fff;
   outline: none;
+  transition: all 0.2s ease;
+}
+
+.field-group__control::placeholder {
+  color: rgba(255,255,255,0.35);
+}
+
+.field-group__control:focus {
+  border-color: rgba(59, 130, 246, 0.55);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+  background: rgba(255,255,255,0.06);
+}
+
+/* summary */
+.receipt-card {
+  padding: 24px;
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02));
+}
+
+.receipt-card__row,
+.receipt-room__head,
+.receipt-line,
+.receipt-room__subtotal,
+.receipt-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
 }
 
 .receipt-card__row {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  padding-bottom: 16px;
-  margin-bottom: 16px;
-  border-bottom: 1px solid var(--border);
+  padding-bottom: 18px;
+  margin-bottom: 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.82);
 }
 
 .receipt-room + .receipt-room {
-  margin-top: 18px;
-  padding-top: 18px;
-  border-top: 1px solid var(--border);
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(255,255,255,0.08);
 }
 
 .receipt-room__head {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  align-items: center;
-  margin-bottom: 14px;
+  margin-bottom: 12px;
 }
 
 .receipt-room__head h3 {
   margin: 0;
   font-size: 18px;
+  font-weight: 600;
+  color: #fff;
 }
 
 .receipt-room__head span {
-  color: var(--muted);
-  font-weight: 600;
+  white-space: nowrap;
+  color: rgba(255,255,255,0.55);
+  font-weight: 500;
 }
 
 .receipt-line {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
   padding: 12px 0;
-  border-top: 1px solid #f1e9dd;
+  border-top: 1px solid rgba(255,255,255,0.06);
 }
 
 .receipt-line__info {
@@ -601,47 +713,84 @@ function handleSubmitForm(payload: ContactFormType) {
   gap: 4px;
 }
 
+.receipt-line__info strong {
+  font-size: 15px;
+  color: #fff;
+}
+
 .receipt-line__info small {
-  color: var(--muted);
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
 }
 
 .receipt-line__price {
   white-space: nowrap;
   font-weight: 700;
+  color: #9ec5ff;
 }
 
 .receipt-room__subtotal {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
   margin-top: 16px;
   padding-top: 16px;
-  border-top: 1px dashed var(--border);
-  font-size: 16px;
+  border-top: 1px dashed rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.78);
+}
+
+.receipt-room__subtotal strong {
+  color: #fff;
 }
 
 .receipt-total {
-  display: flex;
-  justify-content: space-between;
-  gap: 12px;
-  margin-top: 24px;
+  margin-top: 22px;
   padding-top: 20px;
-  border-top: 2px solid var(--border);
+  border-top: 2px solid rgba(59, 130, 246, 0.22);
   font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+}
+
+.receipt-total strong {
+  color: #9ec5ff;
+  font-size: 24px;
+}
+
+/* mobile */
+@media (max-width: 992px) {
+  .count-grid,
+  .rooms-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 720px) {
   .step-card {
-    padding: 20px;
+    padding: 22px;
+    border-radius: 22px;
   }
 
   .step-card__title {
-    font-size: 26px;
+    font-size: 28px;
+  }
+
+  .step-card__subtitle {
+    font-size: 16px;
+  }
+
+  .step-card__description {
+    font-size: 15px;
+    margin-bottom: 22px;
   }
 
   .count-grid,
-  .rooms-grid {
+  .rooms-grid,
+  .chips-grid {
     grid-template-columns: 1fr;
+  }
+
+  .service-room-card,
+  .receipt-card {
+    padding: 18px;
+    border-radius: 18px;
   }
 
   .receipt-card__row,
@@ -651,6 +800,16 @@ function handleSubmitForm(payload: ContactFormType) {
   .receipt-total {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .receipt-line__price,
+  .receipt-room__head span {
+    white-space: normal;
+  }
+
+  .step-card__button {
+    min-height: 54px;
+    border-radius: 16px;
   }
 }
 </style>
