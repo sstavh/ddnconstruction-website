@@ -127,7 +127,6 @@ onBeforeUnmount(() => {
 
 .content {
 
-  border: 2px solid wheat;
   position: relative;
   z-index: 1;
   text-align: center;
