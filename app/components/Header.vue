@@ -287,4 +287,12 @@ onBeforeUnmount(() => {
   width: 100%;padding: 0;
   margin: 0;
    }
+
+
+  
+    @media (max-width: 430px) {
+   .header{
+    display: none;
+   }
+  }
 </style>
