@@ -36,6 +36,7 @@ import ImgsBlocFoto from '~/components/ui/informationBlok/blokImgs/ImgsBlocFoto.
  @media (max-width: 1024px) {
     .form-box{
       display: block;
+      margin: 0 auto;
       
     }
 
@@ -44,14 +45,16 @@ import ImgsBlocFoto from '~/components/ui/informationBlok/blokImgs/ImgsBlocFoto.
       justify-content: center;
       gap: 0;   
     }
+    .tt{
+      
+      display: none;    
+    }
   }
   
   @media (max-width: 768px) {
     
   }
    @media (max-width: 430px) {
-    .tt{
-      display: none;    
-    }
+    
    }
 </style> 
