@@ -101,4 +101,12 @@ margin-bottom: 20px;
 .box-galeri__item{
       list-style: none;
 }
+
+@media (max-width: 1024px) {
+    .portfiliosec-container{
+        display: none;
+    }
+}
+
+
 </style>
