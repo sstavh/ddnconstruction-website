@@ -226,4 +226,12 @@ function cardStyle(i: number): CSSProperties {
   opacity: 0.95;
   color: var(--color-praymeri-blek);
 }
+
+@media (max-width: 1024px) {
+  .stackSection{
+    display: none;
+  }
+}
+
+
 </style>
