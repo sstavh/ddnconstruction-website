@@ -157,4 +157,11 @@ onBeforeUnmount(() => {
   66%  { background: linear-gradient(135deg, var(--c3), var(--c1)); }
   100% { background: linear-gradient(135deg, var(--c1), var(--c2)); }
 }
+
+@media (max-width: 768px){
+  .card{
+    width: 330px;
+    height: 230px;
+  }
+}
 </style>
