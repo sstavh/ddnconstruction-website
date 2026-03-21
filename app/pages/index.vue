@@ -18,8 +18,8 @@ import QuickChatWidget from '../components/base/HiroPages/QuickChatWidget.vue';
       <DirectorMes />
       <DetalsInformation />
      <PortofolioSec />
-       <!--<FormaHiroSection />
-      <Reviews />-->
+       <FormaHiroSection />
+     <!-- <Reviews />-->
       
      
     </section>
