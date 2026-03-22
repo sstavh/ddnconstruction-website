@@ -16,7 +16,7 @@ import Reviews from '../components/base/HiroPages/Reviews.vue';
         <StatsCounters/>    
         <Historywork/>
       <Difficulties/>
-        <!--- <Tech/>-->
+        <Tech/>
          <PortofolioSec/>
           <Reviews/>
     </section>
