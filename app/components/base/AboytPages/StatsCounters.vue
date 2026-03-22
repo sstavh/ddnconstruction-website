@@ -94,12 +94,23 @@ onBeforeUnmount(() => {
 <style scoped>
 .stats {
   padding: 70px 20px;
-  background-color: var(--color-seconadry-blueBg);
-  color: var( --color-praymeri-light);
+
+  /* 🔥 PREMIUM BACKGROUND */
+  background:
+    radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(16,185,129,0.10), transparent 60%),
+    rgba(17, 24, 39, 0.92);
+
+  border-top: 1px solid rgba(255,255,255,0.08);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+
+  color: var(--color-praymeri-light);
+
+  backdrop-filter: blur(8px);
 }
 
+/* CONTAINER */
 .container {
-  max-width: 1100px;
   margin: auto;
   display: flex;
   gap: 40px;
@@ -107,24 +118,36 @@ onBeforeUnmount(() => {
   align-items: stretch;
 }
 
+/* ITEM */
 .item {
   flex: 1;
+
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  padding: 20px;
+
+  
+
+  /* 🔥 легкий glass card ефект */
+  
+  
+
+  transition: 0.25s ease;
 }
 
-/* ===== ЦИФРИ ===== */
 
+
+/* ===== NUMBERS ===== */
 .number {
   display: inline-flex;
   align-items: baseline;
   justify-content: center;
   gap: 6px;
 
-  min-height: 64px;      /* гарантує рівність */
+  min-height: 64px;
   line-height: 1;
- 
 }
 
 .num {
@@ -140,24 +163,44 @@ onBeforeUnmount(() => {
   transform: translateY(-6px);
 }
 
-/* ===== ТЕКСТ ===== */
-
+/* TEXT */
 .text {
   font-size: 16px;
-  opacity: 0.8;
+  opacity: 0.75;
   max-width: 220px;
 }
 
 /* ===== MOBILE ===== */
-
 @media (max-width: 768px) {
   .container {
     flex-direction: column;
-    gap: 30px;
+    gap: 24px;
   }
 
-  .number {
-    min-height: 58px;
+  .item {
+    padding: 16px;
+  }
+
+  .num {
+    font-size: 38px;
   }
 }
-</style>
+
+@media (max-width: 430px) {
+  .stats {
+    padding: 50px 14px;
+  }
+
+  .num {
+    font-size: 32px;
+  }
+
+  .suffix {
+    font-size: 16px;
+  }
+
+  .text {
+    font-size: 14px;
+  }
+}
+</style>  
