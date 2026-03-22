@@ -76,4 +76,11 @@ defineProps<Props>()
   margin-top: 45px;
   text-align: center;
 }
+
+@media (max-width: 430px) {
+  .heroAbout-box__title{
+    font-size: var(--font-s-Mobalh1);
+  }
+}
+  
 </style>
