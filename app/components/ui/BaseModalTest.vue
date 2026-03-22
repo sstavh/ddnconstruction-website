@@ -75,7 +75,7 @@ const overlayStyle = computed(() => {
 .modal {
   position: relative;
 
-  width: min(720px, 100%);
+  width: min(600px, 100%);
   max-height: 90vh;
   overflow: auto;
 
