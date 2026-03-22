@@ -276,4 +276,11 @@ margin-bottom: 80px;
     font-size: 26px;
   }
 }
+
+ @media (max-width: 768px) {
+  .container{max-width: none;}
+   .pricing-title{
+    margin-top: 0;
+   }
+  }
 </style>
