@@ -57,97 +57,115 @@ const overlayStyle = computed(() => {
   position: fixed;
   inset: 0;
   z-index: 99999;
-  background: rgba(15, 23, 42, 0.55);
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   padding: 16px;
+
+  /* 🔥 PREMIUM BACKDROP */
+  background: rgba(2, 6, 23, 0.65);
+  backdrop-filter: blur(10px);
 }
 
+/* =========================
+   MODAL CARD (SAME STYLE AS OTHERS)
+========================= */
 .modal {
-  padding: 30px;
   position: relative;
-  width: min(680px, 100%);
+
+  width: min(600px, 100%);
   max-height: 90vh;
   overflow: auto;
-  background: var(--color-praymeri-light);
-  border-radius: 20px;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.25);
+
+  border-radius: 22px;
+
+  /* 🔥 SAME DARK GLASS STYLE */
+  background:
+    radial-gradient(circle at top left, rgba(59,130,246,0.18), transparent 55%),
+    radial-gradient(circle at bottom right, rgba(16,185,129,0.10), transparent 60%),
+    rgba(17, 24, 39, 0.92);
+
+  border: 1px solid rgba(255,255,255,0.12);
+
+  box-shadow:
+    0 30px 80px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+
+  color: #fff;
+
+  transform-origin: center;
 }
 
+/* CONTENT */
 .content {
-  padding: 28px 24px 24px;
+  padding: 28px 26px;
 }
 
+/* CLOSE BUTTON */
 .close {
-  position: sticky;
-  top: 12px;
-  margin-left: auto;
-  display: block;
+  position: absolute;
+  top: 14px;
+  right: 14px;
+
   width: 40px;
   height: 40px;
-  border: none;
-  cursor: pointer;
+
+  border: 1px solid rgba(255,255,255,0.12);
   border-radius: 12px;
-  background: rgba(0, 0, 0, 0.06);
-  font-size: 26px;
+
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+
+  font-size: 22px;
   line-height: 1;
+
+  cursor: pointer;
+  transition: 0.2s ease;
 }
+
 .close:hover {
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(59,130,246,0.2);
+  transform: scale(1.05);
 }
 
 /* =========================
-   ВІДКРИТТЯ (швидке)
+   ANIMATION (smooth + no glitch)
 ========================= */
-
 .pop-enter-active .modal {
   transition:
-    clip-path 0.22s cubic-bezier(.2,.9,.2,1),
-    transform 0.22s cubic-bezier(.2,.9,.2,1),
-    opacity 0.18s ease,
-    filter 0.18s ease;
+    transform 0.25s ease,
+    opacity 0.2s ease,
+    filter 0.2s ease;
 }
-
-/* =========================
-   ЗАКРИТТЯ (повільніше)
-========================= */
 
 .pop-leave-active .modal {
   transition:
-    clip-path 0.9s cubic-bezier(.16,1,.3,1),
-    transform 0.9s cubic-bezier(.16,1,.3,1),
-    opacity 0.35s ease,
-    filter 0.35s ease;
+    transform 0.25s ease,
+    opacity 0.2s ease,
+    filter 0.2s ease;
   pointer-events: none;
 }
 
-/* Початкові/кінцеві стани */
-
 .pop-enter-from .modal,
 .pop-leave-to .modal {
-  clip-path: circle(0px at var(--ox) var(--oy));
-  transform: scale(0.95);
+  transform: scale(0.92);
   opacity: 0;
-  filter: blur(4px);
+  filter: blur(6px);
 }
 
 .pop-enter-to .modal,
 .pop-leave-from .modal {
-  clip-path: circle(150vmax at var(--ox) var(--oy));
   transform: scale(1);
   opacity: 1;
   filter: blur(0);
 }
 
-/* Overlay */
-
-.pop-enter-active {
-  transition: opacity 0.18s ease;
-}
-
+/* OVERLAY FADE */
+.pop-enter-active,
 .pop-leave-active {
-  transition: opacity 0.35s ease;
+  transition: opacity 0.2s ease;
 }
 
 .pop-enter-from,
@@ -155,18 +173,37 @@ const overlayStyle = computed(() => {
   opacity: 0;
 }
 
-/* Reduced motion */
-
-@media (prefers-reduced-motion: reduce) {
-  .pop-enter-active .modal,
-  .pop-leave-active .modal,
-  .pop-enter-active,
-  .pop-leave-active {
-    transition: none !important;
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 430px) {
+  .modal {
+    width: 100%;
+    max-height: 95vh;
+    border-radius: 16px;
   }
+
+  .content {
+    padding: 18px;
+  }
+
+  .close {
+    width: 36px;
+    height: 36px;
+    font-size: 20px;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .modal,
+  .overlay {
+    transition: none !important;
+    animation: none !important;
+  }
+
   .pop-enter-from .modal,
   .pop-leave-to .modal {
-    clip-path: none;
     transform: none;
     opacity: 1;
     filter: none;

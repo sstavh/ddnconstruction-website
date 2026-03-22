@@ -15,7 +15,7 @@ console.log("hiro work");
         <div class="hiro-container">
             <div class="hero-container__box">
                 <h1 class="hero-box__logo">
-                      <TypeTextt text="текст слого для компанії з ефектом написаня " />
+                      <TypeTextt text="Текст слого для компанії з ефектом написаня " />
                 </h1>
                 <p  data-aos="fade-right" class="hero-box__pidtext">підтекст для розумуня для чого це все і. прощо компанія короткий не велий</p>
                 <div data-aos="fade-up" data-aos-duration="10500">
@@ -47,4 +47,19 @@ console.log("hiro work");
     max-width: 440px;
     margin-bottom: 15px;
 }
+ @media (max-width: 430px) {
+    .hiro-container{
+        padding-top: 100px;
+        margin-left: 0px;
+    }
+
+    .hero-box__logo{
+        font-size: var( --font-s-Mobalh1);
+    }
+
+    .fade-right{
+        font-size: var(--font-s-MobalText);
+    }
+ }
+
 </style>

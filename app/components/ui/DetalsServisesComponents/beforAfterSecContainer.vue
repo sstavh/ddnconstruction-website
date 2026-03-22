@@ -42,29 +42,77 @@ const value = ref(50)
 </template>
 
 <style scoped>
-
+/* ====== BASE ====== */
 .befAft-container{
     margin-bottom: 120px;
 }
+
 .befAft-container-title{
     text-align: center;
     margin-top: 120px;
     margin-bottom: 50px;
 }
 
+/* GRID замість flex (стабільніше) */
 .befAft-list{
-  display:flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 15px;
-  flex-wrap:wrap;
 }
 
 .befAft-list li{
-  flex:0 0 calc(33.333% - 16px);
-  list-style:none;
+  list-style: none;
 }
 
+/* картка */
 .tt{
     height: 250px;
-   width: 370px;
+    width: 100%;
+}
+
+
+/* ====== 1024px ====== */
+@media (max-width: 1024px) {
+  .befAft-list{
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+
+  .tt{
+    height: 250px;
+    width: 100%;
+  }
+}
+
+
+/* ====== 768px ====== */
+@media (max-width: 768px) {
+  .befAft-list{
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .tt{
+    height: 240px;
+  }
+}
+
+
+/* ====== 430px ====== */
+@media (max-width: 430px) {
+  .befAft-list{
+    grid-template-columns: 1fr; /* 🔥 всі підряд */
+    gap: 20px;
+  }
+
+  .tt{
+    width: 100%;
+    height: 220px;
+  }
+
+  .befAft-container-title{
+    margin-top: 80px;
+    margin-bottom: 30px;
+  }
 }
 </style>

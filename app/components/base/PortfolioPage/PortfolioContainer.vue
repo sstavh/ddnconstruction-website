@@ -44,18 +44,96 @@ const slides = [
 </section>
 </template>
 <style scoped>
-.prot-container{
-    margin-top: 130px;
-    margin-bottom: 30px;
+
+
+/* SECTION */
+.prot-container {
+  margin-top: 130px;
+  margin-bottom: 60px;
 }
 
-.port-box__textFoto{
-    display: flex;
-    gap: 30px;
+/* TITLE */
+.port-title {
+  margin-bottom: 40px;
+  margin-left: 70px;
 }
 
-.port-title{
-    margin-bottom: 40px;
-    margin-left: 70px;
+/* MAIN ROW */
+.port-box__textFoto {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+/* ===================== */
+/* 💻 TABLET */
+/* ===================== */
+@media (max-width: 1024px) {
+  .container {
+    max-width: 960px;
+  }
+
+  .port-box__textFoto {
+    gap: 20px;
+  }
+
+  .port-title {
+    margin-left: 20px;
+  }
+}
+
+/* ===================== */
+/* 📱 MOBILE */
+/* ===================== */
+@media (max-width: 768px) {
+  .container {
+    max-width: 720px;
+  }
+
+  .prot-container {
+    margin-top: 80px;
+  }
+
+  /* 🔥 ГОЛОВНЕ */
+  .port-box__textFoto {
+    flex-direction: column;
+    gap: 24px;
+  }
+
+  /* щоб блоки не були вузькі */
+  .port-box__textFoto > * {
+    width: 100%;
+  }
+
+  .port-title {
+    margin-left: 0;
+    text-align: center;
+  }
+}
+
+/* ===================== */
+/* 📱 SMALL MOBILE */
+/* ===================== */
+@media (max-width: 430px) {
+  .container {
+    max-width: 360px;
+  }
+
+  .prot-container {
+    margin-top: 60px;
+  }
+
+  .port-box__textFoto {
+    gap: 18px;
+  }
+
+  .port-title {
+    margin-bottom: 24px;
+  }
+
+  /* текст трохи компактніший */
+  .port-box__textFoto p {
+    font-size: var(--font-s-MobalText);
+  }
 }
 </style>

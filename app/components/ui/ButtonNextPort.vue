@@ -7,7 +7,7 @@ console.log("button Good Work");
     <div class="container">
         <button class="button-next">
             <div>Натискай щоб пореглянути більше!!!</div>
-            <div>></div>
+            <div class="tt">></div>
         
         </button>
     </div>
@@ -32,4 +32,26 @@ console.log("button Good Work");
 .button-next:hover {
     background-color: #0068d6;
 }
+
+@media (max-width: 1024px) {
+   .button-next{
+    width: 780px;
+   }
+  }
+  
+  @media (max-width: 768px) {
+    .button-next{
+    width: 650px;
+   }
+    
+  }
+   @media (max-width: 430px) {
+
+    .button-next{
+        margin:0 auto;
+    width: 325px;
+    font-size: var(--font-s-MobalSmoll);
+   }
+
+  }
 </style>

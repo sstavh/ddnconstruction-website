@@ -45,6 +45,7 @@ const closeServices = () => {
 };
 
 const isScrolled = ref(false);
+
 const onScroll = () => {
   isScrolled.value = window.scrollY > 10;
 };
@@ -58,33 +59,56 @@ onBeforeUnmount(() => {
   window.removeEventListener("scroll", onScroll);
   if (closeTimer) window.clearTimeout(closeTimer);
 });
+
+/* ================= MOBILE ================= */
+
+const isMobileMenuOpen = ref(false);
+
+const toggleMobileMenu = () => {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value;
+};
+
+const closeMobileMenu = () => {
+  isMobileMenuOpen.value = false;
+};
 </script>
 
 <template>
   <header class="header glass" :class="{ 'header--scrolled': isScrolled }">
+
     <div class="container">
       <div class="header-container">
+
         <div class="header-container__navigation">
+
+          <!-- LEFT -->
           <ButtonBlef />
 
-          <nav class="nav">
+          <!-- CENTER NAV -->
+          <nav class="nav" :class="{ 'nav--open': isMobileMenuOpen }">
+
             <template v-for="(item, i) in menu" :key="i">
+
               <NuxtLink
                 v-if="item.title !== 'Послуги'"
                 :to="item.link"
                 class="nav-link"
+                @click="closeMobileMenu"
               >
                 {{ item.title }}
               </NuxtLink>
 
-              <!-- Dropdown -->
               <div
                 v-else
                 class="dropdown"
                 @mouseenter="openServices"
                 @mouseleave="closeServices"
               >
-                <NuxtLink :to="item.link" class="nav-link nav-link--dropdown">
+                <NuxtLink
+                  :to="item.link"
+                  class="nav-link"
+                  @click="closeMobileMenu"
+                >
                   {{ item.title }}
                   <span class="chev">▾</span>
                 </NuxtLink>
@@ -96,25 +120,47 @@ onBeforeUnmount(() => {
                       :key="s.link"
                       :to="s.link"
                       class="dropdown-item"
-                      @click="isServicesOpen = false"
+                      @click="() => { isServicesOpen = false; closeMobileMenu(); }"
                     >
                       {{ s.title }}
                     </NuxtLink>
                   </div>
                 </transition>
               </div>
+
             </template>
+
           </nav>
 
-          <Button ext="Button"
-    @click="openFromClick" />
+          <!-- RIGHT -->
+          <div class="right-side">
 
-          <BaseModalTest :open="open" :origin="origin" @close="open = false">
-            <FormСontact class="header-form" />
-          </BaseModalTest>
+            <!-- BURGER -->
+            <button class="burger" @click="toggleMobileMenu">
+              <span></span>
+              <span></span>
+              <span></span>
+            </button>
+
+            <Button ext="Button" @click="openFromClick" />
+
+          </div>
+
         </div>
       </div>
     </div>
+
+    <BaseModalTest :open="open" :origin="origin" @close="open = false">
+      <FormСontact class="header-form" />
+    </BaseModalTest>
+
+    <!-- OVERLAY -->
+    <div
+      v-if="isMobileMenuOpen"
+      class="mobile-overlay"
+      @click="closeMobileMenu"
+    ></div>
+
   </header>
 </template>
 
@@ -125,66 +171,29 @@ onBeforeUnmount(() => {
   padding: 0 16px;
 }
 
-/* ================= GLASS (HEADER) ================= */
+/* ================= GLASS ================= */
 
 .glass {
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(130, 22, 22, 0.08)),
-    rgba(0, 0, 0, 0.18);
-
-  backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
-
-  border: 1px solid rgba(255, 255, 255, 0.22);
-  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.15);
+  background: linear-gradient(135deg, rgba(255,255,255,0.22), rgba(130,22,22,0.08)),
+    rgba(0,0,0,0.18);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255,255,255,0.22);
+  box-shadow: 0 12px 35px rgba(0,0,0,0.15);
 }
 
-/* ================= STRONG GLASS (DROPDOWN) ================= */
-/* ✅ Тут головне: сильніший темний шар, щоб НЕ було видно текст знизу */
 .glass--strong {
-  position: relative;
-  isolation: isolate;
-
-  background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.16), rgba(130, 22, 22, 0.06)),
-    rgba(0, 0, 0, 0.45);
-
-  backdrop-filter: blur(26px) saturate(170%);
-  -webkit-backdrop-filter: blur(26px) saturate(170%);
-
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.35);
-}
-
-/* Додатковий “дим” поверх (ще сильніше глушить фон) */
-.glass--strong::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  background: rgba(0, 0, 0, 0.45) /* постав 0.55 або 0.65 */і;
-  pointer-events: none;
-  z-index: 0;
-}
-
-/* Щоб контент був над ::before */
-.glass--strong > * {
-  position: relative;
-  z-index: 1;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(26px);
 }
 
 /* ================= HEADER ================= */
 
 .header {
   position: sticky;
-
   z-index: 1000;
-
-  transition: all 220ms ease;
 }
 
 .header--scrolled {
-  top: 0;
   border-radius: 0 0 20px 20px;
 }
 
@@ -196,7 +205,6 @@ onBeforeUnmount(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
 }
 
 /* ================= NAV ================= */
@@ -207,16 +215,9 @@ onBeforeUnmount(() => {
 }
 
 .nav-link {
-  position: relative;
   text-decoration: none;
-  color: rgba(220, 235, 255, 0.95);
+  color: rgba(220,235,255,0.95);
   font-size: 15px;
-  transition: 0.2s ease;
-}
-
-.nav-link:hover {
-  color: #fff;
-  transform: translateY(-1px);
 }
 
 /* ================= DROPDOWN ================= */
@@ -225,66 +226,145 @@ onBeforeUnmount(() => {
   position: relative;
 }
 
-.chev {
-  font-size: 12px;
-  margin-left: 4px;
-}
-
 .dropdown-panel {
-  z-index: 99999;
   position: absolute;
-  top: calc(100% + 14px);
+  top: 120%;
   left: 50%;
   transform: translateX(-50%);
-  min-width: 260px;
-
-  padding: 16px;
-  border-radius: 20px;
-
+  padding: 30px;
+  border-radius: 16px;
   display: grid;
   gap: 10px;
+ width: 300px;
 }
 
-.dropdown-item {
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.92);
-  padding: 10px 14px;
-  border-radius: 12px;
-  transition: 0.2s ease;
+/* ================= RIGHT SIDE ================= */
+
+.right-side {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 }
 
-.dropdown-item:hover {
-  background: rgba(255, 255, 255, 0.16);
-  transform: translateY(-2px);
+/* ================= BURGER ================= */
+
+.burger {
+  display: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.25);
+  background: rgba(0,0,0,0.25);
+  backdrop-filter: blur(12px);
+  cursor: pointer;
+
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
 }
 
-/* ================= ANIMATION ================= */
-
-.dd-enter-active,
-.dd-leave-active {
-  transition: opacity 0.18s ease, transform 0.18s ease;
+.burger span {
+  width: 18px;
+  height: 2px;
+  background: white;
+  border-radius: 2px;
 }
 
-.dd-enter-from,
-.dd-leave-to {
-  opacity: 0;
-  transform: translateX(-50%) translateY(-6px) scale(0.98);
+/* ================= MOBILE ================= */
+
+@media (max-width: 768px) {
+
+  .burger {
+    display: flex;
+  }
+
+  .nav {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 280px;
+    height: 100vh;
+
+    flex-direction: column;
+    padding: 90px 20px;
+    gap: 18px;
+
+    background: rgba(0,0,0,0.65);
+    backdrop-filter: blur(20px);
+
+    transition: 0.3s ease;
+    z-index: 2000;
+  }
+
+  .nav--open {
+    right: 0;
+  }
+
+  .dropdown-panel {
+    position: static;
+    transform: none;
+    background: transparent;
+  }
+
+  .mobile-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.4);
+    z-index: 1500;
+  }
+}
+@media (max-width: 430px) {
+.container{
+  max-width: none;
 }
 
-.dd-enter-to,
-.dd-leave-from {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0) scale(1);
-}
+  /* трохи компактніше header */
+  .header-container {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  padding: 0;
+  }
 
-.header-form{
-  background-color: var(--color-praymeri-light);
-  border: none;
-  border-radius: none;
-  color: var(--color-praymeri-blek);
-  width: 100%;padding: 0;
-  margin: 0;
-   }
+  /* кнопки менші, щоб не тиснули layout */
+  .right-side {
+    gap: 8px;
+  }
+
+  /* бургер менший */
+  .burger {
+    width: 40px;
+    height: 40px;
+  }
+
+  .burger span {
+    width: 16px;
+  }
+
+  /* меню займає всю ширину (краще UX на малих екранах) */
+  .nav {
+    width: 100%;
+    right: -100%;
+  }
+
+  .nav--open {
+    right: 0;
+  }
+
+  /* трохи більші клікабельні елементи */
+  .nav-link {
+    font-size: 16px;
+    padding: 6px 0;
+  }
+
+  /* dropdown без “плаваючого” центру */
+  .dropdown-panel {
+    padding: 10px 0;
+    gap: 8px;
+  }
+
+  .header-container__navigation{
+    justify-content: none;
+  }
+}
 </style>

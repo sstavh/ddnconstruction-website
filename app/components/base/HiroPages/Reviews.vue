@@ -177,4 +177,16 @@ const openFromClick = (e: MouseEvent) => {
     font-size: var(--font-s-button);
     margin-left: 28%;
 }
+
+ @media (max-width: 430px) {
+    .reviews-box__text{
+        margin-top: 25px;
+        margin-bottom: 25px;
+        margin-left: 0;
+    }
+
+    .box__subtitle{
+        display: block;
+    }
+ }
 </style>

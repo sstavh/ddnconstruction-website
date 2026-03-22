@@ -88,4 +88,62 @@
 .historyWork-li__text{
     font-size: var(--font-s-navigation);
 }
+
+ @media (max-width: 768px) {
+    .historyWork-ul__li{
+        gap: 10px;
+    }
+
+    .tt{
+        margin-left: 20px;
+    }
+
+    .historyWork-li{
+        font-size: var(--font-s-Mobalh4);
+        font-weight: var( --font-w-h3);
+    }
+  }
+  @media (max-width: 430px) {
+
+  .historyWork-ul__li {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 80px;
+  }
+
+  /* 🔥 ВАЖЛИВО: порядок */
+  .test-img {
+    order: 1;
+  }
+
+  .historyWork-li__box {
+    order: 2;
+    margin-top: 0;
+    text-align: center;
+  }
+
+  /* РОЗМІР БЛОКУ */
+  .test-img {
+    width: 100%;
+    max-width: 340px;
+    height: 220px;
+    margin: 0;
+  }
+
+  /* прибираємо старі зсуви */
+  .tt {
+    margin: 0;
+  }
+
+  .historyWork-li {
+    margin-bottom: 6px;
+    font-size: var(--font-s-Mobalh4);
+  }
+
+  .historyWork-li__text {
+    font-size: var(--font-s-MobalText);
+  }
+}
 </style>

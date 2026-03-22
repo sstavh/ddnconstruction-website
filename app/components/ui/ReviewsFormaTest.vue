@@ -80,25 +80,139 @@ const submitForm = () => {
 </template>
 
 <style scoped>
-.review-form { display:flex; flex-direction:column; gap:12px; }
-.row { display:flex; gap:10px; }
-input, textarea { width:100%; padding:12px; border:1px solid #d1d5db; border-radius:10px; }
-.stars { display:flex; gap:6px; align-items:center; }
-.star { border:0; background:transparent; font-size:26px; cursor:pointer; color:#d1d5db; padding:0; }
-.star.active { color:#fbbf24; }
-.error { color:#ef4444; font-size:13px; margin:0; }
-.sr { position:absolute; opacity:0; pointer-events:none; height:0; width:0; }
-button[type="submit"] { padding:12px; border-radius:12px; border:none; background:#3b82f6; color:#fff; font-weight:600; cursor:pointer; }
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 
-.review-form__title{
-  color: var(--color-praymeri-blek);
-  margin-top: -45px;
-    text-align: center;
+  /* 🔥 SAME STYLE BACKGROUND AS CARDS */
+  background: transparent ;
+  
+  
+
+  padding: 22px;
+  color: #fff;
+
+
 }
 
-.review-form__subtitle{
-  color: var(--color-praymeri-blek);
-    text-align: center;
-    margin-bottom: 30px;
+/* TITLE */
+.review-form__title {
+  color: #fff;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0;
+}
+
+.review-form__subtitle {
+  color: rgba(255,255,255,0.7);
+  text-align: center;
+  font-size: 14px;
+  margin: 0 0 10px;
+}
+
+/* ROW */
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+/* INPUTS */
+input,
+textarea {
+  width: 100%;
+  padding: 12px 14px;
+
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.12);
+
+  background: rgba(255,255,255,0.06);
+  color: #fff;
+
+  outline: none;
+  transition: 0.2s ease;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(255,255,255,0.5);
+}
+
+input:focus,
+textarea:focus {
+  border-color: rgba(59,130,246,0.6);
+  background: rgba(255,255,255,0.08);
+}
+
+/* STARS */
+.stars {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.star {
+  border: 0;
+  background: transparent;
+  font-size: 26px;
+  cursor: pointer;
+  color: rgba(255,255,255,0.25);
+  transition: 0.2s;
+}
+
+.star.active {
+  color: #fbbf24;
+  transform: scale(1.05);
+}
+
+/* FILE INPUT */
+input[type="file"] {
+  padding: 10px;
+  background: rgba(255,255,255,0.04);
+}
+
+/* ERROR */
+.error {
+  color: #ef4444;
+  font-size: 13px;
+}
+
+/* BUTTON */
+button[type="submit"] {
+  padding: 12px;
+  border-radius: 14px;
+
+  border: none;
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+
+  transition: 0.2s ease;
+}
+
+button[type="submit"]:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(59,130,246,0.35);
+}
+
+/* =========================
+   MOBILE
+========================= */
+@media (max-width: 430px) {
+  .review-form {
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .row {
+    flex-direction: column;
+  }
+
+  .review-form__title {
+    font-size: 18px;
+  }
 }
 </style>

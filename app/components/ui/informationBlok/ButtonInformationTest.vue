@@ -3,7 +3,7 @@ console.log("ButtonInformationTest component loaded");
 </script>
 
 <template>
-   <button class="button-information-test">Натисни щоб дізнатися більше<br/>----->  </button>
+   <button class="button-information-test">Натисни щоб дізнатися більше &rarr; </button>
 </template>
 
 <style scoped>
@@ -25,4 +25,6 @@ console.log("ButtonInformationTest component loaded");
 .button-information-test:hover{
     background-color: var(--color-praymeri-blueHover);
 }
+
+
 </style>

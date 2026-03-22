@@ -53,4 +53,24 @@ console.log("director mes work");
 .directorMes-box__text{
     padding-bottom: 25px;
 }
+
+ @media (max-width: 1024px) {
+    .directorMes-box__logo{
+        margin-top: 120px;
+    }
+ }
+
+   @media (max-width: 768px) {
+    .directorMes-box{
+        display: block;     
+    }
+   }
+
+      @media (max-width: 430px) {
+        .img-cont{
+            width: 100%;
+            height: 390px;
+            margin-bottom: 25px;
+        }
+      }
 </style>

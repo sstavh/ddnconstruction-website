@@ -237,16 +237,25 @@ async function handleSubmit() {
 
 <style scoped>
 .form {
-    margin-top: 70px;
+  margin-top: 70px;
   width: 580px;
-  padding: 30px;
-  border: 1px solid rgb(66, 62, 62);
-  border-radius: 16px;
-  background: rgb(66, 62, 62);
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+  padding: 28px;
+  border-radius: 22px;
+
+  background:
+    radial-gradient(circle at top right, rgba(59, 130, 246, 0.12), transparent 40%),
+    linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.015)),
+    var(--color-praymeri-bg);
+
+  border: 1px solid rgba(59, 130, 246, 0.22);
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255,255,255,0.04);
+
+  color: #fff;
 }
 
-
+/* GRID */
 .grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -260,42 +269,67 @@ async function handleSubmit() {
   }
 }
 
+/* FIELD */
 .field {
   display: grid;
   gap: 6px;
 }
 
-.label {  
-    font-size: var(--font-s-button);
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.8);
 }
 
+/* INPUTS */
 .input,
 .textarea {
   width: 100%;
-  border: 1px solid #d9d9d9;
-  border-radius: 12px;
-  padding: 11px 12px;
-  font-size: 16px;
+  min-height: 52px;
+
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.08);
+
+  background: rgba(255,255,255,0.04);
+  color: #fff;
+
+  padding: 12px 14px;
+  font-size: 15px;
+
   outline: none;
+  transition: all 0.22s ease;
+
+  backdrop-filter: blur(10px);
+}
+
+.textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: rgba(255,255,255,0.35);
 }
 
 .input:focus,
 .textarea:focus {
-  border-color: #9c9c9c;
+  border-color: rgba(59, 130, 246, 0.55);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.12);
+  background: rgba(255,255,255,0.06);
 }
 
-/* Dropdown container */
+/* ACCORDION */
 .accordion {
-  margin: 10px 0 14px;
-  border: 1px solid #e7e7e7;
-  border-radius: 16px;
-  background: #f4f4f4;
+  margin: 14px 0;
+  border-radius: 18px;
+
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
 }
 
-/* relative anchor for absolute dropdown */
 .accordionHead {
   position: relative;
-  border-radius: 16px;
 }
 
 .accordionBtn {
@@ -304,35 +338,37 @@ async function handleSubmit() {
   grid-template-columns: 1fr auto auto;
   gap: 10px;
   align-items: center;
-  padding: 12px 14px;
-  background: transparent;
+
+  padding: 14px 16px;
   border: 0;
   cursor: pointer;
+
+  background: transparent;
+  color: #fff;
   text-align: left;
-  border-radius: 16px;
 }
 
 .accordionTitle {
-  font-weight: 700;
+  font-weight: 600;
+  font-size: 15px;
 }
 
 .accordionHint {
   font-size: 13px;
-  color: var( --color-praymeri-blek);
+  color: rgba(255,255,255,0.55);
   white-space: nowrap;
 }
 
 .chev {
-  font-size: 16px;
-  transform: rotate(0deg);
-  transition: transform 0.15s ease;
+  transition: transform 0.2s ease;
+  color: rgba(255,255,255,0.7);
 }
 
 .chev.open {
   transform: rotate(180deg);
 }
 
-/* ✅ absolute dropdown: doesn't move content below */
+/* DROPDOWN */
 .accordionBody.dropdown {
   position: absolute;
   left: 0;
@@ -340,64 +376,80 @@ async function handleSubmit() {
   top: calc(100% + 8px);
   z-index: 50;
 
-  background: #fff;
-  border: 1px solid #e7e7e7;
-  border-radius: 16px;
-  padding: 12px 14px 14px;
+  border-radius: 18px;
+  padding: 14px;
+
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(20, 20, 20, 0.95);
+
+  backdrop-filter: blur(14px);
+  box-shadow: 0 18px 50px rgba(0,0,0,0.4);
 
   max-height: 260px;
   overflow: auto;
-
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
 }
 
 .help {
   margin: 0 0 10px;
   font-size: 13px;
-  color: var( --color-praymeri-blek);
+  color: rgba(255,255,255,0.6);
 }
 
+/* JOBS */
 .jobs {
   display: grid;
-  gap: 8px;color: var(--color-praymeri-blek);
+  gap: 8px;
 }
 
 .jobItem {
   display: flex;
-  gap: 10px;
   align-items: center;
+  gap: 10px;
+
   padding: 10px 12px;
-  border: 1px solid #ededed;
-  border-radius: 12px;
+  border-radius: 14px;
+
+  border: 1px solid rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.02);
+
+  transition: 0.2s ease;
+}
+
+.jobItem:hover {
+  border-color: rgba(59, 130, 246, 0.25);
+  background: rgba(59, 130, 246, 0.06);
 }
 
 .checkbox {
-  width: 18px;
-  height: 18px;
+  width: 16px;
+  height: 16px;
 }
 
 .jobName {
-  font-size: 15px;
+  font-size: 14px;
+  color: rgba(255,255,255,0.85);
 }
 
+/* AREAS */
 .areas {
   margin: 14px 0;
-  padding: 12px 14px 14px;
-  border: 1px solid #e7e7e7;
-  border-radius: 16px;
-  background: #ffffff;
-  color: var(--color-praymeri-blek);
+  padding: 16px;
+  border-radius: 18px;
+
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
 }
 
 .subtitle {
-  
   margin: 0 0 10px;
-  font-size: 16px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #fff;
 }
 
 .empty {
   font-size: 14px;
-
+  color: rgba(255,255,255,0.6);
 }
 
 .areasGrid {
@@ -411,42 +463,98 @@ async function handleSubmit() {
   }
 }
 
+/* BUTTON */
 .actions {
-  margin-top: 14px;
+  margin-top: 16px;
   display: grid;
   gap: 10px;
 }
 
 .btn {
-  border: 0;
-  border-radius: 12px;
-  padding: 12px 14px;
-  font-size: 16px;
+  border: none;
+  border-radius: 16px;
+  padding: 14px 16px;
+
+  font-size: 15px;
+  font-weight: 600;
+
   cursor: pointer;
-  background: var(--color-praymeri-blue);
-  color: var(--color-praymeri-blek);
-  transition: all 0.3s ease;
+  color: #fff;
+
+  background: linear-gradient(135deg, var(--color-praymeri-blue), var(--color-praymeri-blueHover));
+  box-shadow: 0 10px 28px rgba(59, 130, 246, 0.25);
+
+  transition: all 0.25s ease;
 }
 
-.btn:hover{
-  background-color: var(--color-praymeri-blueHover);
-
+.btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 16px 34px rgba(59, 130, 246, 0.32);
 }
 
 .btn:disabled {
-  opacity: 0.7;
+  opacity: 0.45;
   cursor: not-allowed;
+  box-shadow: none;
 }
 
+/* STATUS */
 .error {
-  color: #b00020;
+  color: #ff6b6b;
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .success {
-  color: #0a7a2f;
+  color: #4ade80;
   margin: 0;
-  font-size: 14px;
+  font-size: 13px;
+}
+
+/* MOBILE */
+@media (max-width: 720px) {
+  .form {
+    width: 100%;
+    margin-top: 30px;
+    padding: 20px;
+    border-radius: 18px;
+  }
+}
+@media (max-width: 430px) {
+  .form {
+   width: 360px;
+    margin-top: 24px;
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .accordionBtn {
+    grid-template-columns: 1fr auto;
+    gap: 6px;
+  }
+
+  .accordionHint {
+    display: none;
+  }
+
+  .input,
+  .textarea {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  .btn {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .areas {
+    padding: 12px;
+  }
+
+  .accordionBody.dropdown {
+    max-height: 220px;
+    padding: 12px;
+  }
 }
 </style>

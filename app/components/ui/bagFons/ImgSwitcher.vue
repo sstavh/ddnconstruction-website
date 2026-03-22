@@ -95,4 +95,10 @@ z-index: -50;
   /* затемнення */
   filter: brightness(0.6);
 }
+
+ @media (max-width: 430px) {
+  .slider{
+    height: 600px;
+  }
+ }
 </style>

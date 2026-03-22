@@ -53,4 +53,14 @@
         transform: translateY(0);
     }
 }
+
+    @media (max-width: 430px){
+    .heroAbout-box__title{
+        padding-top: 140px;
+        font-size: var(  --font-s-Mobalh1);
+    }
+    .heroAbaut-section{
+        height: 330px;
+    }
+  }
 </style>
