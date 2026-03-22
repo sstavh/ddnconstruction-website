@@ -45,4 +45,41 @@ import Button from "../../ui/Button.vue";
     font-size: --font-s-textSmoll;
     color: var(--color-praymeri-blekText);
 }
+
+@media (max-width: 1024px) {
+  .foto-test{
+    height: 420px;
+    width: 470px;
+  }
+
+  .general-container{
+    margin-top: 100px;
+  }
+  }
+ 
+  @media (max-width: 768px) {
+    .foto-test{
+        display: none;
+    }
+
+    .general-container__box{
+
+        margin-left: 70px;
+        display: block; 
+    }
+  }
+   @media (max-width: 430px) {
+  .generel-box__title{
+    font-size: var(  --font-s-Mobalh1);
+    text-align: center;
+  }
+
+  .general-container__box{
+    margin-left: 0;
+  }
+
+  .generel-box{
+    text-align: center;
+  }
+  }
 </style>
