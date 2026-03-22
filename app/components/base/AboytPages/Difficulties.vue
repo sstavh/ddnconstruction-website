@@ -30,8 +30,7 @@
         </div>
     </section>
 </template>
-
-<style scoped>
+<style scoped>/* ====== BASE (твій, без змін) ====== */
 .diffic-container{
     margin-top: 160px;
 }
@@ -77,5 +76,94 @@
     color: var(--color-praymeri-blekText);
     font-size: var(--font-s-navigation);
 }
-</style>
+
+
+/* ====== 1024px ====== */
+@media (max-width: 1024px) {
+  .container {
+    max-width: 960px;
+  }
+
+  .diffic-container {
+    margin-top: 120px;
+  }
+
+  .diffic-box__ul {
+    gap: 20px;
+  }
+
+  .diffic-ul__li {
+    margin-right: 40px;
+  }
+
+  .test-img {
+    width: 220px;
+    height: 300px;
+  }
+}
+
+
+/* ====== 768px ====== */
+@media (max-width: 768px) {
+  .container {
+    max-width: 720px;
+  }
+
+  .diffic-box__ul {
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .diffic-ul__li {
+    margin-right: 0;
+    width: calc(50% - 10px);
+  }
+
+  .test-img {
+    width: 100%;
+    height: 260px;
+  }
+
+  .diffic-box__pidtext {
+    margin-bottom: 60px;
+  }
+}
+
+
+/* ====== 430px ====== */
+@media (max-width: 430px) {
+  .container {
+    max-width: 360px;
+  }
+
+  .diffic-container {
+    margin-top: 80px;
+  }
+
+  .diffic-box__ul {
+    flex-direction: column;
+    gap: 25px;
+  }
+
+  .diffic-ul__li {
+    width: 100%;
+  }
+
+  .test-img {
+    height: 220px;
+  }
+
+  .diffic-box__tile {
+    margin-bottom: 30px;
+  }
+
+  .diffic-box__pidtext {
+    margin-bottom: 40px;
+  }
+
+  p {
+    font-size: var(--font-s-MobalText);
+  }
+}</style>
+
 
