@@ -54,7 +54,6 @@
       </label>
     </div>
 
-    <!-- Dropdown (multiselect) - стартово закритий і не зсуває секції нижче -->
     <section class="accordion">
       <div class="accordionHead">
         <button
@@ -84,7 +83,12 @@
 
           <div class="jobs">
             <label v-for="job in jobOptions" :key="job.id" class="jobItem">
-              <input class="checkbox" type="checkbox" :value="job.id" v-model="form.jobs" />
+              <input
+                class="checkbox"
+                type="checkbox"
+                :value="job.id"
+                v-model="form.jobs"
+              />
               <span class="jobName">{{ job.label }}</span>
             </label>
           </div>
@@ -92,7 +96,6 @@
       </div>
     </section>
 
-    <!-- Dynamic area inputs -->
     <section class="areas">
       <h3 class="subtitle">Площа (м²)</h3>
 
@@ -144,6 +147,8 @@
 </template>
 
 <script setup lang="ts">
+import { reactive, ref, watch } from "vue"
+
 type JobOption = { id: string; label: string }
 
 const jobOptions: JobOption[] = [
@@ -154,9 +159,7 @@ const jobOptions: JobOption[] = [
   { id: "other", label: "Інше" },
 ]
 
-// ✅ стартово закритий
 const jobsOpen = ref(false)
-
 const submitting = ref(false)
 const error = ref<string | null>(null)
 const success = ref<string | null>(null)
@@ -175,13 +178,13 @@ function jobLabel(jobId: string): string {
   return jobOptions.find((j) => j.id === jobId)?.label ?? jobId
 }
 
-// Коли вибір робіт змінюється — додаємо/прибираємо поля площі
 watch(
   () => [...form.jobs],
   (jobs) => {
     for (const id of jobs) {
       if (!(id in form.areas)) form.areas[id] = null
     }
+
     for (const key of Object.keys(form.areas)) {
       if (!jobs.includes(key)) delete form.areas[key]
     }
@@ -206,14 +209,17 @@ async function handleSubmit() {
     error.value = "Перевірте, будь ласка, правильність пошти."
     return
   }
+
   if (!isPhoneLikelyValid(form.phone)) {
     error.value = "Перевірте, будь ласка, номер телефону."
     return
   }
+
   if (!form.jobs.length) {
     error.value = "Оберіть хоча б один тип робіт."
     return
   }
+
   for (const jobId of form.jobs) {
     const v = form.areas[jobId]
     if (v === null || Number.isNaN(v) || v < 0) {
@@ -223,11 +229,40 @@ async function handleSubmit() {
   }
 
   submitting.value = true
+
   try {
-    // Приклад: await $fetch('/api/lead', { method: 'POST', body: { ...form } })
-    console.log("SUBMIT", JSON.parse(JSON.stringify(form)))
+    const response = await fetch("http://localhost:3001/leads", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        ...form,
+        areas: Object.fromEntries(
+          Object.entries(form.areas).map(([k, v]) => [k, v ?? 0])
+        ),
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error("Не вдалося надіслати форму")
+    }
+
+    const data = await response.json()
+    console.log("Заявка збережена:", data)
+
     success.value = "Дякуємо! Ми зв’яжемось з вами найближчим часом."
-  } catch {
+
+    form.lastName = ""
+    form.firstName = ""
+    form.email = ""
+    form.phone = ""
+    form.jobs = []
+    form.areas = {}
+    form.comment = ""
+    jobsOpen.value = false
+  } catch (e) {
+    console.error(e)
     error.value = "Не вдалося надіслати форму. Спробуйте ще раз."
   } finally {
     submitting.value = false
@@ -255,7 +290,6 @@ async function handleSubmit() {
   color: #fff;
 }
 
-/* GRID */
 .grid {
   display: grid;
   grid-template-columns: 1fr;
@@ -269,7 +303,6 @@ async function handleSubmit() {
   }
 }
 
-/* FIELD */
 .field {
   display: grid;
   gap: 6px;
@@ -281,7 +314,6 @@ async function handleSubmit() {
   color: rgba(255,255,255,0.8);
 }
 
-/* INPUTS */
 .input,
 .textarea {
   width: 100%;
@@ -319,7 +351,6 @@ async function handleSubmit() {
   background: rgba(255,255,255,0.06);
 }
 
-/* ACCORDION */
 .accordion {
   margin: 14px 0;
   border-radius: 18px;
@@ -368,7 +399,6 @@ async function handleSubmit() {
   transform: rotate(180deg);
 }
 
-/* DROPDOWN */
 .accordionBody.dropdown {
   position: absolute;
   left: 0;
@@ -395,7 +425,6 @@ async function handleSubmit() {
   color: rgba(255,255,255,0.6);
 }
 
-/* JOBS */
 .jobs {
   display: grid;
   gap: 8px;
@@ -430,7 +459,6 @@ async function handleSubmit() {
   color: rgba(255,255,255,0.85);
 }
 
-/* AREAS */
 .areas {
   margin: 14px 0;
   padding: 16px;
@@ -463,7 +491,6 @@ async function handleSubmit() {
   }
 }
 
-/* BUTTON */
 .actions {
   margin-top: 16px;
   display: grid;
@@ -498,7 +525,6 @@ async function handleSubmit() {
   box-shadow: none;
 }
 
-/* STATUS */
 .error {
   color: #ff6b6b;
   margin: 0;
@@ -511,7 +537,6 @@ async function handleSubmit() {
   font-size: 13px;
 }
 
-/* MOBILE */
 @media (max-width: 720px) {
   .form {
     width: 100%;
@@ -520,9 +545,10 @@ async function handleSubmit() {
     border-radius: 18px;
   }
 }
+
 @media (max-width: 430px) {
   .form {
-   width: 360px;
+    width: 360px;
     margin-top: 24px;
     padding: 16px;
     border-radius: 16px;
