@@ -258,9 +258,9 @@ onMounted(loadCategories)
 
 .form-block {
   padding: 18px;
-  border: 1px solid #ddd;
+  border: 1px solid #b35858;
   border-radius: 14px;
-  background: #fff;
+  background: #7a5353;
 }
 
 .form-block h2 {
@@ -279,7 +279,7 @@ select {
   width: 100%;
   padding: 10px;
   margin-top: 6px;
-  border: 1px solid #ccc;
+  border: 1px solid #482828;
   border-radius: 8px;
 }
 
@@ -313,7 +313,7 @@ button:disabled {
   padding: 18px;
   border: 1px solid #e2e8f0;
   border-radius: 14px;
-  background: #fafafa;
+  background: #a03a3a;
 }
 
 .category-header {
