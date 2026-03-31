@@ -48,7 +48,10 @@ export default {
   methods: {
     async loadLeads() {
       try {
-    // const response = await fetch('http://localhost:3001/leads');
+        const response = await fetch('http://localhost:3001/leads');
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.status}`);
+        }
         this.leads = await response.json();
       } catch (error) {
         console.error('Помилка завантаження лідів:', error);
