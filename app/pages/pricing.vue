@@ -1,16 +1,49 @@
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { pricingData } from '../data/pricing'
+import { ref, computed, onMounted } from 'vue'
 
-const activeCategoryId = ref<string>(pricingData[0].id)
+type PricingItem = {
+  title: string
+  titleUk: string
+  price: string
+}
+
+type PricingCategory = {
+  id: string
+  title: string
+  description: string
+  items: PricingItem[]
+}
+
+const pricingData = ref<PricingCategory[]>([])
+const activeCategoryId = ref('')
 
 const setActiveCategory = (id: string) => {
   activeCategoryId.value = id
 }
 
 const activeCategory = computed(() =>
-  pricingData.find(category => category.id === activeCategoryId.value)
+  pricingData.value.find(category => category.id === activeCategoryId.value)
 )
+
+const loadPricing = async () => {
+  try {
+    const res = await fetch('http://localhost:3001/pricing')
+
+    if (!res.ok) {
+      throw new Error(`HTTP error! status: ${res.status}`)
+    }
+
+    pricingData.value = await res.json()
+
+    if (pricingData.value.length && !activeCategoryId.value) {
+      activeCategoryId.value = pricingData.value[0].id
+    }
+  } catch (error) {
+    console.error('Помилка завантаження прайсу:', error)
+  }
+}
+
+onMounted(loadPricing)
 </script>
 
 <template>
@@ -22,7 +55,6 @@ const activeCategory = computed(() =>
         data-aos-delay="100"
       >
         <h2 class="pricing-title">Choose a Service Category</h2>
-        
       </div>
 
       <div
@@ -70,16 +102,18 @@ const activeCategory = computed(() =>
             </div>
           </div>
         </div>
+
+        <div v-else class="pricing-panel">
+          <p>Завантаження прайсу...</p>
+        </div>
       </div>
     </div>
   </section>
 </template>
 
 <style scoped>
-
-
 .container {
-margin-bottom: 80px;
+  margin-bottom: 80px;
 }
 
 .pricing-header {
@@ -90,8 +124,8 @@ margin-bottom: 80px;
 
 .pricing-subtitle {
   margin: 0 0 12px;
-  color: var( --color-praymeri-blue);
-  font-size: var( --font-s-textSmoll);
+  color: var(--color-praymeri-blue);
+  font-size: var(--font-s-textSmoll);
   font-weight: var(--font-w-h1);
   text-transform: uppercase;
   letter-spacing: 0.18em;
@@ -159,7 +193,7 @@ margin-bottom: 80px;
   margin: 0 0 10px;
   font-size: var(--font-s-Mobalh4);
   line-height: 1.3;
-  font-weight: var( --font-w-h1);
+  font-weight: var(--font-w-h1);
 }
 
 .pricing-card-uk {
@@ -231,7 +265,7 @@ margin-bottom: 80px;
 .pricing-item-info p {
   margin: 0;
   color: #94a3b8;
-  font-size:var( --font-s-textSmoll);
+  font-size: var(--font-s-textSmoll);
   line-height: 1.5;
 }
 
@@ -239,7 +273,7 @@ margin-bottom: 80px;
   flex-shrink: 0;
   white-space: nowrap;
   color: var(--color-praymeri-blue);
-  font-size: var( --font-s-Mobalh4);
+  font-size: var(--font-s-Mobalh4);
   font-weight: var(--font-w-h1);
 }
 
@@ -277,10 +311,13 @@ margin-bottom: 80px;
   }
 }
 
- @media (max-width: 768px) {
-  .container{max-width: none;}
-   .pricing-title{
-    margin-top: 0;
-   }
+@media (max-width: 768px) {
+  .container {
+    max-width: none;
   }
+
+  .pricing-title {
+    margin-top: 0;
+  }
+}
 </style>
