@@ -17,12 +17,7 @@
           >
             <article class="card">
 
-              <div class="work">
-                <img v-if="r.workPhoto" :src="r.workPhoto" class="work-img" />
-                <div v-else class="work-fallback" :style="{ background: r.workFallbackColor }">
-                  Фото роботи
-                </div>
-              </div>
+              <!-- ❌ ВИДАЛИЛИ БЛОК work -->
 
               <div class="info">
                 <div class="top">
@@ -56,7 +51,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted, onBeforeUnmount } from 'vue'
+import { computed, ref, watch, onMounted, onBeforeUnmount } from 'vue'
 
 type Review = {
   id: string | number
@@ -138,6 +133,18 @@ function onTransitionEnd() {
 function initials(name: string) {
   return name.split(' ').map(n => n[0]).join('').toUpperCase()
 }
+
+watch(
+  () => props.reviews,
+  () => {
+    index.value = visible.value
+    anim.value = false
+    requestAnimationFrame(() => {
+      anim.value = true
+    })
+  },
+  { deep: true }
+)
 
 /* autoplay */
 function start() {
@@ -222,7 +229,19 @@ onBeforeUnmount(() => {
 
 .stars{
   margin-top: 10px;
-  color: yellow ;
+}
+
+.star {
+  border: 0;
+  background: transparent;
+  font-size: 26px;
+  cursor: pointer;
+  color: rgba(255,255,255,0.25);
+  transition: 0.2s;
+}
+
+.star.on {
+  color: #fbbf24;
 }
 
 /* TABLET */

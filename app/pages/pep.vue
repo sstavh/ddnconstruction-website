@@ -48,7 +48,7 @@ export default {
   methods: {
     async loadLeads() {
       try {
-        const response = await fetch('http://localhost:3001/leads');
+        const response = await fetch(`${apiUrl}/leads`);
         if (!response.ok) {
           throw new Error(`Server error: ${response.status}`);
         }

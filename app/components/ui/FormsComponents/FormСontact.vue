@@ -201,6 +201,8 @@ function isPhoneLikelyValid(phone: string): boolean {
   return digits.length >= 9
 }
 
+const apiUrl = useRuntimeConfig().public.apiUrl
+
 async function handleSubmit() {
   error.value = null
   success.value = null
@@ -231,7 +233,7 @@ async function handleSubmit() {
   submitting.value = true
 
   try {
-    const response = await fetch("http://localhost:3001/leads", {
+    const response = await fetch(`${apiUrl}/leads`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

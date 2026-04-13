@@ -16,7 +16,8 @@ type PricingCategory = {
   items: PricingItem[]
 }
 
-const baseUrl = 'http://localhost:3001/pricing'
+const apiUrl = useRuntimeConfig().public.apiUrl
+const baseUrl = `${apiUrl}/pricing`
 const categories = ref<PricingCategory[]>([])
 const selectedCategoryId = ref('')
 const loading = ref(false)
