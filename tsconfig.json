@@ -1,0 +1,12 @@
+{
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    "types": ["node"],
+    "moduleResolution": "Bundler"
+  },
+  "include": [
+    "app/**/*",
+    "nuxt.config.ts",
+    ".nuxt/**/*"
+  ]
+}

@@ -1,89 +1,117 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import ReviewsFormaTest from '../components/ui/ReviewsFormaTest.vue';
-import BaseModalTest from '../components/ui/BaseModalTest.vue';
+import { ref, onMounted } from 'vue'
+import ReviewsFormaTest from '../components/ui/ReviewsFormaTest.vue'
+import BaseModalTest from '../components/ui/BaseModalTest.vue'
 
 type Review = {
-  id: number;
-  firstName?: string;
-  lastName?: string;
-  rating: number;
-  message: string;
-  photo?: string;
-  createdAt?: string;
-};
+  id: number
+  firstName?: string
+  lastName?: string
+  rating: number
+  message: string
+  photo?: string
+  createdAt?: string
+}
 
-const apiUrl = useRuntimeConfig().public.apiUrl;
+const reviews = ref<Review[]>([])
+const loading = ref(false)
+const loadError = ref<string | null>(null)
+const deletingId = ref<number | null>(null)
 
-const reviews = ref<Review[]>([]);
-const loading = ref(false);
-const deletingId = ref<number | null>(null);
+const open = ref(false)
+const origin = ref<{ x: number; y: number } | null>(null)
 
-const open = ref(false);
-const origin = ref<{ x: number; y: number } | null>(null);
+const apiUrl = useRuntimeConfig().public.apiUrl || 'http://localhost:3001'
 
 const loadReviews = async () => {
   try {
-    loading.value = true;
+    loading.value = true
+    loadError.value = null
 
-    const res = await fetch(`${apiUrl}/reviews`);
+    console.log('Loading reviews from', apiUrl)
+    const res = await fetch(`${apiUrl}/reviews`)
+
     if (!res.ok) {
-      throw new Error(`Failed to load reviews: ${res.status}`);
+      throw new Error(`Failed to load reviews: ${res.status}`)
     }
 
-    const data = await res.json();
-    reviews.value = data;
-  } catch (error) {
-    console.error('Failed to load reviews', error);
+    const data = await res.json()
+
+    const rawReviews = Array.isArray(data)
+      ? data
+      : Array.isArray(data?.reviews)
+        ? data.reviews
+        : []
+
+    reviews.value = rawReviews
+      .map((item: any) => ({
+        id: Number(item.id) || 0,
+        firstName: item.firstName ?? item.first_name ?? '',
+        lastName: item.lastName ?? item.last_name ?? '',
+        rating: Number(item.rating) || 0,
+        message: item.message ?? item.text ?? '',
+        photo: item.photo ?? '',
+        createdAt: item.createdAt ?? item.created_at ?? '',
+      }))
+      .sort((a: Review, b: Review) => {
+        const dateA = a.createdAt ? new Date(a.createdAt).getTime() : 0
+        const dateB = b.createdAt ? new Date(b.createdAt).getTime() : 0
+        return dateB - dateA
+      })
+  } catch (error: any) {
+    console.error('Failed to load reviews', error)
+    loadError.value = `Не вдалося завантажити відгуки з ${apiUrl}/reviews: ${error?.message || 'unknown'}`
   } finally {
-    loading.value = false;
+    loading.value = false
   }
-};
+}
 
 const openModal = (e?: MouseEvent) => {
   if (e) {
-    origin.value = { x: e.clientX, y: e.clientY };
+    origin.value = { x: e.clientX, y: e.clientY }
   } else {
-    origin.value = { x: window.innerWidth / 2, y: window.innerHeight / 2 };
+    origin.value = { x: window.innerWidth / 2, y: window.innerHeight / 2 }
   }
 
-  open.value = true;
-};
+  open.value = true
+}
 
 const closeModal = () => {
-  open.value = false;
-};
+  open.value = false
+}
 
 const refreshReviews = async () => {
-  await loadReviews();
-  closeModal();
-};
+  await loadReviews()
+  closeModal()
+}
 
 const deleteReview = async (id: number) => {
-  const confirmed = window.confirm('Видалити цей відгук?');
-  if (!confirmed) return;
+  const confirmed = window.confirm('Видалити цей відгук?')
+  if (!confirmed) return
 
   try {
-    deletingId.value = id;
+    deletingId.value = id
 
     const res = await fetch(`${apiUrl}/reviews/${id}`, {
       method: 'DELETE',
-    });
+    })
 
     if (!res.ok) {
-      throw new Error(`Failed to delete review: ${res.status}`);
+      throw new Error(`Failed to delete review: ${res.status}`)
     }
 
-    reviews.value = reviews.value.filter((review) => review.id !== id);
+    reviews.value = reviews.value.filter((review) => review.id !== id)
   } catch (error) {
-    console.error('Failed to delete review', error);
-    alert('Не вдалося видалити відгук');
+    console.error('Failed to delete review', error)
+    alert('Не вдалося видалити відгук')
   } finally {
-    deletingId.value = null;
+    deletingId.value = null
   }
-};
+}
 
-onMounted(loadReviews);
+onMounted(() => {
+  loadReviews()
+})
 </script>
 
 <template>
@@ -104,6 +132,10 @@ onMounted(loadReviews);
 
       <div v-if="loading" class="loading">
         Завантаження...
+      </div>
+
+      <div v-else-if="loadError" class="loading error-text">
+        {{ loadError }}
       </div>
 
       <div v-else class="table-wrap">
@@ -135,13 +167,13 @@ onMounted(loadReviews);
               <td>{{ review.rating }}</td>
 
               <td class="message-cell">
-                {{ review.message }}
+                {{ review.message || '—' }}
               </td>
 
               <td>
                 <img
                   v-if="review.photo"
-                  :src="`${apiUrl}/${review.photo}`"
+                  :src="review.photo.startsWith('http') ? review.photo : `${apiUrl}/${String(review.photo).replace(/^\/+/, '')}`"
                   alt="review photo"
                   class="thumb"
                 />
@@ -172,6 +204,7 @@ onMounted(loadReviews);
 <style scoped>
 .reviews-admin {
   padding: 40px 0;
+  min-height: 60vh;
 }
 
 .admin-header {
@@ -192,6 +225,10 @@ onMounted(loadReviews);
   text-align: center;
 }
 
+.error-text {
+  color: #ef4444;
+}
+
 .table-wrap {
   overflow-x: auto;
 }
@@ -208,6 +245,7 @@ onMounted(loadReviews);
   padding: 12px;
   text-align: left;
   vertical-align: top;
+  color: #111827;
 }
 
 .reviews-table th {

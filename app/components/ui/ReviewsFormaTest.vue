@@ -5,7 +5,7 @@ const emit = defineEmits<{
   (e: "submitted"): void;
 }>();
 
-const apiUrl = useRuntimeConfig().public.apiUrl;
+const apiUrl = useRuntimeConfig().public.apiUrl || 'http://127.0.0.1:3001';
 const fileInput = ref<HTMLInputElement | null>(null);
 
 const firstName = ref("");
@@ -15,6 +15,8 @@ const rating = ref(0);
 const message = ref("");
 const photo = ref<File | null>(null);
 const error = ref("");
+const success = ref("");
+const isSubmitting = ref(false);
 
 const setRating = (v: number) => (rating.value = v);
 
@@ -33,10 +35,13 @@ const submitForm = async () => {
     !photo.value
   ) {
     error.value = "Заповніть всі поля (всі обов’язкові)";
+    success.value = "";
     return;
   }
 
   error.value = "";
+  success.value = "";
+  isSubmitting.value = true;
 
   try {
     const formData = new FormData();
@@ -60,6 +65,7 @@ const submitForm = async () => {
     }
 
     console.log("Відгук успішно відправлено ✅");
+    success.value = "Відгук успішно надіслано";
 
     // очистка форми
     firstName.value = "";
@@ -74,6 +80,8 @@ const submitForm = async () => {
   } catch (err) {
     console.error(err);
     error.value = "Не вдалося відправити відгук. Спробуйте ще раз.";
+  } finally {
+    isSubmitting.value = false;
   }
 };
 </script>
@@ -111,8 +119,11 @@ const submitForm = async () => {
     <input ref="fileInput" type="file" accept="image/*" @change="handleFile" required />
 
     <p v-if="error" class="error">{{ error }}</p>
+    <p v-if="success" class="success">{{ success }}</p>
 
-    <button type="submit">Відправити</button>
+    <button type="submit" :disabled="isSubmitting">
+      {{ isSubmitting ? 'Відправка...' : 'Відправити' }}
+    </button>
   </form>
 </template>
 
@@ -196,6 +207,11 @@ input[type="file"] {
 
 .error {
   color: #ef4444;
+  font-size: 13px;
+}
+
+.success {
+  color: #22c55e;
   font-size: 13px;
 }
 
