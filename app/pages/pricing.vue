@@ -21,13 +21,15 @@ const setActiveCategory = (id: string) => {
   activeCategoryId.value = id
 }
 
+const apiUrl = useRuntimeConfig().public.apiUrl
+
 const activeCategory = computed(() =>
   pricingData.value.find(category => category.id === activeCategoryId.value)
 )
 
 const loadPricing = async () => {
   try {
-    const res = await fetch('http://localhost:3001/pricing')
+    const res = await fetch(`${apiUrl}/pricing`)
 
     if (!res.ok) {
       throw new Error(`HTTP error! status: ${res.status}`)

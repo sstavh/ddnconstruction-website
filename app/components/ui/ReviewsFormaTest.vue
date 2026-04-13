@@ -5,6 +5,9 @@ const emit = defineEmits<{
   (e: "submitted"): void;
 }>();
 
+const apiUrl = useRuntimeConfig().public.apiUrl;
+const fileInput = ref<HTMLInputElement | null>(null);
+
 const firstName = ref("");
 const lastName = ref("");
 const email = ref("");
@@ -47,7 +50,7 @@ const submitForm = async () => {
       formData.append("photo", photo.value);
     }
 
-    const response = await fetch("http://localhost:3001/reviews", {
+    const response = await fetch(`${apiUrl}/reviews`, {
       method: "POST",
       body: formData,
     });
@@ -65,6 +68,7 @@ const submitForm = async () => {
     rating.value = 0;
     message.value = "";
     photo.value = null;
+    if (fileInput.value) fileInput.value.value = "";
 
     emit("submitted");
   } catch (err) {
@@ -102,9 +106,9 @@ const submitForm = async () => {
       <input class="sr" :value="rating" required aria-hidden="true" />
     </div>
 
-    <textarea v-model="message" placeholder="Ваш відгук..." rows="4" required />
+    <textarea v-model="message" placeholder="Ваш відгук..." rows="4" required></textarea>
 
-    <input type="file" accept="image/*" @change="handleFile" required />
+    <input ref="fileInput" type="file" accept="image/*" @change="handleFile" required />
 
     <p v-if="error" class="error">{{ error }}</p>
 
