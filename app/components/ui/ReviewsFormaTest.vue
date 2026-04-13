@@ -20,33 +20,66 @@ const handleFile = (e: Event) => {
   photo.value = input.files?.[0] ?? null;
 };
 
-const submitForm = () => {
-  if (!firstName.value || !lastName.value || !email.value || !rating.value || !message.value || !photo.value) {
+const submitForm = async () => {
+  if (
+    !firstName.value ||
+    !lastName.value ||
+    !email.value ||
+    !rating.value ||
+    !message.value ||
+    !photo.value
+  ) {
     error.value = "Заповніть всі поля (всі обов’язкові)";
     return;
   }
 
   error.value = "";
 
-  // тут буде твій API-запит (якщо треба)
-  console.log("Send review ✅", {
-    firstName: firstName.value,
-    lastName: lastName.value,
-    email: email.value,
-    rating: rating.value,
-    message: message.value,
-    photo: photo.value,
-  });
+  try {
+    const formData = new FormData();
+    formData.append("firstName", firstName.value);
+    formData.append("lastName", lastName.value);
+    formData.append("email", email.value);
+    formData.append("rating", String(rating.value));
+    formData.append("message", message.value);
 
-  // ✅ повідомляємо батьківський компонент, що все ок
-  emit("submitted");
+    if (photo.value) {
+      formData.append("photo", photo.value);
+    }
+
+    const response = await fetch("http://localhost:3001/reviews", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!response.ok) {
+      throw new Error("Помилка при відправці форми");
+    }
+
+    console.log("Відгук успішно відправлено ✅");
+
+    // очистка форми
+    firstName.value = "";
+    lastName.value = "";
+    email.value = "";
+    rating.value = 0;
+    message.value = "";
+    photo.value = null;
+
+    emit("submitted");
+  } catch (err) {
+    console.error(err);
+    error.value = "Не вдалося відправити відгук. Спробуйте ще раз.";
+  }
 };
 </script>
 
 <template>
   <form class="review-form" @submit.prevent="submitForm">
-    <h3 class="review-form__title" >Надішліть відгук</h3>
-    <p class="review-form__subtitle">Ми раді вашому відгуку — він допомагає нам ставати кращими</p>
+    <h3 class="review-form__title">Надішліть відгук</h3>
+    <p class="review-form__subtitle">
+      Ми раді вашому відгуку — він допомагає нам ставати кращими
+    </p>
 
     <div class="row">
       <input v-model="firstName" type="text" placeholder="Ім'я" required />
@@ -84,19 +117,11 @@ const submitForm = () => {
   display: flex;
   flex-direction: column;
   gap: 14px;
-
-  /* 🔥 SAME STYLE BACKGROUND AS CARDS */
-  background: transparent ;
-  
-  
-
+  background: transparent;
   padding: 22px;
   color: #fff;
-
-
 }
 
-/* TITLE */
 .review-form__title {
   color: #fff;
   text-align: center;
@@ -112,24 +137,19 @@ const submitForm = () => {
   margin: 0 0 10px;
 }
 
-/* ROW */
 .row {
   display: flex;
   gap: 10px;
 }
 
-/* INPUTS */
 input,
 textarea {
   width: 100%;
   padding: 12px 14px;
-
   border-radius: 14px;
   border: 1px solid rgba(255,255,255,0.12);
-
   background: rgba(255,255,255,0.06);
   color: #fff;
-
   outline: none;
   transition: 0.2s ease;
 }
@@ -145,7 +165,6 @@ textarea:focus {
   background: rgba(255,255,255,0.08);
 }
 
-/* STARS */
 .stars {
   display: flex;
   gap: 6px;
@@ -166,30 +185,24 @@ textarea:focus {
   transform: scale(1.05);
 }
 
-/* FILE INPUT */
 input[type="file"] {
   padding: 10px;
   background: rgba(255,255,255,0.04);
 }
 
-/* ERROR */
 .error {
   color: #ef4444;
   font-size: 13px;
 }
 
-/* BUTTON */
 button[type="submit"] {
   padding: 12px;
   border-radius: 14px;
-
   border: none;
   background: linear-gradient(135deg, #3b82f6, #2563eb);
-
   color: #fff;
   font-weight: 700;
   cursor: pointer;
-
   transition: 0.2s ease;
 }
 
@@ -198,9 +211,6 @@ button[type="submit"]:hover {
   box-shadow: 0 10px 25px rgba(59,130,246,0.35);
 }
 
-/* =========================
-   MOBILE
-========================= */
 @media (max-width: 430px) {
   .review-form {
     padding: 16px;
