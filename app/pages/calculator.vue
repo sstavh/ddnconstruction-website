@@ -18,8 +18,15 @@
           :current-step="currentStep"
         />
 
+        <div v-if="loadingCatalog" class="calculator-status">
+          Завантаження прайсу...
+        </div>
+        <div v-else-if="catalogError" class="calculator-status calculator-status--error">
+          Помилка завантаження прайсу: {{ catalogError }}
+        </div>
+
         <CalculatorStepCard
-          :step="steps[currentStep]"
+          :step="currentStepData"
           :is-last-step="currentStep === steps.length - 1"
           :form-data="calculatorForm"
           :room-options="roomOptions"
@@ -27,6 +34,10 @@
           @complete-step="completeStep"
           @submit-form="submitForm"
         />
+
+        <div v-if="submitStatus" class="calculator-status calculator-status--submit">
+          {{ submitStatus }}
+        </div>
 
         <StepsInfo
           :steps="steps"
@@ -38,7 +49,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import PageHeader from '../components/ui/calculatorComponent/PageHeader.vue'
 import CalculatorAside from '../components/ui/calculatorComponent/CalculatorAside.vue'
 import StepProgress from '../components/ui/calculatorComponent/StepProgress.vue'
@@ -48,8 +59,10 @@ import type {
   CalculatorData,
   CalculatorStep,
   ContactForm,
+  PriceType,
   RoomOption,
   ServiceCatalog,
+  ServiceItem,
 } from '../types/calculator'
 
 const roomOptions: RoomOption[] = [
@@ -62,51 +75,49 @@ const roomOptions: RoomOption[] = [
   { value: 'exterior', label: 'Exterior / Зовнішні роботи', serviceGroup: 'exterior' },
 ]
 
-const serviceCatalog: ServiceCatalog = {
-  bathroom: [
-    { id: 'bathroom-demolition', title: 'Bathroom demolition — Демонтаж ванної кімнати', price: 18, priceType: 'm2' },
-    { id: 'shower-installation', title: 'Shower installation — Встановлення душу', price: 900, priceType: 'fixed' },
-    { id: 'bathtub-installation', title: 'Bathtub installation — Встановлення ванни', price: 1100, priceType: 'fixed' },
-    { id: 'walk-in-shower-installation', title: 'Walk-in shower installation — Встановлення walk-in душу', price: 1400, priceType: 'fixed' },
-    { id: 'shower-tile-installation', title: 'Shower tile installation — Укладання плитки в душі', price: 45, priceType: 'm2' },
-    { id: 'bathroom-floor-tile-installation', title: 'Bathroom floor tile installation — Укладання плитки на підлогу у ванній', price: 35, priceType: 'm2' },
-    { id: 'shower-niche-installation', title: 'Shower niche installation — Монтаж ніші в душі', price: 250, priceType: 'fixed' },
-    { id: 'shower-bench-installation', title: 'Shower bench installation — Монтаж лавки в душі', price: 350, priceType: 'fixed' },
-    { id: 'linear-drain-installation', title: 'Linear drain installation — Встановлення лінійного трапу', price: 300, priceType: 'fixed' },
-    { id: 'bathroom-vanity-installation', title: 'Bathroom vanity installation — Встановлення тумби з умивальником', price: 450, priceType: 'fixed' },
-    { id: 'sink-installation', title: 'Sink installation — Встановлення умивальника', price: 220, priceType: 'fixed' },
-    { id: 'toilet-installation', title: 'Toilet installation — Встановлення туалету', price: 250, priceType: 'fixed' },
-    { id: 'faucet-installation', title: 'Faucet installation — Встановлення змішувачів', price: 120, priceType: 'fixed' },
-    { id: 'glass-shower-door-installation', title: 'Glass shower door installation — Встановлення скляних дверей душу', price: 650, priceType: 'fixed' },
-  ],
-  kitchen: [
-    { id: 'kitchen-demolition', title: 'Kitchen demolition — Демонтаж кухні', price: 16, priceType: 'm2' },
-    { id: 'kitchen-cabinet-installation', title: 'Kitchen cabinet installation — Монтаж кухонних шаф', price: 1200, priceType: 'fixed' },
-    { id: 'kitchen-countertop-installation', title: 'Kitchen countertop installation — Монтаж кухонної стільниці', price: 850, priceType: 'fixed' },
-    { id: 'kitchen-backsplash-tile-installation', title: 'Kitchen backsplash tile installation — Укладання плитки backsplash', price: 40, priceType: 'm2' },
-    { id: 'kitchen-floor-tile-installation', title: 'Kitchen floor tile installation — Укладання плитки на підлогу кухні', price: 35, priceType: 'm2' },
-    { id: 'kitchen-sink-installation', title: 'Kitchen sink installation — Встановлення кухонної мийки', price: 240, priceType: 'fixed' },
-    { id: 'kitchen-faucet-installation', title: 'Kitchen faucet installation — Встановлення кухонного змішувача', price: 120, priceType: 'fixed' },
-  ],
-  interior: [
-    { id: 'tile-floor-installation', title: 'Tile floor installation — Укладання плитки на підлогу', price: 32, priceType: 'm2' },
-    { id: 'laminate-flooring-installation', title: 'Laminate flooring installation — Монтаж ламінату', price: 18, priceType: 'm2' },
-    { id: 'vinyl-plank-flooring-installation', title: 'Vinyl plank flooring installation — Монтаж вінілової підлоги', price: 20, priceType: 'm2' },
-    { id: 'drywall-installation', title: 'Drywall installation — Монтаж гіпсокартону', price: 28, priceType: 'm2' },
-    { id: 'drywall-repair', title: 'Drywall repair — Ремонт гіпсокартону', price: 16, priceType: 'm2' },
-    { id: 'interior-painting', title: 'Interior painting — Фарбування приміщень', price: 14, priceType: 'm2' },
-    { id: 'trim-baseboard-installation', title: 'Trim and baseboard installation — Монтаж плінтусів та лиштв', price: 8, priceType: 'm2' },
-    { id: 'interior-door-installation', title: 'Interior door installation — Встановлення міжкімнатних дверей', price: 350, priceType: 'fixed' },
-  ],
-  exterior: [
-    { id: 'deck-installation', title: 'Deck installation — Монтаж тераси (deck)', price: 65, priceType: 'm2' },
-    { id: 'deck-repair', title: 'Deck repair — Ремонт тераси', price: 35, priceType: 'm2' },
-    { id: 'fence-installation', title: 'Fence installation — Встановлення паркану', price: 55, priceType: 'm2' },
-    { id: 'exterior-door-installation', title: 'Exterior door installation — Встановлення зовнішніх дверей', price: 500, priceType: 'fixed' },
-    { id: 'exterior-painting', title: 'Exterior painting — Фарбування будинку зовні', price: 18, priceType: 'm2' },
-    { id: 'power-washing', title: 'Power washing — Мийка будинку pressure washer', price: 10, priceType: 'm2' },
-  ],
+const serviceCatalog = ref<ServiceCatalog>({})
+const catalogError = ref('')
+const loadingCatalog = ref(true)
+const submitStatus = ref('')
+
+const apiUrl = useRuntimeConfig().public.apiUrl
+
+function parsePrice(value: string) {
+  const normalized = String(value).trim().replace(/[^0-9.]/g, '')
+  return normalized === '' ? 0 : Number(normalized)
 }
+
+function mapPricingToCatalog(data: Array<{ id: string; title: string; description: string; items: Array<{ id: number; title: string; titleUk: string; price: string; priceType?: string; categoryId: string }> }>) {
+  return data.reduce((acc, category) => {
+    acc[category.id] = category.items.map((item) => ({
+      id: String(item.id),
+      title: `${item.title} — ${item.titleUk}`,
+      price: parsePrice(item.price),
+      priceType: (item.priceType === 'm2' ? 'm2' : 'fixed') as PriceType,
+    }))
+    return acc
+  }, {} as ServiceCatalog)
+}
+
+async function loadServiceCatalog() {
+  loadingCatalog.value = true
+  catalogError.value = ''
+
+  try {
+    const response = await fetch(`${apiUrl}/pricing`)
+    if (!response.ok) {
+      throw new Error(`Failed to load pricing catalog: ${response.status}`)
+    }
+    const pricingData = await response.json()
+    serviceCatalog.value = mapPricingToCatalog(pricingData)
+  } catch (error) {
+    catalogError.value = error instanceof Error ? error.message : String(error)
+  } finally {
+    loadingCatalog.value = false
+  }
+}
+
+onMounted(loadServiceCatalog)
 
 const steps = reactive<CalculatorStep[]>([
   {
@@ -172,6 +183,11 @@ const steps = reactive<CalculatorStep[]>([
 ])
 
 const currentStep = ref(0)
+const currentStepData = computed<CalculatorStep>(() => {
+  const step = steps[currentStep.value]
+  if (step) return step
+  return steps[0]!
+})
 
 const calculatorForm = reactive<CalculatorData>({
   roomCount: 1,
@@ -188,7 +204,7 @@ const contactForm = reactive<ContactForm>({
 
 const canGoNext = computed(() => {
   if (currentStep.value >= steps.length - 1) return false
-  return steps[currentStep.value].completed
+  return currentStepData.value.completed
 })
 
 function goBack() {
@@ -218,7 +234,7 @@ function completeStep(payload?: Partial<CalculatorData>) {
     }
   }
 
-  steps[currentStep.value].completed = true
+  currentStepData.value.completed = true
 
   if (currentStep.value < steps.length - 1) {
     currentStep.value += 1
@@ -227,21 +243,39 @@ function completeStep(payload?: Partial<CalculatorData>) {
 
 function submitForm(payload: ContactForm) {
   Object.assign(contactForm, payload)
-  steps[currentStep.value].completed = true
+  currentStepData.value.completed = true
 
   const requestPayload = {
-    calculator: {
-      roomCount: calculatorForm.roomCount,
-      selectedRooms: calculatorForm.selectedRooms,
-      servicesByRoom: calculatorForm.servicesByRoom,
-      areasByRoom: calculatorForm.areasByRoom,
-    },
-    contacts: {
-      ...contactForm,
-    },
+    name: contactForm.name,
+    phone: contactForm.phone,
+    comment: contactForm.comment,
+    roomCount: calculatorForm.roomCount,
+    selectedRooms: calculatorForm.selectedRooms,
+    servicesByRoom: calculatorForm.servicesByRoom,
+    areasByRoom: calculatorForm.areasByRoom,
   }
 
-  console.log('Calculator submit:', requestPayload)
+  submitStatus.value = ''
+
+  fetch(`${apiUrl}/calculator-leads`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(requestPayload),
+  })
+    .then(async (response) => {
+      if (!response.ok) {
+        throw new Error(`Помилка при відправці заявки: ${response.status}`)
+      }
+      submitStatus.value = 'Заявка успішно відправлена!'
+      return response.json()
+    })
+    .then((data) => {
+      console.log('Calculator submit:', data)
+    })
+    .catch((error) => {
+      submitStatus.value = error instanceof Error ? error.message : String(error)
+      console.error(error)
+    })
 }
 </script>
 
@@ -271,6 +305,27 @@ function submitForm(payload: ContactForm) {
   .calculator-layout {
     grid-template-columns: 1fr;
   }
+}
+
+.calculator-status {
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: rgba(59, 130, 246, 0.1);
+  color: #dbeafe;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  margin-top: 16px;
+}
+
+.calculator-status--error {
+  background: rgba(248, 113, 113, 0.12);
+  color: #fee2e2;
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+.calculator-status--submit {
+  background: rgba(34, 197, 94, 0.12);
+  color: #dcfce7;
+  border-color: rgba(34, 197, 94, 0.3);
 }
 
 @media (max-width: 720px) {
