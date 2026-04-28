@@ -1,34 +1,35 @@
+```vue
 <template>
   <form class="form" @submit.prevent="handleSubmit">
     <div class="grid">
       <label class="field">
-        <span class="label">Прізвище</span>
+        <span class="label">Last Name</span>
         <input
           v-model.trim="form.lastName"
           class="input"
           type="text"
           name="lastName"
           autocomplete="family-name"
-          placeholder="Напр., Іваненко"
+          placeholder="e.g., Smith"
           required
         />
       </label>
 
       <label class="field">
-        <span class="label">Імʼя</span>
+        <span class="label">First Name</span>
         <input
           v-model.trim="form.firstName"
           class="input"
           type="text"
           name="firstName"
           autocomplete="given-name"
-          placeholder="Напр., Олег"
+          placeholder="e.g., John"
           required
         />
       </label>
 
       <label class="field">
-        <span class="label">Пошта</span>
+        <span class="label">Email</span>
         <input
           v-model.trim="form.email"
           class="input"
@@ -41,14 +42,14 @@
       </label>
 
       <label class="field">
-        <span class="label">Номер телефону</span>
+        <span class="label">Phone Number</span>
         <input
           v-model.trim="form.phone"
           class="input"
           type="tel"
           name="phone"
           autocomplete="tel"
-          placeholder="+380..."
+          placeholder="+1..."
           required
         />
       </label>
@@ -63,9 +64,9 @@
           aria-controls="jobs-panel"
           @click="jobsOpen = !jobsOpen"
         >
-          <span class="accordionTitle">Вибір робіт</span>
+          <span class="accordionTitle">Select Services</span>
           <span class="accordionHint">
-            {{ form.jobs.length ? `Вибрано: ${form.jobs.length}` : "Нічого не вибрано" }}
+            {{ form.jobs.length ? `Selected: ${form.jobs.length}` : "Nothing selected" }}
           </span>
           <span class="chev" :class="{ open: jobsOpen }" aria-hidden="true">▾</span>
         </button>
@@ -75,10 +76,10 @@
           id="jobs-panel"
           class="accordionBody dropdown"
           role="region"
-          aria-label="Вибір робіт"
+          aria-label="Select Services"
         >
           <p class="help">
-            Можна вибрати декілька варіантів. Після вибору нижче з’являться поля для площі (м²).
+            You can select multiple options. After selecting, area fields (sq ft) will appear below.
           </p>
 
           <div class="jobs">
@@ -97,16 +98,16 @@
     </section>
 
     <section class="areas">
-      <h3 class="subtitle">Площа (м²)</h3>
+      <h3 class="subtitle">Area (sq ft)</h3>
 
       <div v-if="!form.jobs.length" class="empty">
-        Спочатку виберіть тип робіт у блоці “Вибір робіт”.
+        First select a service type in the “Select Services” section.
       </div>
 
       <div v-else class="areasGrid">
         <label v-for="jobId in form.jobs" :key="jobId" class="field">
           <span class="label">
-            Квадратні метри — <b>{{ jobLabel(jobId) }}</b>
+            Square feet — <b>{{ jobLabel(jobId) }}</b>
           </span>
 
           <input
@@ -117,7 +118,7 @@
             step="0.1"
             :name="`area_${jobId}`"
             v-model.number="form.areas[jobId]"
-            placeholder="Напр., 12.5"
+            placeholder="e.g., 120"
             required
           />
         </label>
@@ -125,19 +126,19 @@
     </section>
 
     <label class="field">
-      <span class="label">Коментар (необов’язково)</span>
+      <span class="label">Comment (optional)</span>
       <textarea
         v-model.trim="form.comment"
         class="textarea"
         name="comment"
         rows="4"
-        placeholder="Коротко опишіть задачу, адресу/місто, терміни тощо..."
+        placeholder="Briefly describe the project, address/city, timeline, etc..."
       />
     </label>
 
     <div class="actions">
       <button class="btn" type="submit" :disabled="submitting">
-        {{ submitting ? "Надсилаємо..." : "Надіслати заявку" }}
+        {{ submitting ? "Sending..." : "Submit Request" }}
       </button>
 
       <p v-if="error" class="error" role="status">{{ error }}</p>
@@ -152,11 +153,16 @@ import { reactive, ref, watch } from "vue"
 type JobOption = { id: string; label: string }
 
 const jobOptions: JobOption[] = [
-  { id: "tile", label: "Плитка" },
-  { id: "walls", label: "Стіни (шпаклівка/фарба)" },
-  { id: "floor", label: "Підлога (стяжка/ламінат)" },
-  { id: "bathroom", label: "Санвузол під ключ" },
-  { id: "other", label: "Інше" },
+  { id: "kitchen_remodeling", label: "Kitchen Remodeling" },
+  { id: "bathroom_remodeling", label: "Bathroom Remodeling (Turnkey)" },
+  { id: "tile_installation", label: "Tile Installation" },
+  { id: "flooring", label: "Flooring (Laminate / Vinyl / Hardwood)" },
+  { id: "drywall_painting", label: "Drywall & Painting" },
+  { id: "electrical_work", label: "Electrical Work" },
+  { id: "plumbing_services", label: "Plumbing Services" },
+  { id: "demolition", label: "Demolition" },
+  { id: "full_interior_remodeling", label: "Full Interior Remodeling" },
+  { id: "other", label: "Other" },
 ]
 
 const jobsOpen = ref(false)
@@ -208,24 +214,25 @@ async function handleSubmit() {
   success.value = null
 
   if (!isEmailValid(form.email)) {
-    error.value = "Перевірте, будь ласка, правильність пошти."
+    error.value = "Please check that your email is correct."
     return
   }
 
   if (!isPhoneLikelyValid(form.phone)) {
-    error.value = "Перевірте, будь ласка, номер телефону."
+    error.value = "Please check your phone number."
     return
   }
 
   if (!form.jobs.length) {
-    error.value = "Оберіть хоча б один тип робіт."
+    error.value = "Please select at least one service."
     return
   }
 
   for (const jobId of form.jobs) {
     const v = form.areas[jobId]
+
     if (v === null || Number.isNaN(v) || v < 0) {
-      error.value = `Вкажіть площу (м²) для: ${jobLabel(jobId)}`
+      error.value = `Please enter the area (sq ft) for: ${jobLabel(jobId)}`
       return
     }
   }
@@ -247,13 +254,13 @@ async function handleSubmit() {
     })
 
     if (!response.ok) {
-      throw new Error("Не вдалося надіслати форму")
+      throw new Error("Failed to submit the form")
     }
 
     const data = await response.json()
-    console.log("Заявка збережена:", data)
+    console.log("Lead saved:", data)
 
-    success.value = "Дякуємо! Ми зв’яжемось з вами найближчим часом."
+    success.value = "Thank you! We will contact you shortly."
 
     form.lastName = ""
     form.firstName = ""
@@ -265,7 +272,7 @@ async function handleSubmit() {
     jobsOpen.value = false
   } catch (e) {
     console.error(e)
-    error.value = "Не вдалося надіслати форму. Спробуйте ще раз."
+    error.value = "Failed to submit the form. Please try again."
   } finally {
     submitting.value = false
   }
@@ -586,3 +593,4 @@ async function handleSubmit() {
   }
 }
 </style>
+```

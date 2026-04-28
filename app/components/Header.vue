@@ -14,20 +14,20 @@ const openFromClick = (e: MouseEvent) => {
 };
 
 const menu = [
-  { title: "Про нас", link: "/about" },
-  { title: "Портфоліо", link: "/portfilio" },
-  { title: "Каркулятор", link: "/calculator" },
-  { title: "Послуги", link: "/service" },
-  { title: "Прайс", link: "/pricing" },
+  { title: "About us", link: "/about" },
+  { title: "Portfolio", link: "/portfilio" },
+  { title: "Calculator", link: "/calculator" },
+  { title: "Services", link: "/service" },
+  { title: "Pricing", link: "/pricing" },
 ];
 
 const services = [
-  { title: "Кухні", link: "/services/KitchenServise" },
-  { title: "Ванна кімната", link: "/services/bathroom" },
-  { title: "Плитка", link: "/services/tiles" },
-  { title: "Шпаклівка / фарбування", link: "/services/painting" },
-  { title: "Електрика", link: "/services/electric" },
-  { title: "Сантехніка", link: "/services/plumbing" },
+  { title: "Kitchen Service", link: "/services/KitchenServise" },
+  { title: "Bathroom", link: "/services/bathroom" },
+  { title: "Tiles", link: "/services/tiles" },
+  { title: "Spackling / Painting", link: "/services/painting" },
+  { title: "Electrical Work", link: "/services/electric" },
+  { title: "Plumbing", link: "/services/plumbing" },
 ];
 
 const isServicesOpen = ref(false);
@@ -90,7 +90,7 @@ const closeMobileMenu = () => {
             <template v-for="(item, i) in menu" :key="i">
 
               <NuxtLink
-                v-if="item.title !== 'Послуги'"
+                v-if="item.title !== 'Services'"
                 :to="item.link"
                 class="nav-link"
                 @click="closeMobileMenu"

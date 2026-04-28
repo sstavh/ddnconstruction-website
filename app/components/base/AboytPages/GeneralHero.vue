@@ -8,9 +8,11 @@ import Button from "../../ui/Button.vue";
             <div class="general-container__box">
                 <div data-aos="fade-right" order: 2 class="foto-test">IMGS</div>
                 <div class="generel-box">
-                    <h1 class="generel-box__title">Текст слого для <br/>цієї сторінки</h1>
-                    <p class="generel-box__pidtext">текст для доповнненя</p>
-                    <Button text="Button"
+                    <h1 class="generel-box__title">Built with Responsibility.<br/>Delivered with Results.</h1>
+                    <p class="generel-box__pidtext">We specialize in high-quality remodeling and construction, focusing on precision, timelines, and clear communication.
+Every project reflects our reputation — that’s why we handle every detail from concept to completion.
+</p>
+                    <Button text="Get Free Estimate"
   link="/catalog" order: 2 data-aos="fade-up"/>
                 </div>
             </div>
@@ -38,6 +40,11 @@ import Button from "../../ui/Button.vue";
 
 .generel-box{
     margin-top: 90px;
+    width: 760px;
+}
+
+.generel-box__title{
+    font-size: 57px;
 }
 
 .generel-box__pidtext{

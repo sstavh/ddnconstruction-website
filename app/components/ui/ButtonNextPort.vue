@@ -6,7 +6,7 @@ console.log("button Good Work");
 <template>
     <div class="container">
         <button class="button-next">
-            <div>Натискай щоб пореглянути більше!!!</div>
+            <div>Click to see more!!!</div>
             <div class="tt">></div>
         
         </button>

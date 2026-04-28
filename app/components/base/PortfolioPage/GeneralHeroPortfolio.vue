@@ -8,9 +8,10 @@ import Button from "../../ui/Button.vue";
             <div class="general-container__box">
                 <div data-aos="fade-right" order: 2 class="foto-test">IMGS</div>
                 <div class="generel-box">
-                    <h1 class="generel-box__title">Текст слого для <br/>цієї сторінки</h1>
-                    <p class="generel-box__pidtext">текст для доповнненя</p>
-                    <Button ext="Button"
+                    <h1 class="generel-box__title">Our Recent Projects
+</h1>
+                    <p class="generel-box__pidtext">See Our Work in Action</p>
+                    <Button ext="Request a Quote"
   link="/catalog" order: 2 data-aos="fade-up"/>
                 </div>
             </div>

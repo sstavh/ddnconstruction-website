@@ -106,7 +106,7 @@ onMounted(loadPricing)
         </div>
 
         <div v-else class="pricing-panel">
-          <p>Завантаження прайсу...</p>
+          <p>Loading price list...</p>
         </div>
       </div>
     </div>

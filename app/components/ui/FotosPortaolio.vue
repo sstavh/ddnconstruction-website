@@ -26,7 +26,7 @@ type Props = {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  text: 'Наведи або почекай 🙂',
+  text: 'Quality in Every Detail',
   colors: () => ['#6a11cb', '#2575fc', '#00c6ff'],
   cycleSeconds: 9,
   randomMinWaitSeconds: 5,

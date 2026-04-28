@@ -10,9 +10,9 @@ const STACK_X = 150;
 const STACK_Y = 100;
 
 const cards = ref([
-  { id: "c1", title: "Картка 1", text: "Перший блок інформації. Тут може бути опис кроку процесу." },
-  { id: "c2", title: "Картка 2", text: "Другий блок інформації. Текст читається і не зʼїжджає." },
-  { id: "c3", title: "Картка 3", text: "Третій блок інформації. Після появи картки не зникають." },
+  { id: "c1", title: "Consultation & Estimate", text: "We discuss your project, evaluate the scope of work , and provide a clear and accurate estimate." },
+  { id: "c2", title: "Planning & Preparation", text: "We create a detailed work plan, set timelines, and help you select the right materials." },
+  { id: "c3", title: "Build & Final Delivery", text: "We complete your project with precision and deliver a high-quality finished result on time. " },
 ]);
 
 // Звідки “прилітає” кожна картка
@@ -144,7 +144,7 @@ function cardStyle(i: number): CSSProperties {
 
 <template>
   <section ref="sectionEl" class="stackSection" :style="{ height: sectionHeight + 'px' }">
-    <h3 class="our-title">Наш процес</h3>
+    <h3 class="our-title">Our Process</h3>
     <div class="pin">
       <div class="content">
         

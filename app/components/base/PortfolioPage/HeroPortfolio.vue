@@ -7,7 +7,7 @@
             <div class="heroAbaut-container">
                 <div class="heroAbout-container-box">
                     <h1 class="heroAbout-box__title">
-                        <span class="title-text">Прортфоліо</span>
+                        <span class="title-text">Portfolio</span>
                     </h1>
                 </div>
             </div>

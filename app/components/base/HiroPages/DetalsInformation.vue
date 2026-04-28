@@ -11,11 +11,11 @@ import beforeAfter from '~/components/ui/informationBlok/beforeAfter.vue'
 import caruseProgektTest from '~/components/ui/informationBlok/caruseProgektTest.vue'
 
 const slides = [
-  { color: '#ff004c', title: 'Title 1', text: 'Text for slide 1' },
-  { color: '#ffb300', title: 'Title 2', text: 'Text for slide 2' },
-  { color: '#00d084', title: 'Title 3', text: 'Text for slide 3' },
-  { color: '#007bff', title: 'Title 4', text: 'Text for slide 4' },
-  { color: '#7c3aed', title: 'Title 5', text: 'Text for slide 5' }
+  { color: '#ff004c', title: 'Learn More', text: 'We follow the schedule with no delays' },
+  { color: '#ffb300', title: 'Fixed Pricing', text: 'No hidden fees or surprises' },
+  { color: '#00d084', title: 'Quality Control', text: 'Inspection at every stage of the project' },
+  { color: '#007bff', title: 'Experienced Team ', text: 'Our team consists of skilled and trusted professionals' },
+  { color: '#7c3aed', title: 'Modern Materials ', text: 'We use high-quality materials' }
 ]
 
 type Item = {
@@ -83,7 +83,7 @@ onMounted(async () => {
                 :data-aos-easing="item.easing"
                 :data-aos-anchor-placement="item.anchorPlacement || 'top-bottom'"
               >
-                <component :is="item.component" v-bind="item.props" />
+                <component class="re" :is="item.component" v-bind="item.props" />
               </li>
             </ul>
           </div>
@@ -151,13 +151,15 @@ onMounted(async () => {
 
 .group__li {
   display: flex;
+  
   width: 100%;
   height: 100%;
 }
 
 .group__li > * {
+  
   width: 100%;
-  height: 100%;
+height: 350px;
 }
 
 /* FIX COMPONENT SIZE */

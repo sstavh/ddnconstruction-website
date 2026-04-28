@@ -20,7 +20,7 @@
 
     <div v-else-if="step.key === 'rooms'" class="rooms-box">
       <div class="helper-box">
-        Можна вибрати не більше ніж <strong>{{ formData.roomCount }}</strong> кімнат(и).
+        You can choose no more than <strong>{{ formData.roomCount }}</strong> room(s).
       </div>
 
       <div class="rooms-grid">
@@ -70,7 +70,7 @@
         class="field-group"
       >
         <label class="field-group__label">
-          {{ getRoomLabel(room) }} — площа, м²
+          {{ getRoomLabel(room) }} — area, m²
         </label>
 
         <input
@@ -87,7 +87,7 @@
     <div v-else-if="step.key === 'summary'" class="summary-box">
       <div class="receipt-card">
         <div class="receipt-card__row">
-          <span>Кількість кімнат</span>
+          <span>Number of Rooms</span>
           <strong>{{ formData.roomCount }}</strong>
         </div>
 
@@ -98,7 +98,7 @@
         >
           <div class="receipt-room__head">
             <h3>{{ getRoomLabel(room) }}</h3>
-            <span>{{ formData.areasByRoom[room] || 0 }} м²</span>
+            <span>{{ formData.areasByRoom[room] || 0 }} m²</span>
           </div>
 
           <div
@@ -117,13 +117,13 @@
           </div>
 
           <div class="receipt-room__subtotal">
-            <span>Разом по кімнаті</span>
+            <span>Subtotal for Room</span>
             <strong>{{ formatCurrency(getRoomTotal(room)) }}</strong>
           </div>
         </div>
 
         <div class="receipt-total">
-          <span>Загальна сума</span>
+          <span>Grand Total</span>
           <strong>{{ formatCurrency(grandTotal) }}</strong>
         </div>
       </div>

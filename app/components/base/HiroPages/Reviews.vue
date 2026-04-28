@@ -1,12 +1,13 @@
+```vue
 <script lang="ts" setup>
 console.log("good work Reviews");
 
-import { ref, computed } from 'vue';
+import { ref, computed } from "vue";
 
-import ReviewsCompTest from '~/components/ui/ReviewsCompTest.vue';
-import ReviewsButtonTest from '~/components/ui/ReviewsButtonTest.vue';
-import ReviewsFormaTest from '~/components/ui/ReviewsFormaTest.vue';
-import BaseModalTest from '~/components/ui/BaseModalTest.vue';
+import ReviewsCompTest from "~/components/ui/ReviewsCompTest.vue";
+import ReviewsButtonTest from "~/components/ui/ReviewsButtonTest.vue";
+import ReviewsFormaTest from "~/components/ui/ReviewsFormaTest.vue";
+import BaseModalTest from "~/components/ui/BaseModalTest.vue";
 
 type Review = {
   id: number;
@@ -37,12 +38,12 @@ const {
       )
       .map((item: any) => ({
         id: item.id,
-        name: `${item.firstName ?? ''} ${item.lastName ?? ''}`.trim(),
+        name: `${item.firstName ?? ""} ${item.lastName ?? ""}`.trim(),
         rating: Number(item.rating) || 0,
-        text: item.message ?? '',
-        avatarColor: '#3b82f6',
-        // workPhoto видалено
-        workFallbackColor: '#374151',
+        text: item.message ?? "",
+        photo: item.photo ? `${apiUrl}/${item.photo}` : '',
+        avatarColor: "#3b82f6",
+        workFallbackColor: "#374151",
       })),
 });
 
@@ -64,22 +65,27 @@ const refreshReviews = async () => {
     <div class="container">
       <div class="reviews-container__box">
         <div class="reviews-box">
-          <h3 class="reviews-box__title">Відгуки клієнтів</h3>
+          <h3 class="reviews-box__title">Customer Reviews</h3>
 
           <div class="reviews-box__subtitle">
             <div class="box__subtitle">
-              <p class="reviews-box__text">Залишіть свій відгук про нашу роботу.</p>
+              <p class="reviews-box__text">Leave your review about our work</p>
+
               <ReviewsButtonTest @click="openFromClick" />
 
-              <BaseModalTest :open="open" :origin="origin" @close="open = false">
+              <BaseModalTest
+                :open="open"
+                :origin="origin"
+                @close="open = false"
+              >
                 <ReviewsFormaTest @submitted="refreshReviews" />
               </BaseModalTest>
             </div>
 
             <div class="reviews-status">
-              <p v-if="loading">Завантаження відгуків...</p>
-              <p v-else-if="loadError">Не вдалося завантажити відгуки.</p>
-              <p v-else>Відгуків: {{ reviews.length }}</p>
+              <p v-if="loading">Loading reviews...</p>
+              <p v-else-if="loadError">Failed to load reviews.</p>
+              <p v-else>Reviews: {{ reviews.length }}</p>
             </div>
 
             <ReviewsCompTest
@@ -123,6 +129,12 @@ const refreshReviews = async () => {
   margin-left: 28%;
 }
 
+.reviews-status {
+  font-size: 20px;
+  color: #fff;
+  margin-bottom: 20px;
+}
+
 @media (max-width: 430px) {
   .reviews-box__text {
     margin-top: 25px;
@@ -133,5 +145,10 @@ const refreshReviews = async () => {
   .box__subtitle {
     display: block;
   }
+
+  .reviews-status {
+    font-size: 18px;
+  }
 }
 </style>
+```

@@ -3,12 +3,12 @@
 
     <div class="contactList">
       <a class="contactItem" :href="`tel:${phoneHref}`">
-        <div class="label">Телефон</div>
+        <div class="label">Phone</div>
         <div class="value">{{ phone }}</div>
       </a>
 
       <a class="contactItem" :href="`mailto:${email}`">
-        <div class="label">Пошта</div>
+        <div class="label">Email</div>
         <div class="value">{{ email }}</div>
       </a>
     </div>
@@ -32,15 +32,15 @@
 </template>
 
 <script setup lang="ts">
-const phone = "+380 67 123 45 67"
-const email = "info@example.com"
+const phone = "+12242620179"
+const email = "ddnconstruction1111@gmail.com "
 
 const phoneHref = phone.replace(/[^\d+]/g, "")
 
 const socials = {
-  telegram: "https://t.me/your_username",
-  instagram: "https://instagram.com/your_username",
-  facebook: "https://facebook.com/your_page"
+  telegram: "https://www.tiktok.com/@d.d.n.constructio?_r=1&_t=ZT-95nHH5TDC5W",
+  instagram: "https://www.instagram.com/ddn_construction?igsh=YWpoaWVyYXNsM2Fr",
+  facebook: "https://www.facebook.com/share/16ZGGCHJrW/?mibextid=wwXIfr"
 }
 </script>
 
