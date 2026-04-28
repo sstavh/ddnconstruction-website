@@ -4,92 +4,310 @@ import PortofolioSec from '../../components/base/HiroPages/PortofolioSec.vue';
 import BeforAfterSecContainer from '../../components/ui/DetalsServisesComponents/beforAfterSecContainer.vue';
 import InformationCards from '../../components/ui/DetalsServisesComponents/Information-Cards.vue';
 import TextTeclolojig from '../../components/ui/DetalsServisesComponents/textTeclolojig.vue';
+import PromoCard from '../../components/ui/ServisesComponents/PromoCard.vue';
+import BeforeAfter from '../../components/ui/informationBlok/beforeAfter.vue';
+import TextBlok from '../../components/ui/informationBlok/TextBlok.vue';
+import { ref, onMounted } from 'vue';
+import { imgUrl, fetchSection } from '~/composables/useApi';
 
-const cards = [
-  {
-    logo: "/logo.png",
-    title: "Назва блоку",
-    description: "Хмарка тепер завжди буде видима всередині блоку.",
-    colors: ['#3b82f6', '#8b5cf6', '#22c55e'],
-    blockColor: "#111827"
-  },
-  {
-    logo: "/logo.png",
-    title: "Назва блоку",
-    description: "Хмарка тепер завжди буде видима всередині блоку.",
-    colors: ['#3b82f6', '#8b5cf6', '#22c55e'],
-    blockColor: "#111827"
-  },
-  {
-    logo: "/logo.png",
-    title: "Назва блоку",
-    description: "Хмарка тепер завжди буде видима всередині блоку.",
-    colors: ['#3b82f6', '#8b5cf6', '#22c55e'],
-    blockColor: "#111827"
-  },
-  {
-    logo: "/logo.png",
-    title: "Назва блоку",
-    description: "Хмарка тепер завжди буде видима всередині блоку.",
-    colors: ['#3b82f6', '#8b5cf6', '#22c55e'],
-    blockColor: "#111827"
-  },
-  {
-    logo: "/logo.png",
-    title: "Назва блоку",
-    description: "Хмарка тепер завжди буде видима всередині блоку.",
-    colors: ['#3b82f6', '#8b5cf6', '#22c55e'],
-    blockColor: "#111827"
-  },
-  {
-    logo: "/logo.png",
-    title: "Назва блоку",
-    description: "Хмарка тепер завжди буде видима всередині блоку.",
-    colors: ['#3b82f6', '#8b5cf6', '#22c55e'],
-    blockColor: "#111827"
-  }
+// ─── InformationCards per service ─────────────────────────────────────────────
+const kitchenCards = [
+  { logo: "/logo.png", title: "Design Planning", description: "Custom kitchen layout design tailored to your space and lifestyle.", colors: ['#3b82f6', '#8b5cf6', '#22c55e'], blockColor: "#111827" },
+  { logo: "/logo.png", title: "Cabinet Installation", description: "Premium cabinets installed with precision and care.", colors: ['#f97316', '#eab308', '#22c55e'], blockColor: "#111827" },
+  { logo: "/logo.png", title: "Countertops", description: "Stone, quartz, and laminate countertop options to fit your budget.", colors: ['#06b6d4', '#3b82f6', '#8b5cf6'], blockColor: "#111827" },
+  { logo: "/logo.png", title: "Appliance Integration", description: "Seamless integration of appliances into your new kitchen layout.", colors: ['#ec4899', '#f97316', '#eab308'], blockColor: "#111827" },
+  { logo: "/logo.png", title: "Lighting & Electrical", description: "Under-cabinet lighting, pendants, and full electrical work.", colors: ['#10b981', '#06b6d4', '#3b82f6'], blockColor: "#111827" },
+  { logo: "/logo.png", title: "Final Finishing", description: "Backsplash, trim, and final touches that complete your kitchen.", colors: ['#8b5cf6', '#ec4899', '#f97316'], blockColor: "#111827" },
 ];
 
-const blocks = [
+// ─── Before/After blocks (3) ────────────────────────────────────────────────
+const beforeAfterBlocks1 = [
+  { leftColor: '#22c55e', rightColor: '#3b82f6' },
+  { leftColor: '#f97316', rightColor: '#6366f1' },
+  { leftColor: '#10b981', rightColor: '#ef4444' },
+];
+
+const beforeAfterBlocks2 = [
+  { leftColor: '#8b5cf6', rightColor: '#f59e0b' },
+  { leftColor: '#06b6d4', rightColor: '#ec4899' },
+  { leftColor: '#14b8a6', rightColor: '#f97316' },
+];
+
+const beforeAfterBlocks3 = [
+  { leftColor: '#3b82f6', rightColor: '#10b981' },
+  { leftColor: '#ef4444', rightColor: '#6366f1' },
+  { leftColor: '#eab308', rightColor: '#8b5cf6' },
+];
+
+// ─── CollectedServises-like blocks (6 services) ────────────────────────────
+const serviceBlocks = [
   {
-    leftColor: '#22c55e',
-    rightColor: '#3b82f6'
+    title: "Kitchen Service",
+    link: "/services/KitchenServise",
+    text: "Complete kitchen remodeling from design to final installation.",
+    section: "kitchen",
   },
   {
-    leftColor: '#f97316',
-    rightColor: '#6366f1'
+    title: "Bathroom",
+    link: "/services/bathroom",
+    text: "Modern bathroom renovations with premium tile and fixture work.",
+    section: "bathroom",
   },
   {
-    leftColor: '#10b981',
-    rightColor: '#ef4444'
+    title: "Tiles",
+    link: "/services/tiles",
+    text: "Expert tile installation for floors, walls, and backsplashes.",
+    section: "tiles",
   },
-  
-]
+  {
+    title: "Spackling / Painting",
+    link: "/services/painting",
+    text: "Smooth wall preparation and professional interior/exterior painting.",
+    section: "painting",
+  },
+  {
+    title: "Electrical Work",
+    link: "/services/electric",
+    text: "Safe, code-compliant electrical installation and upgrades.",
+    section: "electric",
+  },
+  {
+    title: "Plumbing",
+    link: "/services/plumbing",
+    text: "Reliable plumbing for kitchens, bathrooms, and full-home systems.",
+    section: "plumbing",
+  },
+];
+
+// ─── Service block images ───────────────────────────────────────────────────
+const serviceImgs = ref<Record<string, string[]>>({});
+
+onMounted(async () => {
+  for (const block of serviceBlocks) {
+    try {
+      const data = await fetchSection(block.section);
+      if (Array.isArray(data)) {
+        serviceImgs.value[block.section] = data.map((item: any) => imgUrl(item.imageUrl));
+      }
+    } catch (e) {}
+  }
+});
+
+function getImg(section: string, index: number): string {
+  return serviceImgs.value[section]?.[index] || '';
+}
 </script>
 
 <template>
+  <!-- ── Hero ─────────────────────────────────────────────────────────────── -->
   <HeroSECComponent
-    title="Кухні"
+    title="Kitchen Service"
     buttonText="Переглянути каталог"
     buttonLink="/catalog"
     section="kitchen"
   />
 
-  <InformationCards :cards="cards"/>
+  <!-- ── Information Cards ─────────────────────────────────────────────────── -->
+  <InformationCards :cards="kitchenCards"/>
+
+  <!-- ── Technology text ──────────────────────────────────────────────────── -->
   <TextTeclolojig
-title="Наші технології"
-text="Новий текст який буде відображатисьоровррвошщфраграшгіотаі аігшаніаолі а цгнапе на цна цац ащц а9шг ора ріапі аеіп аігра іао арміма. ащі азіщд лоіра ф ш фн фшщг щфвофв фщвв ге амри фшщв 8ф9ш 9в 0цв фов фвлф в фвфв фшлво фзщвш9щв 9фгвфв фв фвамв вв ф87в вци у0й уйу й муй йуй у98нйу7г йц87уе йцру йшгнуп н йгп"
-/>
+    title="Наші технології"
+    text="Ми використовуємо сучасні матеріали та обладнання для забезпечення найвищої якості кожного проекту. Від планування до фінального результату — кожен крок продуманий."
+  />
 
-<BeforAfterSecContainer
-title="Технології"
-:items="blocks"/>
+  <!-- ── Before/After #1 ──────────────────────────────────────────────────── -->
+  <BeforAfterSecContainer
+    title="Before & After — Кухні"
+    :items="beforeAfterBlocks1"
+  />
 
-<PortofolioSec class="tt"/>
+  <!-- ── Before/After #2 ──────────────────────────────────────────────────── -->
+  <BeforAfterSecContainer
+    title="Before & After — Деталі"
+    :items="beforeAfterBlocks2"
+  />
+
+  <!-- ── Before/After #3 ──────────────────────────────────────────────────── -->
+  <BeforAfterSecContainer
+    title="Before & After — Результат"
+    :items="beforeAfterBlocks3"
+  />
+
+  <!-- ── 6 Service blocks ──────────────────────────────────────────────────── -->
+  <section class="services-overview">
+    <div class="container">
+      <h2 class="services-overview__title">Всі наші послуги</h2>
+
+      <div
+        v-for="block in serviceBlocks"
+        :key="block.section"
+        class="service-block"
+      >
+        <h3 class="service-block__title">{{ block.title }}</h3>
+
+        <div class="service-block__grid">
+          <PromoCard
+            data-aos="fade-up"
+            logo="/logo.png"
+            width="292.5px"
+            height="400px"
+            :bg-image="getImg(block.section, 0)"
+            :link="block.link"
+            :button-text="block.title"
+          />
+
+          <div class="before-after-wrap" data-aos="fade-up">
+            <p class="before-after-label">Before / After</p>
+            <BeforeAfter
+              class="ba-card"
+              :left-color="'#22c55e'"
+              :right-color="'#3b82f6'"
+            />
+          </div>
+
+          <PromoCard
+            data-aos="fade-up"
+            logo="/logo.png"
+            width="292.5px"
+            height="400px"
+            :bg-image="getImg(block.section, 1)"
+            :link="block.link"
+            :button-text="block.title"
+          />
+
+          <PromoCard
+            data-aos="fade-up"
+            logo="/logo.png"
+            width="380px"
+            height="370px"
+            :bg-image="getImg(block.section, 2)"
+            :link="block.link"
+            :button-text="block.title"
+          />
+
+          <PromoCard
+            data-aos="fade-up"
+            logo="/logo.png"
+            width="370px"
+            height="370px"
+            :bg-image="getImg(block.section, 3)"
+            :link="block.link"
+            :button-text="block.title"
+          />
+
+          <TextBlok
+            class="service-text-blok"
+            data-aos="fade-up"
+            :text="block.text"
+          />
+
+          <PromoCard
+            data-aos="fade-up"
+            logo="/logo.png"
+            width="575px"
+            height="450px"
+            :bg-image="getImg(block.section, 4)"
+            :link="block.link"
+            :button-text="block.title"
+          />
+
+          <PromoCard
+            data-aos="fade-up"
+            logo="/logo.png"
+            width="575px"
+            height="450px"
+            :bg-image="getImg(block.section, 5)"
+            :link="block.link"
+            :button-text="block.title"
+          />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Portfolio Section ─────────────────────────────────────────────────── -->
+  <PortofolioSec class="tt"/>
 </template>
 
 <style scoped>
-.tt{
+.tt {
   margin-bottom: 70px;
+}
+
+/* Services Overview */
+.services-overview {
+  margin-top: 80px;
+}
+
+.services-overview__title {
+  text-align: center;
+  margin-bottom: 60px;
+  font-size: 32px;
+}
+
+.service-block {
+  margin-bottom: 80px;
+}
+
+.service-block__title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  padding-left: 8px;
+  border-left: 4px solid var(--color-praymeri-blue, #3b82f6);
+}
+
+.service-block__grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+}
+
+.before-after-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.before-after-label {
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-praymeri-blekText, #555);
+}
+
+.ba-card {
+  width: 530px;
+  height: 400px;
+}
+
+.service-text-blok {
+  width: 370px;
+  height: 370px;
+}
+
+@media (max-width: 1024px) {
+  .service-block__grid > * {
+    width: 100% !important;
+  }
+  .ba-card {
+    width: 100%;
+  }
+  .service-text-blok {
+    width: 100%;
+  }
+}
+
+@media (max-width: 430px) {
+  .services-overview__title {
+    font-size: 24px;
+  }
+  .service-block__title {
+    font-size: 20px;
+  }
 }
 </style>

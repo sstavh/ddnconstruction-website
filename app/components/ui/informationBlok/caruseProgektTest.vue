@@ -24,6 +24,17 @@
       <h4 class="title">{{ displayItem.title }}</h4>
       <p class="text">{{ displayItem.text }}</p>
     </div>
+
+    <!-- dots навігація -->
+    <div class="dots">
+      <span
+        v-for="(_, i) in allSlides"
+        :key="i"
+        class="dot"
+        :class="{ active: i === index }"
+        @click="goTo(i)"
+      ></span>
+    </div>
   </section>
 </template>
 
@@ -81,6 +92,11 @@ function startWipe() {
   if (isAnimating.value || allSlides.value.length < 2) return
   isAnimating.value = true
   wipeKey.value++
+}
+
+function goTo(i: number) {
+  if (isAnimating.value || i === index.value) return
+  index.value = i
 }
 
 function onWipeEnd() {
@@ -175,6 +191,32 @@ onBeforeUnmount(() => {
   margin: 0;
   font-size: 15px;
   line-height: 1.5;
+}
+
+/* dots */
+.dots {
+  position: absolute;
+  bottom: 14px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  z-index: 2;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.5);
+  cursor: pointer;
+  transition: background 0.25s, transform 0.25s;
+}
+
+.dot.active {
+  background: white;
+  transform: scale(1.3);
 }
 
 @media (prefers-reduced-motion: reduce) {

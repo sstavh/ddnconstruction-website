@@ -34,63 +34,66 @@ onMounted(fetchImages)
                 <div class="collected-box">
 
                      <PromoCard class="aa"
-                     data-aos="fade-up" order:1
+                     data-aos="fade-up"
                       logo="/logos/spotify.svg"
                       width="292.5px"
                       height="400px"
                       :bg-image="img(0)"
-                      link="/music"
-                      button-text="Перейти"
+                      link="/services/KitchenServise"
+                      button-text="Kitchen Service"
                     />
-                    <BeforeAfter data-aos="fade-up" order:1 class="ttt"/>
+                    <div class="before-after-wrap" data-aos="fade-up">
+                      <p class="before-after-label">Before / After</p>
+                      <BeforeAfter class="ttt" left-section="beforeAfterLeft" right-section="beforeAfterRight"/>
+                    </div>
                     <PromoCard
-                    data-aos="fade-up" order:1
+                    data-aos="fade-up"
                       logo="/logos/spotify.svg"
                       width="292.5px"
                       height="400px"
                       :bg-image="img(1)"
-                      link="/music"
-                      button-text="Перейти"
+                      link="/services/bathroom"
+                      button-text="Bathroom"
                     />
                     <PromoCard
-                    data-aos="fade-up" order:2
+                    data-aos="fade-up"
                       logo="/logos/spotify.svg"
                       width="380px"
                       height="370px"
                       :bg-image="img(2)"
-                      link="/music"
-                      button-text="Перейти"
+                      link="/services/tiles"
+                      button-text="Tiles"
                     />
                     <PromoCard
-                     data-aos="fade-up" order:2
+                     data-aos="fade-up"
                       logo="/logos/spotify.svg"
                       width="370px"
                       height="370px"
                       :bg-image="img(3)"
-                      link="/music"
-                      button-text="Перейти"
+                      link="/services/painting"
+                      button-text="Spackling / Painting"
                     />
                     <TextBlok class="ttt-text"
-                     data-aos="fade-up" order:2
-                        text="Це текст із головного файлу. Тут ти можеш писати будь-який опис для інформаційного блока."
+                     data-aos="fade-up"
+                        text="Вибирай сервіс який тобі потрібен. Ми пропонуємо повний спектр ремонтних і будівельних послуг — від кухні до електрики."
                       />
                       <PromoCard
-                       data-aos="fade-up" order:3
+                       data-aos="fade-up"
                       logo="/logos/spotify.svg"
                       width="575px"
                       height="450px"
                       :bg-image="img(4)"
-                      link="/music"
-                      button-text="Перейти"
+                      link="/services/electric"
+                      button-text="Electrical Work"
                     />
                     <PromoCard
-                     data-aos="fade-up" order:3
+                     data-aos="fade-up"
                       logo="/logos/spotify.svg"
                       width="575px"
                       height="450px"
                       :bg-image="img(5)"
-                      link="/music"
-                      button-text="Перейти"
+                      link="/services/plumbing"
+                      button-text="Plumbing"
                     />
 
                 </div>
@@ -120,6 +123,21 @@ onMounted(fetchImages)
 }
 
 /* великі кастомні блоки */
+.before-after-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.before-after-label {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-praymeri-blekText, #555);
+}
+
 .ttt{
     width: 530px;
     height: 400px;

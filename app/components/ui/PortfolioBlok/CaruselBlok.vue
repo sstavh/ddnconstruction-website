@@ -3,7 +3,8 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
 type Slide = {
   id: number | string;
-  color: string;
+  color?: string;
+  imageUrl?: string;
   title: string;
   subtitle: string;
 };
@@ -167,7 +168,9 @@ onBeforeUnmount(() => {
 
         <!-- clone left -->
         <div v-if="leftClone" class="card">
-          <div class="cardInner" :style="{ background: leftClone.color }">
+          <div class="cardInner" :style="leftClone.imageUrl
+            ? { backgroundImage: `url(${leftClone.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+            : { background: leftClone.color || '#333' }">
             <div class="overlay">
               <h3>{{ leftClone.title }}</h3>
               <p>{{ leftClone.subtitle }}</p>
@@ -177,8 +180,10 @@ onBeforeUnmount(() => {
 
         <!-- items -->
         <div v-for="s in items" :key="s.id" class="card">
-          <div class="cardInner" :style="{ background: s.color }">
-            <div class="overlay">
+          <div class="cardInner" :style="s.imageUrl
+            ? { backgroundImage: `url(${s.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+            : { background: s.color || '#333' }">
+            <div class="overlay always-visible">
               <h3>{{ s.title }}</h3>
               <p>{{ s.subtitle }}</p>
             </div>
@@ -187,7 +192,9 @@ onBeforeUnmount(() => {
 
         <!-- clone right -->
         <div v-if="rightClone" class="card">
-          <div class="cardInner" :style="{ background: rightClone.color }">
+          <div class="cardInner" :style="rightClone.imageUrl
+            ? { backgroundImage: `url(${rightClone.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+            : { background: rightClone.color || '#333' }">
             <div class="overlay">
               <h3>{{ rightClone.title }}</h3>
               <p>{{ rightClone.subtitle }}</p>
@@ -250,6 +257,11 @@ onBeforeUnmount(() => {
 .cardInner:hover .overlay {
   opacity: 1;
   background: rgba(0,0,0,0.4);
+}
+
+.overlay.always-visible {
+  opacity: 1;
+  background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 60%);
 }
 
 /* NAV */

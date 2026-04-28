@@ -315,7 +315,7 @@ function getServiceCalculationText(roomValue: string, serviceId: string) {
     return `${service.price}$/м² × ${area} м²`
   }
 
-  return `Фіксована ціна: ${service.price}$`
+  return `Фіксована ціна: ${service.price}$`//////////////////////////////////////
 }
 
 function formatPriceLabel(service: ServiceItem) {

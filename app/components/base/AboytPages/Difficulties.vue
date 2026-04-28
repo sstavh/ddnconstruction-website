@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
-import { imgUrl, fetchSection } from '~/composables/useApi'
+import { imgUrl } from '~/composables/useApi'
 
 const backgroundImage = ref('')
 const defaultBg = '/images/about/difficulties.jpg'
+const workerImages = ref(['', '', ''])
 
 async function fetchBackground() {
   try {
@@ -20,8 +21,25 @@ async function fetchBackground() {
   }
 }
 
+async function fetchWorkerImage(slot: number, section: string) {
+  try {
+    const response = await fetch(`http://localhost:3001/section-images/section/${section}`)
+    const data = await response.json()
+    if (data && data.length > 0) {
+      workerImages.value[slot] = imgUrl(data[0].imageUrl)
+    }
+  } catch (error) {
+    console.error(`Error fetching worker image ${slot}:`, error)
+  }
+}
+
 onMounted(async () => {
-  await fetchBackground()
+  await Promise.all([
+    fetchBackground(),
+    fetchWorkerImage(0, 'difficulties1'),
+    fetchWorkerImage(1, 'difficulties2'),
+    fetchWorkerImage(2, 'difficulties3'),
+  ])
 })
 </script>
 
@@ -35,18 +53,27 @@ onMounted(async () => {
                     <p class="diffic-box__pidtext">текст досить опширний і з хороши змістом і роботою агігаішгапінанімаіпам іп гапінап іап інамііма вшф8нвф98 вфва фвфв вф8 вшрвгфрв фрв ф8вн фвнрв гшфрвгшвфшгвфгв фав фнвп гірв ф78вф98в ф98вфврфв мимфрпвф </p>
 
                     <ul class="diffic-box__ul">
-                        <li data-aos="fade-right" order: 2 class="diffic-ul__li">
-                            <div class="test-img"></div>
+                        <li data-aos="fade-right" class="diffic-ul__li">
+                            <div
+                              class="test-img"
+                              :style="workerImages[0] ? { backgroundImage: `url(${workerImages[0]})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}"
+                            ></div>
                             <h4>Імя прізвище</h4>
                             <p class="diffic-li-text">коротка спіціальність</p>
                         </li>
-                        <li data-aos="fade-up" order: 3 class="diffic-ul__li">
-                            <div class="test-img"></div>
+                        <li data-aos="fade-up" class="diffic-ul__li">
+                            <div
+                              class="test-img"
+                              :style="workerImages[1] ? { backgroundImage: `url(${workerImages[1]})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}"
+                            ></div>
                             <h4>Імя Прізвище</h4>
                             <p class="diffic-li-text">коротка спіціальність</p>
                         </li>
-                        <li data-aos="fade-down" order: 2 class="diffic-ul__li tt">
-                            <div class="test-img"></div>
+                        <li data-aos="fade-down" class="diffic-ul__li tt">
+                            <div
+                              class="test-img"
+                              :style="workerImages[2] ? { backgroundImage: `url(${workerImages[2]})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}"
+                            ></div>
                             <h4>Імя прізвище</h4>
                             <p class="diffic-li-text">коротка спіціальність</p>
                         </li>
@@ -71,7 +98,7 @@ section {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.9);
+    
     z-index: 1;
 }
 

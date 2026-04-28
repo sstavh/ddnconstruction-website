@@ -1,17 +1,30 @@
 <template>
   <div class="foto-admin">
-    <div class="container">
-      <h1 class="admin-title">Управління фото секцій</h1>
+    <div class="fa-wrap">
+      <h1 class="admin-title">
+        <span class="admin-title__icon">🖼</span>
+        Управління фото секцій
+      </h1>
+
+      <!-- Header Logo indicator -->
+      <div class="header-logo-info">
+        <ButtonBlef text="Логотип у шапці (Header Logo)" />
+        <p class="header-logo-hint">Секція <strong>headerLogo</strong> — це логотип у верхній частині сайту (header).</p>
+      </div>
 
       <!-- Форма додавання/редагування -->
       <div class="form-box">
-        <h2>{{ editingId ? 'Редагувати фото' : 'Додати нове фото' }}</h2>
+        <h2 class="form-box__title">
+          <span class="form-box__dot"></span>
+          {{ editingId ? 'Редагувати фото' : 'Додати нове фото' }}
+        </h2>
 
         <div class="form-group">
           <label>Секція:</label>
           <select v-model="form.section" required>
             <option value="">Оберіть секцію</option>
             <optgroup label="--- Головна ---">
+              <option value="headerLogo">🔷 Header Logo (логотип у шапці)</option>
               <option value="hero">Hero (Головна)</option>
               <option value="ourProcess">Our Process (фон)</option>
               <option value="ourProcess1">Our Process - Картка 1</option>
@@ -21,8 +34,12 @@
             <optgroup label="--- About ---">
               <option value="about">About Hero</option>
               <option value="generalHero">General Hero (About)</option>
+              <option value="generalHeroSide">General Hero - Фото поруч з текстом</option>
               <option value="history">History Work</option>
-              <option value="difficulties">Difficulties</option>
+              <option value="difficulties">Difficulties (фон)</option>
+              <option value="difficulties1">👷 Працівник 1 (Difficulties)</option>
+              <option value="difficulties2">👷 Працівник 2 (Difficulties)</option>
+              <option value="difficulties3">👷 Працівник 3 (Difficulties)</option>
             </optgroup>
             <optgroup label="--- Portfolio ---">
               <option value="portfolio">Portfolio Hero</option>
@@ -35,6 +52,11 @@
               <option value="services">Services Hero</option>
               <option value="collectedServices">Collected Services (картки)</option>
               <option value="kitchen">Kitchen Service</option>
+              <option value="bathroom">Bathroom Service</option>
+              <option value="tiles">Tiles Service</option>
+              <option value="painting">Spackling / Painting Service</option>
+              <option value="electric">Electrical Work Service</option>
+              <option value="plumbing">Plumbing Service</option>
             </optgroup>
             <optgroup label="--- Інформаційний блок (DetalsInformation) ---">
               <option value="fotoImgTest">Foto Img Test</option>
@@ -112,7 +134,10 @@
       <!-- Список фото по секціях -->
       <div class="sections-list">
         <div v-for="section in sections" :key="section.name" class="section-block">
-          <h3 class="section-title">{{ section.label }}</h3>
+          <h3 class="section-title">
+            <span class="section-title__bar"></span>
+            {{ section.label }}
+          </h3>
 
           <div v-if="imagesBySection[section.name]?.length" class="images-grid">
             <div
@@ -123,6 +148,7 @@
             >
               <div class="image-preview">
                 <img :src="`http://localhost:3001/${img.imageUrl}`" :alt="img.title || 'Image'" />
+                <span v-if="!img.isActive" class="inactive-badge">Неактивне</span>
               </div>
               <div class="image-info">
                 <p class="image-title">{{ img.title || 'Без назви' }}</p>
@@ -130,8 +156,8 @@
                 <p class="image-order">Порядок: {{ img.order }}</p>
               </div>
               <div class="image-actions">
-                <button @click="editImage(img)" class="btn-edit">Редагувати</button>
-                <button @click="deleteImage(img.id)" class="btn-delete">Видалити</button>
+                <button @click="editImage(img)" class="btn-edit">✏️ Редагувати</button>
+                <button @click="deleteImage(img.id)" class="btn-delete">🗑 Видалити</button>
               </div>
             </div>
           </div>
@@ -142,9 +168,13 @@
   </div>
 </template>
 
+
 <script>
+import ButtonBlef from '../components/ui/ButtonBlef.vue'
+
 export default {
   name: 'fotoAdm',
+  components: { ButtonBlef },
   data() {
     return {
       images: [],
@@ -162,6 +192,7 @@ export default {
         currentImageUrl: '',
       },
       sections: [
+        { name: 'headerLogo', label: '🔷 Header Logo (логотип у шапці)' },
         { name: 'hero', label: 'Hero (Головна)' },
         { name: 'ourProcess', label: 'Our Process (фон)' },
         { name: 'ourProcess1', label: 'Our Process - Картка 1' },
@@ -169,8 +200,12 @@ export default {
         { name: 'ourProcess3', label: 'Our Process - Картка 3' },
         { name: 'about', label: 'About Hero' },
         { name: 'generalHero', label: 'General Hero (About)' },
+        { name: 'generalHeroSide', label: 'General Hero - Фото поруч з текстом' },
         { name: 'history', label: 'History Work' },
-        { name: 'difficulties', label: 'Difficulties' },
+        { name: 'difficulties', label: 'Difficulties (фон)' },
+        { name: 'difficulties1', label: '👷 Працівник 1 (Difficulties)' },
+        { name: 'difficulties2', label: '👷 Працівник 2 (Difficulties)' },
+        { name: 'difficulties3', label: '👷 Працівник 3 (Difficulties)' },
         { name: 'portfolio', label: 'Portfolio Hero' },
         { name: 'generalHeroPortfolio', label: 'General Hero Portfolio' },
         { name: 'portfolioSec1', label: 'Portfolio Sec - Картка 1' },
@@ -179,6 +214,11 @@ export default {
         { name: 'services', label: 'Services Hero' },
         { name: 'collectedServices', label: 'Collected Services (картки)' },
         { name: 'kitchen', label: 'Kitchen Service' },
+        { name: 'bathroom', label: 'Bathroom Service' },
+        { name: 'tiles', label: 'Tiles Service' },
+        { name: 'painting', label: 'Spackling / Painting Service' },
+        { name: 'electric', label: 'Electrical Work Service' },
+        { name: 'plumbing', label: 'Plumbing Service' },
         { name: 'fotoImgTest', label: 'Foto Img Test' },
         { name: 'infoportfolio', label: 'Portfolio картка (DetalsInfo)' },
         { name: 'carousel', label: 'Carousel (слайдер)' },
@@ -328,35 +368,101 @@ export default {
 </script>
 
 <style scoped>
+/* ══════════════════════════════════════════
+   BASE
+══════════════════════════════════════════ */
 .foto-admin {
-  padding: 40px 20px;
   min-height: 100vh;
-  background: #f0f2f5;
+  background: #0f172a;
+  color: #e2e8f0;
+  padding: 0 0 80px;
 }
 
+.fa-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 24px 0;
+}
+
+/* ══════════════════════════════════════════
+   TITLE
+══════════════════════════════════════════ */
 .admin-title {
-  text-align: center;
-  margin-bottom: 40px;
-  color: #1e3a8a;
-  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  font-size: 30px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 36px;
+  letter-spacing: -0.3px;
 }
 
-.form-box {
-  background: white;
-  padding: 32px;
+.admin-title__icon {
+  font-size: 32px;
+}
+
+/* ══════════════════════════════════════════
+   HEADER LOGO INFO
+══════════════════════════════════════════ */
+.header-logo-info {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: rgba(37, 99, 235, 0.12);
+  border: 1.5px solid rgba(59, 130, 246, 0.4);
   border-radius: 16px;
-  margin-bottom: 40px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 18px 24px;
+  margin-bottom: 36px;
 }
 
-.form-box h2 {
-  margin-bottom: 24px;
-  color: #111;
+.header-logo-hint {
+  font-size: 14px;
+  color: #93c5fd;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.header-logo-hint strong {
+  color: #60a5fa;
+}
+
+/* ══════════════════════════════════════════
+   FORM BOX
+══════════════════════════════════════════ */
+.form-box {
+  background: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 24px;
+  padding: 36px;
+  margin-bottom: 48px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+}
+
+.form-box__title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
   font-size: 20px;
+  font-weight: 700;
+  color: #f1f5f9;
+  margin-bottom: 28px;
 }
 
+.form-box__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #3b82f6;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════
+   FORM FIELDS
+══════════════════════════════════════════ */
 .form-group {
-  margin-bottom: 20px;
+  margin-bottom: 22px;
 }
 
 .form-row {
@@ -373,8 +479,10 @@ export default {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: #374151;
-  font-size: 14px;
+  color: #94a3b8;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .form-group input[type="text"],
@@ -382,11 +490,13 @@ export default {
 .form-group select,
 .form-group textarea {
   width: 100%;
-  padding: 12px 14px;
-  border: 1.5px solid #d1d5db;
-  border-radius: 10px;
+  padding: 12px 16px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 12px;
   font-size: 14px;
-  transition: border-color 0.2s;
+  background: #111827;
+  color: #f1f5f9;
+  transition: border-color 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
 }
 
@@ -395,29 +505,48 @@ export default {
 .form-group textarea:focus {
   outline: none;
   border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.form-group select option,
+.form-group select optgroup {
+  background: #1e293b;
+  color: #e2e8f0;
 }
 
 .form-group textarea {
-  min-height: 80px;
+  min-height: 90px;
   resize: vertical;
 }
 
 .form-group.checkbox label {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding-top: 8px;
+  gap: 10px;
+  padding-top: 10px;
   cursor: pointer;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 14px;
+  color: #cbd5e1;
 }
 
-/* === Upload Area === */
+.form-group.checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  accent-color: #3b82f6;
+}
+
+/* ══════════════════════════════════════════
+   UPLOAD AREA
+══════════════════════════════════════════ */
 .file-input-hidden {
   display: none;
 }
 
 .upload-area {
-  border: 2px dashed #cbd5e1;
-  border-radius: 14px;
+  border: 2px dashed rgba(100, 116, 139, 0.4);
+  border-radius: 16px;
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s;
   overflow: hidden;
@@ -425,33 +554,36 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(30, 41, 59, 0.5);
 }
 
 .upload-area:hover {
   border-color: #3b82f6;
-  background: #f0f7ff;
+  background: rgba(59, 130, 246, 0.07);
 }
 
 .upload-placeholder {
   text-align: center;
   padding: 30px 20px;
-  color: #6b7280;
+  color: #64748b;
 }
 
 .upload-icon {
-  font-size: 40px;
+  font-size: 44px;
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
 }
 
 .upload-placeholder p {
   margin: 4px 0;
   font-size: 14px;
+  color: #94a3b8;
 }
 
 .upload-hint {
-  color: #9ca3af;
+  color: #64748b !important;
   font-size: 12px !important;
+  margin-top: 6px !important;
 }
 
 .upload-preview {
@@ -470,17 +602,18 @@ export default {
   position: absolute;
   top: 10px;
   right: 10px;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.65);
   color: white;
   border: none;
   border-radius: 50%;
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   font-size: 14px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: background 0.2s;
 }
 
 .remove-photo:hover {
@@ -488,12 +621,12 @@ export default {
 }
 
 .current-photo {
-  margin-top: 12px;
+  margin-top: 14px;
 }
 
 .current-label {
   font-size: 13px;
-  color: #6b7280;
+  color: #64748b;
   margin-bottom: 6px;
 }
 
@@ -501,170 +634,241 @@ export default {
   width: 100%;
   max-height: 160px;
   object-fit: cover;
-  border-radius: 8px;
-  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.2);
 }
 
 .current-hint {
   font-size: 12px;
-  color: #9ca3af;
-  margin-top: 4px;
+  color: #475569;
+  margin-top: 5px;
 }
 
+/* ══════════════════════════════════════════
+   ERROR
+══════════════════════════════════════════ */
 .upload-error {
-  color: #ef4444;
+  color: #fca5a5;
   font-size: 13px;
-  margin-bottom: 12px;
-  background: #fef2f2;
-  padding: 8px 12px;
-  border-radius: 8px;
+  margin-bottom: 14px;
+  background: rgba(239, 68, 68, 0.12);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  padding: 10px 14px;
+  border-radius: 10px;
 }
 
+/* ══════════════════════════════════════════
+   FORM ACTIONS
+══════════════════════════════════════════ */
 .form-actions {
   display: flex;
   gap: 12px;
+  margin-top: 8px;
 }
 
-.btn-save, .btn-cancel {
-  padding: 12px 28px;
+.btn-save,
+.btn-cancel {
+  padding: 12px 30px;
   border: none;
-  border-radius: 10px;
+  border-radius: 14px;
   cursor: pointer;
   font-size: 14px;
   font-weight: 600;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-save:hover,
+.btn-cancel:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
 }
 
 .btn-save:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
+  transform: none;
 }
 
 .btn-save {
-  background: #22c55e;
+  background: #16a34a;
   color: white;
 }
 
 .btn-cancel {
-  background: #6b7280;
+  background: #475569;
   color: white;
 }
 
-/* === Sections list === */
+/* ══════════════════════════════════════════
+   SECTIONS LIST
+══════════════════════════════════════════ */
 .sections-list {
   display: flex;
   flex-direction: column;
-  gap: 30px;
+  gap: 28px;
 }
 
 .section-block {
-  background: white;
-  padding: 24px;
-  border-radius: 16px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+  background: rgba(15, 23, 42, 0.98);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 20px;
+  padding: 28px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
 }
 
 .section-title {
-  margin-bottom: 20px;
-  color: #1e3a8a;
-  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 22px;
+  font-size: 15px;
+  font-weight: 700;
+  color: #cbd5e1;
 }
 
+.section-title__bar {
+  width: 4px;
+  height: 18px;
+  background: linear-gradient(to bottom, #3b82f6, #8b5cf6);
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+/* ══════════════════════════════════════════
+   IMAGES GRID
+══════════════════════════════════════════ */
 .images-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: 20px;
 }
 
 .image-card {
-  border: 1px solid #e5e7eb;
-  border-radius: 12px;
+  background: #1e293b;
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  border-radius: 16px;
   overflow: hidden;
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
 .image-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  border-color: rgba(59, 130, 246, 0.3);
 }
 
 .image-card.inactive {
-  opacity: 0.55;
+  opacity: 0.45;
 }
 
 .image-preview {
+  position: relative;
   width: 100%;
   height: 180px;
   overflow: hidden;
-  background: #f3f4f6;
+  background: #0f172a;
 }
 
 .image-preview img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 0.3s;
+}
+
+.image-card:hover .image-preview img {
+  transform: scale(1.04);
+}
+
+.inactive-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  background: rgba(239, 68, 68, 0.85);
+  color: white;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 20px;
 }
 
 .image-info {
-  padding: 12px;
+  padding: 14px 14px 10px;
 }
 
 .image-title {
   font-weight: 600;
   margin-bottom: 4px;
   font-size: 14px;
+  color: #f1f5f9;
 }
 
 .image-desc {
   font-size: 12px;
-  color: #6b7280;
+  color: #64748b;
   margin-bottom: 4px;
 }
 
 .image-order {
-  font-size: 12px;
-  color: #9ca3af;
+  font-size: 11px;
+  color: #475569;
 }
 
 .image-actions {
   display: flex;
   gap: 8px;
-  padding: 12px;
-  border-top: 1px solid #e5e7eb;
+  padding: 12px 14px;
+  border-top: 1px solid rgba(148, 163, 184, 0.1);
 }
 
-.btn-edit, .btn-delete {
+.btn-edit,
+.btn-delete {
   flex: 1;
-  padding: 8px;
+  padding: 9px 6px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
   font-size: 12px;
   font-weight: 600;
-  transition: opacity 0.2s;
+  transition: opacity 0.2s, transform 0.15s;
 }
 
-.btn-edit:hover, .btn-delete:hover {
-  opacity: 0.8;
+.btn-edit:hover,
+.btn-delete:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
 }
 
 .btn-edit {
-  background: #3b82f6;
+  background: #2563eb;
   color: white;
 }
 
 .btn-delete {
-  background: #ef4444;
+  background: #dc2626;
   color: white;
 }
 
 .no-images {
-  color: #9ca3af;
+  color: #475569;
   font-style: italic;
   font-size: 14px;
+  padding: 8px 0;
 }
 
+/* ══════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════ */
 @media (max-width: 768px) {
+  .fa-wrap {
+    padding: 32px 16px 0;
+  }
+
+  .form-box {
+    padding: 24px 20px;
+    border-radius: 20px;
+  }
+
   .images-grid {
     grid-template-columns: 1fr;
   }
@@ -672,6 +876,10 @@ export default {
   .form-row {
     flex-direction: column;
     gap: 0;
+  }
+
+  .admin-title {
+    font-size: 22px;
   }
 }
 </style>

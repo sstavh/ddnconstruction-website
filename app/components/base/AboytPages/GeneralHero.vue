@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import { ref, onMounted } from "vue";
-import { imgUrl, fetchSection } from '~/composables/useApi'
+import { ref, computed, onMounted } from "vue";
+import { imgUrl } from '~/composables/useApi'
 import Button from "../../ui/Button.vue";
 
 const backgroundImage = ref('')
+const sideImage = ref('')
 const defaultBg = '/images/about/generalHero.jpg'
 
 async function fetchBackground() {
@@ -21,8 +22,26 @@ async function fetchBackground() {
   }
 }
 
+async function fetchSideImage() {
+  try {
+    const response = await fetch('http://localhost:3001/section-images/section/generalHeroSide')
+    const data = await response.json()
+    if (data && data.length > 0) {
+      sideImage.value = imgUrl(data[0].imageUrl)
+    }
+  } catch (error) {
+    console.error('Error fetching side image:', error)
+  }
+}
+
+const sideImageStyle = computed(() =>
+  sideImage.value
+    ? { backgroundImage: 'url(' + sideImage.value + ')', backgroundSize: 'cover', backgroundPosition: 'center' }
+    : {}
+)
+
 onMounted(async () => {
-  await fetchBackground()
+  await Promise.all([fetchBackground(), fetchSideImage()])
 })
 </script>
 
@@ -32,14 +51,17 @@ onMounted(async () => {
         <div class="container">
         <div class="general-container">
             <div class="general-container__box">
-                <div data-aos="fade-right" order: 2 class="foto-test">IMGS</div>
+                <div
+                  data-aos="fade-right"
+                  class="foto-test"
+                  :style="sideImageStyle"
+                ></div>
                 <div class="generel-box">
                     <h1 class="generel-box__title">Built with Responsibility.<br/>Delivered with Results.</h1>
                     <p class="generel-box__pidtext">We specialize in high-quality remodeling and construction, focusing on precision, timelines, and clear communication.
-Every project reflects our reputation — that’s why we handle every detail from concept to completion.
+Every project reflects our reputation — that's why we handle every detail from concept to completion.
 </p>
-                    <Button text="Get Free Estimate"
-  link="/catalog" order: 2 data-aos="fade-up"/>
+                    <Button text="Get Free Estimate" link="/catalog" data-aos="fade-up"/>
                 </div>
             </div>
         </div>
@@ -61,7 +83,7 @@ section {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.85);
+
     z-index: 1;
 }
 
