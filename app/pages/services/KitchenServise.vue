@@ -72,6 +72,7 @@ const blocks = [
     title="Кухні"
     buttonText="Переглянути каталог"
     buttonLink="/catalog"
+    section="kitchen"
   />
 
   <InformationCards :cards="cards"/>

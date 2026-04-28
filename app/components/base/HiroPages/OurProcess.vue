@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import type { CSSProperties } from "vue";
+import { imgUrl } from '~/composables/useApi'
 
 /* ====== НАЛАШТУВАННЯ ====== */
 const PIN_TOP = 80;                 // відступ під хедер
@@ -9,11 +10,41 @@ const EXIT_EXTRA_VH = 40;           // простір для виходу
 const STACK_X = 150;
 const STACK_Y = 100;
 
+const backgroundImage = ref('')
+const defaultBg = '/images/ourProcess/bg.jpg'
+
 const cards = ref([
-  { id: "c1", title: "Consultation & Estimate", text: "We discuss your project, evaluate the scope of work , and provide a clear and accurate estimate." },
-  { id: "c2", title: "Planning & Preparation", text: "We create a detailed work plan, set timelines, and help you select the right materials." },
-  { id: "c3", title: "Build & Final Delivery", text: "We complete your project with precision and deliver a high-quality finished result on time. " },
+  { id: "c1", section: "ourProcess1", title: "Consultation & Estimate", text: "We discuss your project, evaluate the scope of work , and provide a clear and accurate estimate.", imageUrl: "" },
+  { id: "c2", section: "ourProcess2", title: "Planning & Preparation", text: "We create a detailed work plan, set timelines, and help you select the right materials.", imageUrl: "" },
+  { id: "c3", section: "ourProcess3", title: "Build & Final Delivery", text: "We complete your project with precision and deliver a high-quality finished result on time. ", imageUrl: "" },
 ]);
+
+async function fetchBackground() {
+  try {
+    const response = await fetch('http://localhost:3001/section-images/section/ourProcess')
+    const data = await response.json()
+    if (data && data.length > 0) {
+      backgroundImage.value = imgUrl(data[0].imageUrl)
+    } else {
+      backgroundImage.value = defaultBg
+    }
+  } catch (error) {
+    console.error('Error fetching background:', error)
+    backgroundImage.value = defaultBg
+  }
+}
+
+async function fetchCardImages() {
+  for (const card of cards.value) {
+    try {
+      const response = await fetch(`http://localhost:3001/section-images/section/${card.section}`)
+      const data = await response.json()
+      if (data && data.length > 0) {
+        card.imageUrl = imgUrl(data[0].imageUrl)
+      }
+    } catch (e) {}
+  }
+}
 
 // Звідки “прилітає” кожна картка
 // 1-ша центральна: без прильоту (стоїть)
@@ -78,7 +109,8 @@ function onScroll() {
   raf = requestAnimationFrame(update);
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await Promise.all([fetchBackground(), fetchCardImages()])
   recalcSectionHeight();
   update();
 
@@ -133,17 +165,30 @@ function cardStyle(i: number): CSSProperties {
   const tx = i === 0 ? xStack : (xStack + xFly);
   const ty = i === 0 ? yStack : (yStack + yFly);
 
+  const imageStyle = cards.value[i]?.imageUrl
+    ? { backgroundImage: `url(${cards.value[i].imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+    : {}
+
   return {
     transform: `translate(-50%, -50%) translate(${tx}px, ${ty}px) scale(${scale})`,
     opacity,
     zIndex: 10 + i,
     pointerEvents: opacity > 0.98 ? "auto" : "none",
+    ...imageStyle,
   };
 }
 </script>
 
 <template>
-  <section ref="sectionEl" class="stackSection" :style="{ height: sectionHeight + 'px' }">
+  <section 
+    ref="sectionEl" 
+    class="stackSection" 
+    :style="{ 
+      height: sectionHeight + 'px',
+      backgroundImage: `url(${backgroundImage})`
+    }"
+  >
+    <div class="overlay"></div>
     <h3 class="our-title">Our Process</h3>
     <div class="pin">
       <div class="content">
@@ -168,6 +213,24 @@ function cardStyle(i: number): CSSProperties {
 <style scoped>
 .stackSection {
   position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.our-title {
+  position: relative;
+  z-index: 2;
 }
 
 .pin {

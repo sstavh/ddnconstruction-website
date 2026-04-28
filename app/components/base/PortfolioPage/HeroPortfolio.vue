@@ -1,8 +1,36 @@
 <script lang="ts" setup>
+import { ref, onMounted } from "vue";
+import { imgUrl, fetchSection } from '~/composables/useApi'
+
+const backgroundImage = ref('')
+const defaultBg = '/images/portfolio/hero.jpg'
+
+async function fetchBackground() {
+  try {
+    const response = await fetch('http://localhost:3001/section-images/section/portfolio')
+    const data = await response.json()
+    if (data && data.length > 0) {
+      backgroundImage.value = imgUrl(data[0].imageUrl)
+    } else {
+      backgroundImage.value = defaultBg
+    }
+  } catch (error) {
+    console.error('Error fetching background:', error)
+    backgroundImage.value = defaultBg
+  }
+}
+
+onMounted(async () => {
+  await fetchBackground()
+})
 </script>
 
 <template>
-    <section class="heroAbaut-section">
+    <section 
+        class="heroAbaut-section"
+        :style="{ backgroundImage: `url(${backgroundImage})` }"
+    >
+        <div class="overlay"></div>
         <div class="container">
             <div class="heroAbaut-container">
                 <div class="heroAbout-container-box">
@@ -19,12 +47,29 @@
 .heroAbaut-section{
     margin-top: -60px;
     height: 470px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: linear-gradient(
         to top,
         rgba(0, 0, 0, 0.8),
         rgba(0, 0, 0, 0)
-    ),
-    blueviolet;
+    );
+    z-index: 1;
+}
+
+.heroAbaut-section .container {
+    position: relative;
+    z-index: 2;
 }
 
 .heroAbout-box__title{

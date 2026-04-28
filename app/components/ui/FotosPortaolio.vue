@@ -1,31 +1,16 @@
-<template>
-  <div
-    class="card"
-    :style="cardStyle"
-    @mouseenter="isHovered = true"
-    @mouseleave="isHovered = false"
-  >
-    <div class="overlay" />
-
-    <div class="content" :class="{ visible: textVisible }">
-      <slot>{{ text }}</slot>
-    </div>
-  </div>
-</template>
-
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
 
-type Props = {
+const props = withDefaults(defineProps<{
   text?: string
-  colors?: [string, string, string] // рівно 3 кольори
-  cycleSeconds?: number             // повний цикл (сек)
-  randomMinWaitSeconds?: number     // мін. пауза між рандом-появами
-  randomMaxWaitSeconds?: number     // макс. пауза між рандом-появами
-  randomShowSeconds?: number        // скільки тримається текст без hover
-}
-
-const props = withDefaults(defineProps<Props>(), {
+  colors?: string[]
+  images?: string[]
+  section?: string
+  cycleSeconds?: number
+  randomMinWaitSeconds?: number
+  randomMaxWaitSeconds?: number
+  randomShowSeconds?: number
+}>(), {
   text: 'Quality in Every Detail',
   colors: () => ['#6a11cb', '#2575fc', '#00c6ff'],
   cycleSeconds: 9,
@@ -36,53 +21,110 @@ const props = withDefaults(defineProps<Props>(), {
 
 const isHovered = ref(false)
 const randomVisible = ref(false)
+const dbImages = ref<{ imageUrl: string; title: string }[]>([])
+const currentImageIndex = ref(0)
 
 const textVisible = computed(() => isHovered.value || randomVisible.value)
 
-const cardStyle = computed(() => ({
-  // CSS variables для анімації 3 кольорів
-  '--c1': props.colors[0],
-  '--c2': props.colors[1],
-  '--c3': props.colors[2],
-  '--cycle': `${props.cycleSeconds}s`,
-}))
+const activeImages = computed(() => {
+  if (dbImages.value.length > 0) return dbImages.value.map((i) => i.imageUrl)
+  if (props.images && props.images.length > 0) return props.images
+  return [] as string[]
+})
+
+const useImageMode = computed(() => activeImages.value.length > 0)
+
+const displayText = computed(() => {
+  const entry = dbImages.value[currentImageIndex.value]
+  if (entry && entry.title) return entry.title
+  return props.text || ''
+})
+
+const cardStyle = computed(() => {
+  if (useImageMode.value) {
+    const url = activeImages.value[currentImageIndex.value] || ''
+    return { backgroundImage: `url(${url})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+  }
+  const c = props.colors || ['#6a11cb', '#2575fc', '#00c6ff']
+  return {
+    '--c1': c[0],
+    '--c2': c[1],
+    '--c3': c[2],
+    '--cycle': `${props.cycleSeconds}s`,
+  }
+})
 
 let showTimeout: ReturnType<typeof setTimeout> | null = null
 let nextTimeout: ReturnType<typeof setTimeout> | null = null
+let cycleTimer: ReturnType<typeof setInterval> | null = null
 
 function randInt(min: number, max: number) {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
 function scheduleRandomShow() {
-  // якщо зараз hover — не ліземо, просто переплануємо
-  const wait = randInt(props.randomMinWaitSeconds, props.randomMaxWaitSeconds) * 1000
-
+  const minW = props.randomMinWaitSeconds || 5
+  const maxW = props.randomMaxWaitSeconds || 14
+  const showS = props.randomShowSeconds || 6
+  const wait = randInt(minW, maxW) * 1000
   nextTimeout = setTimeout(() => {
-    // якщо користувач навівся — пропускаємо “рандом” і плануємо далі
-    if (isHovered.value) {
-      scheduleRandomShow()
-      return
-    }
-
+    if (isHovered.value) { scheduleRandomShow(); return }
     randomVisible.value = true
-
     showTimeout = setTimeout(() => {
       randomVisible.value = false
       scheduleRandomShow()
-    }, props.randomShowSeconds * 1000)
+    }, showS * 1000)
   }, wait)
 }
 
-onMounted(() => {
+async function fetchFromDb() {
+  if (!props.section) return
+  try {
+    const res = await fetch(`http://localhost:3001/section-images/section/${props.section}`)
+    const data = await res.json()
+    if (Array.isArray(data) && data.length > 0) {
+      dbImages.value = data.map((item: { imageUrl: string; title: string }) => ({
+        imageUrl: item.imageUrl.startsWith('http') ? item.imageUrl : `http://localhost:3001/${item.imageUrl}`,
+        title: item.title || '',
+      }))
+    }
+  } catch (e) {
+    console.error('FotosPortaolio fetch error:', e)
+  }
+}
+
+onMounted(async () => {
+  await fetchFromDb()
   scheduleRandomShow()
+  const cycleSec = props.cycleSeconds || 9
+  if (activeImages.value.length > 1) {
+    cycleTimer = setInterval(() => {
+      currentImageIndex.value = (currentImageIndex.value + 1) % activeImages.value.length
+    }, cycleSec * 1000)
+  }
 })
 
 onBeforeUnmount(() => {
   if (showTimeout) clearTimeout(showTimeout)
   if (nextTimeout) clearTimeout(nextTimeout)
+  if (cycleTimer) clearInterval(cycleTimer)
 })
 </script>
+
+<template>
+  <div
+    class="card"
+    :class="{ 'image-mode': useImageMode }"
+    :style="cardStyle"
+    @mouseenter="isHovered = true"
+    @mouseleave="isHovered = false"
+  >
+    <div class="overlay" />
+    <div class="content" :class="{ visible: textVisible }">
+      <slot>{{ displayText }}</slot>
+    </div>
+  </div>
+</template>
 
 <style scoped>
 .card {
@@ -93,53 +135,45 @@ onBeforeUnmount(() => {
   overflow: hidden;
   cursor: pointer;
   user-select: none;
-
-  /* Плавна реакція на hover */
   transition: filter 250ms ease, box-shadow 250ms ease, transform 250ms ease;
-
-  /* Фонова “циклічна” анімація з fade між 3 кольорами */
+  --c1: #6a11cb;
+  --c2: #2575fc;
+  --c3: #00c6ff;
+  --cycle: 9s;
   background: linear-gradient(135deg, var(--c1), var(--c2));
   animation: bgCycle var(--cycle) ease-in-out infinite;
 }
 
-/* Легке затемнення + тінь при наведенні */
 .card:hover {
   filter: brightness(0.88);
   box-shadow: 0 14px 36px rgba(0, 0, 0, 0.28);
   transform: translateY(-2px);
 }
 
-/* Додаткове “приглушення” через overlay (ефект затемнення/появи) */
 .overlay {
   position: absolute;
   inset: 0;
-  background: rgba(0,0,0,0.0);
+  background: rgba(0, 0, 0, 0);
   transition: background 250ms ease;
   pointer-events: none;
 }
+
 .card:hover .overlay {
-  background: rgba(0,0,0,0.12);
+  background: rgba(0, 0, 0, 0.12);
 }
 
-/* Текст */
 .content {
   position: absolute;
   left: 16px;
   right: 16px;
   bottom: 14px;
-
   padding: 10px 12px;
   border-radius: 12px;
-
   color: white;
   font-weight: 600;
   line-height: 1.2;
-
-  /* невеликий “скляний” ефект */
   background: rgba(0, 0, 0, 0.22);
   backdrop-filter: blur(6px);
-
-  /* приховано за замовчуванням */
   opacity: 0;
   transform: translateY(18px);
   transition: opacity 260ms ease, transform 260ms ease;
@@ -150,7 +184,6 @@ onBeforeUnmount(() => {
   transform: translateY(0);
 }
 
-/* 3 кольори — плавний цикл */
 @keyframes bgCycle {
   0%   { background: linear-gradient(135deg, var(--c1), var(--c2)); }
   33%  { background: linear-gradient(135deg, var(--c2), var(--c3)); }
@@ -158,8 +191,12 @@ onBeforeUnmount(() => {
   100% { background: linear-gradient(135deg, var(--c1), var(--c2)); }
 }
 
-@media (max-width: 768px){
-  .card{
+.image-mode {
+  animation: none !important;
+}
+
+@media (max-width: 768px) {
+  .card {
     width: 330px;
     height: 230px;
   }

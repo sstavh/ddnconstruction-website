@@ -10,14 +10,6 @@ import TextBlok from '~/components/ui/informationBlok/TextBlok.vue'
 import beforeAfter from '~/components/ui/informationBlok/beforeAfter.vue'
 import caruseProgektTest from '~/components/ui/informationBlok/caruseProgektTest.vue'
 
-const slides = [
-  { color: '#ff004c', title: 'Learn More', text: 'We follow the schedule with no delays' },
-  { color: '#ffb300', title: 'Fixed Pricing', text: 'No hidden fees or surprises' },
-  { color: '#00d084', title: 'Quality Control', text: 'Inspection at every stage of the project' },
-  { color: '#007bff', title: 'Experienced Team ', text: 'Our team consists of skilled and trusted professionals' },
-  { color: '#7c3aed', title: 'Modern Materials ', text: 'We use high-quality materials' }
-]
-
 type Item = {
   key: string
   component: any
@@ -30,11 +22,11 @@ type Item = {
 }
 
 const items: Item[] = [
-  { key: 'foto', component: FotoImgTest, aos: 'fade-right', duration: 1200, easing: 'ease-out-cubic', order: 3 },
-  { key: 'portfolio', component: FotosPortaolio, props: { class: 'update' }, aos: 'zoom-in', duration: 1200, easing: 'ease-out-back', order: 5 },
+  { key: 'foto', component: FotoImgTest, props: { section: 'fotoImgTest' }, aos: 'fade-right', duration: 1200, easing: 'ease-out-cubic', order: 3 },
+  { key: 'portfolio', component: FotosPortaolio, props: { section: 'infoportfolio', class: 'update' }, aos: 'zoom-in', duration: 1200, easing: 'ease-out-back', order: 5 },
   { key: 'btn', component: ButtonInformationTest, aos: 'fade-up', duration: 1200, easing: 'ease-out-cubic', order: 1 },
-  { key: 'beforeAfter', component: beforeAfter, props: { 'left-color': '#ff0000', 'right-color': '#0000ff', class: 'h-56' }, aos: 'flip-left', duration: 1200, easing: 'ease-out-cubic', order: 2 },
-  { key: 'carousel', component: caruseProgektTest, props: { slides }, aos: 'fade-left', duration: 1200, easing: 'ease-out-cubic', order: 6 },
+  { key: 'beforeAfter', component: beforeAfter, props: { 'left-section': 'beforeAfterLeft', 'right-section': 'beforeAfterRight', 'left-color': '#ff0000', 'right-color': '#0000ff', class: 'h-56' }, aos: 'flip-left', duration: 1200, easing: 'ease-out-cubic', order: 2 },
+  { key: 'carousel', component: caruseProgektTest, props: { section: 'carousel' }, aos: 'fade-left', duration: 1200, easing: 'ease-out-cubic', order: 6 },
   { key: 'text', component: TextBlok, aos: 'fade-up', duration: 1200, easing: 'ease-out-cubic', order: 4 }
 ]
 

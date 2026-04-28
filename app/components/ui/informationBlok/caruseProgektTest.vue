@@ -1,14 +1,21 @@
 <template>
   <section class="wrap" :style="wrapStyle">
     <!-- поточний фон -->
-    <div class="layer base" :style="{ background: currentItem.color }"></div>
+    <div
+      class="layer base"
+      :style="currentItem.imageUrl
+        ? { backgroundImage: `url(${currentItem.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+        : { background: currentItem.color || '#333' }"
+    ></div>
 
     <!-- новий фон (wipe зліва направо) -->
     <div
       v-if="isAnimating"
       class="layer wipe"
       :key="wipeKey"
-      :style="{ background: nextItem.color }"
+      :style="nextItem.imageUrl
+        ? { backgroundImage: `url(${nextItem.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }
+        : { background: nextItem.color || '#333' }"
       @animationend="onWipeEnd"
     ></div>
 
@@ -24,13 +31,15 @@
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
 
 type SlideItem = {
-  color: string
+  color?: string
+  imageUrl?: string
   title: string
   text: string
 }
 
 type Props = {
-  slides: SlideItem[]
+  slides?: SlideItem[]
+  section?: string
   intervalMs?: number
   wipeMs?: number
   height?: string
@@ -47,15 +56,17 @@ const props = withDefaults(defineProps<Props>(), {
 const index = ref(0)
 const isAnimating = ref(false)
 const wipeKey = ref(0)
+const dbSlides = ref<SlideItem[]>([])
 
-let timer: ReturnType<typeof setInterval> | null = null
+const allSlides = computed(() => {
+  if (props.section && dbSlides.value.length > 0) return dbSlides.value
+  return props.slides || []
+})
 
-const currentItem = computed(() => props.slides[index.value])
+const currentItem = computed(() => allSlides.value[index.value] || { title: '', text: '' })
 const nextItem = computed(() =>
-  props.slides[(index.value + 1) % props.slides.length]
+  allSlides.value[(index.value + 1) % allSlides.value.length] || { title: '', text: '' }
 )
-
-// що показувати в центрі (під час анімації вже новий текст)
 const displayItem = computed(() =>
   isAnimating.value ? nextItem.value : currentItem.value
 )
@@ -67,20 +78,38 @@ const wrapStyle = computed(() => ({
 }))
 
 function startWipe() {
-  if (isAnimating.value) return
+  if (isAnimating.value || allSlides.value.length < 2) return
   isAnimating.value = true
   wipeKey.value++
 }
 
 function onWipeEnd() {
-  index.value = (index.value + 1) % props.slides.length
+  index.value = (index.value + 1) % allSlides.value.length
   isAnimating.value = false
 }
 
-onMounted(() => {
-  timer = setInterval(() => {
-    startWipe()
-  }, props.intervalMs)
+async function fetchFromDb() {
+  if (!props.section) return
+  try {
+    const res = await fetch(`http://localhost:3001/section-images/section/${props.section}`)
+    const data = await res.json()
+    if (Array.isArray(data) && data.length > 0) {
+      dbSlides.value = data.map((item: any) => ({
+        imageUrl: item.imageUrl.startsWith('http') ? item.imageUrl : `http://localhost:3001/${item.imageUrl}`,
+        title: item.title || '',
+        text: item.description || '',
+      }))
+    }
+  } catch (e) {
+    console.error('caruseProgektTest fetch error:', e)
+  }
+}
+
+let timer: ReturnType<typeof setInterval> | null = null
+
+onMounted(async () => {
+  await fetchFromDb()
+  timer = setInterval(startWipe, props.intervalMs)
 })
 
 onBeforeUnmount(() => {

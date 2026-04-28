@@ -1,32 +1,89 @@
 <script lang="ts" setup>
+import { ref, onMounted } from "vue";
 import Button from "../../ui/Button.vue";
+import { imgUrl } from '~/composables/useApi'
+
+const backgroundImage = ref('')
+const sideImage = ref('')
+const pageTitle = ref('Our Recent Projects')
+const pageSubtitle = ref('See Our Work in Action')
+const defaultBg = '/images/portfolio/generalHero.jpg'
+
+async function fetchData() {
+  try {
+    const response = await fetch('http://localhost:3001/section-images/section/generalHeroPortfolio')
+    const data = await response.json()
+    if (data && data.length > 0) {
+      backgroundImage.value = imgUrl(data[0].imageUrl) || defaultBg
+      if (data[0].title) pageTitle.value = data[0].title
+      if (data[0].description) pageSubtitle.value = data[0].description
+    } else {
+      backgroundImage.value = defaultBg
+    }
+    if (data && data.length > 1) {
+      sideImage.value = imgUrl(data[1].imageUrl)
+    }
+  } catch (error) {
+    console.error('Error fetching background:', error)
+    backgroundImage.value = defaultBg
+  }
+}
+
+onMounted(fetchData)
 </script>
 
 <template>
-    <div class="container">
+    <section :style="{ backgroundImage: `url(${backgroundImage})` }">
+        <div class="overlay"></div>
+        <div class="container">
         <div class="general-container">
             <div class="general-container__box">
-                <div data-aos="fade-right" order: 2 class="foto-test">IMGS</div>
+                <div
+                  data-aos="fade-right"
+                  class="foto-test"
+                  :style="sideImage ? { backgroundImage: `url(${sideImage})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}"
+                ></div>
                 <div class="generel-box">
-                    <h1 class="generel-box__title">Our Recent Projects
-</h1>
-                    <p class="generel-box__pidtext">See Our Work in Action</p>
-                    <Button ext="Request a Quote"
-  link="/catalog" order: 2 data-aos="fade-up"/>
+                    <h1 class="generel-box__title">{{ pageTitle }}</h1>
+                    <p class="generel-box__pidtext">{{ pageSubtitle }}</p>
+                    <Button ext="Request a Quote" link="/catalog" data-aos="fade-up"/>
                 </div>
             </div>
         </div>
-    </div>
+        </div>
+    </section>
 </template>
 
 <style scoped>
+section {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.85);
+    z-index: 1;
+}
+
+section .container {
+    position: relative;
+    z-index: 2;
+}
+
 .general-container{
     margin-top: 160px;
     margin-bottom: 100px;
 }
 
 .general-container__box{
-    display: flex;  
+    display: flex;
     gap: 55px;
     justify-content: center;
 }
@@ -34,7 +91,9 @@ import Button from "../../ui/Button.vue";
 .foto-test{
     width: 580px;
     height: 500px;
-    background-color: blueviolet;
+    background-color: #1a1a2e;
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 .generel-box{
@@ -57,16 +116,15 @@ import Button from "../../ui/Button.vue";
     margin-top: 100px;
   }
   }
- 
+
   @media (max-width: 768px) {
     .foto-test{
         display: none;
     }
 
     .general-container__box{
-
         margin-left: 70px;
-        display: block; 
+        display: block;
     }
   }
    @media (max-width: 430px) {

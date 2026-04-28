@@ -23,6 +23,7 @@ import ButtonNextPort from '~/components/ui/ButtonNextPort.vue'
                   data-aos-duration="1500"
                   data-aos-delay="0">
                 <FotosPortaolio
+                  section="portfolioSec1"
                   text="Custom Home Construction"
                   :colors="['#ff4d4d', '#7c3aed', '#22c55e']"
                   :cycle-seconds="25"
@@ -37,6 +38,7 @@ import ButtonNextPort from '~/components/ui/ButtonNextPort.vue'
                   data-aos-duration="1500"
                   data-aos-delay="400">
                 <FotosPortaolio
+                  section="portfolioSec2"
                   text="Commercial Property Renovation"
                   :colors="['#ff4d4d', '#7c3aed', '#22c55e']"
                   :cycle-seconds="25"
@@ -51,6 +53,7 @@ import ButtonNextPort from '~/components/ui/ButtonNextPort.vue'
                   data-aos-duration="1500"
                   data-aos-delay="800">
                 <FotosPortaolio
+                  section="portfolioSec3"
                   text="Interior Renovation & Finishing"
                   :colors="['#ff4d4d', '#7c3aed', '#22c55e']"
                   :cycle-seconds="25"

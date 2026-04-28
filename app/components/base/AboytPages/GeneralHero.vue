@@ -1,9 +1,35 @@
 <script lang="ts" setup>
+import { ref, onMounted } from "vue";
+import { imgUrl, fetchSection } from '~/composables/useApi'
 import Button from "../../ui/Button.vue";
+
+const backgroundImage = ref('')
+const defaultBg = '/images/about/generalHero.jpg'
+
+async function fetchBackground() {
+  try {
+    const response = await fetch('http://localhost:3001/section-images/section/generalHero')
+    const data = await response.json()
+    if (data && data.length > 0) {
+      backgroundImage.value = imgUrl(data[0].imageUrl)
+    } else {
+      backgroundImage.value = defaultBg
+    }
+  } catch (error) {
+    console.error('Error fetching background:', error)
+    backgroundImage.value = defaultBg
+  }
+}
+
+onMounted(async () => {
+  await fetchBackground()
+})
 </script>
 
 <template>
-    <div class="container">
+    <section :style="{ backgroundImage: `url(${backgroundImage})` }">
+        <div class="overlay"></div>
+        <div class="container">
         <div class="general-container">
             <div class="general-container__box">
                 <div data-aos="fade-right" order: 2 class="foto-test">IMGS</div>
@@ -17,10 +43,33 @@ Every project reflects our reputation — that’s why we handle every detail fr
                 </div>
             </div>
         </div>
-    </div>
+        </div>
+    </section>
 </template>
 
 <style scoped>
+section {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.85);
+    z-index: 1;
+}
+
+section .container {
+    position: relative;
+    z-index: 2;
+}
+
 .general-container{
     margin-top: 160px;
     margin-bottom: 100px;

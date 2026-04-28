@@ -1,7 +1,33 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { ref, onMounted } from "vue";
+import { imgUrl, fetchSection } from '~/composables/useApi'
+
+const backgroundImage = ref('')
+const defaultBg = '/images/about/history.jpg'
+
+async function fetchBackground() {
+  try {
+    const response = await fetch('http://localhost:3001/section-images/section/history')
+    const data = await response.json()
+    if (data && data.length > 0) {
+      backgroundImage.value = imgUrl(data[0].imageUrl)
+    } else {
+      backgroundImage.value = defaultBg
+    }
+  } catch (error) {
+    console.error('Error fetching background:', error)
+    backgroundImage.value = defaultBg
+  }
+}
+
+onMounted(async () => {
+  await fetchBackground()
+})
+</script>
 
 <template>
-    <section>
+    <section :style="{ backgroundImage: `url(${backgroundImage})` }">
+        <div class="overlay"></div>
         <div class="container">
             <div class="historyWork-container">
                 <div class="historyWork-container__box">
@@ -45,6 +71,29 @@
 </template>
 
 <style scoped>
+section {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    padding-bottom: 80px;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.9);
+    z-index: 1;
+}
+
+section .container {
+    position: relative;
+    z-index: 2;
+}
+
 .historyWork-container{
     margin-top: 160px;
 }
