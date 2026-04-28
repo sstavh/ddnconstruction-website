@@ -10,6 +10,8 @@ type PricingItem = {
   categoryId: string
 }
 
+type ActiveDiscount = { id: number; itemId: number; itemTitle: string; percent: number }
+
 type PricingCategory = {
   id: string
   title: string
@@ -24,6 +26,24 @@ const categories = ref<PricingCategory[]>([])
 const selectedCategoryId = ref('')
 const loading = ref(false)
 const errorMessage = ref('')
+
+const discounts = ref<ActiveDiscount[]>([])
+
+const loadDiscounts = async () => {
+  try {
+    const res = await fetch(`${apiUrl}/discounts`)
+    if (res.ok) discounts.value = await res.json()
+  } catch {}
+}
+
+const getDiscount = (itemId: number): ActiveDiscount | undefined =>
+  discounts.value.find((d) => d.itemId === itemId)
+
+const discountedPrice = (price: string, percent: number): string => {
+  const num = parseFloat(price.replace(/[^\d.]/g, ''))
+  if (isNaN(num)) return price
+  return Math.round(num * (1 - percent / 100)).toString()
+}
 
 const categoryForm = reactive({
   id: '',
@@ -158,7 +178,7 @@ const deleteItem = async (id: number) => {
   }
 }
 
-onMounted(loadCategories)
+onMounted(() => { loadCategories(); loadDiscounts() })
 </script>
 
 <template>
@@ -236,7 +256,16 @@ onMounted(loadCategories)
           <div v-if="category.items.length === 0">Немає елементів</div>
           <ul>
             <li v-for="item in category.items" :key="item.id">
-              <span>{{ item.title }} / {{ item.titleUk }} — {{ item.price }} {{ item.priceType === 'm2' ? '/м²' : '' }}</span>
+              <span>
+                {{ item.title }} / {{ item.titleUk }} —
+                <template v-if="getDiscount(item.id)">
+                  <s class="price-original">{{ item.price }}</s>
+                  <strong class="price-discounted">{{ discountedPrice(item.price, getDiscount(item.id)!.percent) }}</strong>
+                  <span class="price-badge">−{{ getDiscount(item.id)!.percent }}%</span>
+                </template>
+                <template v-else>{{ item.price }}</template>
+                {{ item.priceType === 'm2' ? '/м²' : '' }}
+              </span>
               <button @click.prevent="deleteItem(item.id)" :disabled="loading">Видалити</button>
             </li>
           </ul>

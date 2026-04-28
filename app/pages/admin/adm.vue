@@ -16,7 +16,8 @@ const sections = [
   { key: 'pricing', label: 'Pricing', instruction: 'Показує прайс-каталог з API.' },
   { key: 'calAF', label: 'calAF', instruction: 'Це розділ для заявок калькулятора.' },
   { key: 'calA', label: 'calA', instruction: 'Адмінська панель для прайсу калькулятора.' },
-  { key: 'logout', label: 'Вихід', instruction: 'Натисніть, щоб вийти з адмінки.', isLogout: true },
+  { key: 'discounts', label: 'Знижки', instruction: 'Встановіть знижку у відсотках на конкретний товар калькулятора.' },
+  { key: 'logout', label: 'Вийти', instruction: 'Натисніть, щоб вийти з адмінки.', isLogout: true },
 ]
 
 const activeInstruction = computed(() => {
@@ -92,6 +93,8 @@ const selectSection = async (sectionKey: string) => {
     await loadPaCategories()
   } else if (sectionKey === 'calA') {
     await loadCalACategories()
+  } else if (sectionKey === 'discounts') {
+    await Promise.all([loadDiscounts(), loadDiscountItems()])
   }
 }
 
@@ -520,6 +523,85 @@ const deleteCalAItem = async (id: number) => {
     calALoading.value = false
   }
 }
+
+/* Discounts */
+type Discount = { id: number; itemId: number; itemTitle: string; percent: number }
+type FlatPricingItem = { id: number; title: string; categoryTitle: string }
+
+const discounts = ref<Discount[]>([])
+const discountItems = ref<FlatPricingItem[]>([])
+const discountLoading = ref(false)
+const discountError = ref('')
+const discountForm = reactive({ itemTitle: '', percent: 10 })
+
+const loadDiscounts = async () => {
+  try {
+    discountLoading.value = true
+    discountError.value = ''
+    const res = await fetch(`${apiUrl}/discounts`)
+    if (!res.ok) throw new Error('Не вдалося завантажити знижки')
+    discounts.value = await res.json()
+  } catch (error: any) {
+    discountError.value = error.message || 'Помилка завантаження знижок'
+  } finally {
+    discountLoading.value = false
+  }
+}
+
+const loadDiscountItems = async () => {
+  try {
+    const res = await fetch(`${apiUrl}/pricing`)
+    if (!res.ok) throw new Error('Не вдалося завантажити товари')
+    const data: PricingCategory[] = await res.json()
+    discountItems.value = data.flatMap((cat) =>
+      cat.items.map((item) => ({ id: item.id, title: item.title, categoryTitle: cat.title })),
+    )
+  } catch {}
+}
+
+const createDiscount = async () => {
+  const title = discountForm.itemTitle.trim()
+  if (!title) { discountError.value = 'Введіть назву товару'; return }
+  if (discountForm.percent < 1 || discountForm.percent > 99) { discountError.value = 'Відсоток від 1 до 99'; return }
+
+  const matched = discountItems.value.find((i) => i.title.toLowerCase() === title.toLowerCase())
+  const itemId = matched?.id ?? 0
+  const itemTitle = matched?.title ?? title
+
+  discountLoading.value = true
+  discountError.value = ''
+  try {
+    const res = await fetch(`${apiUrl}/discounts`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ itemId, itemTitle, percent: Number(discountForm.percent) }),
+    })
+    if (!res.ok) throw new Error('Не вдалося зберегти знижку')
+    discounts.value.unshift(await res.json())
+    discountForm.itemTitle = ''
+  } catch (error: any) {
+    discountError.value = error.message || 'Помилка збереження знижки'
+  } finally {
+    discountLoading.value = false
+  }
+}
+
+const reloadDiscounts = () => Promise.all([loadDiscounts(), loadDiscountItems()])
+
+const deleteDiscount = async (id: number) => {
+  if (!confirm('Видалити знижку?')) return
+  discountLoading.value = true
+  discountError.value = ''
+  try {
+    const res = await fetch(`${apiUrl}/discounts/${id}`, { method: 'DELETE' })
+    if (!res.ok) throw new Error('Не вдалося видалити знижку')
+    discounts.value = discounts.value.filter((d) => d.id !== id)
+  } catch (error: any) {
+    discountError.value = error.message || 'Помилка видалення знижки'
+  } finally {
+    discountLoading.value = false
+  }
+}
 </script>
 
 <template>
@@ -872,6 +954,55 @@ const deleteCalAItem = async (id: number) => {
             </div>
           </div>
         </div>
+        <div class="content-section" v-if="activeSection === 'discounts'">
+          <div class="section-header">
+            <h2>Знижки на товари калькулятора</h2>
+            <button class="small-btn" @click="reloadDiscounts">Оновити</button>
+          </div>
+          <div v-if="discountLoading" class="status">Завантаження...</div>
+          <div v-if="discountError" class="error">{{ discountError }}</div>
+
+          <div class="admin-forms">
+            <div class="form-block">
+              <h3>Додати знижку</h3>
+              <label>
+                Товар
+                <input
+                  v-model="discountForm.itemTitle"
+                  list="discount-items-list"
+                  placeholder="Введіть або виберіть назву товару"
+                />
+                <datalist id="discount-items-list">
+                  <option
+                    v-for="item in discountItems"
+                    :key="item.id"
+                    :value="item.title"
+                  >{{ item.categoryTitle }}</option>
+                </datalist>
+              </label>
+              <label>
+                Знижка (%)
+                <input v-model.number="discountForm.percent" type="number" min="1" max="99" />
+              </label>
+              <button class="small-btn" @click.prevent="createDiscount">Зберегти знижку</button>
+            </div>
+
+            <div class="form-block">
+              <h3>Активні знижки</h3>
+              <div v-if="discounts.length === 0" style="color: rgba(255,255,255,0.5)">Знижок немає</div>
+              <ul class="discount-list">
+                <li v-for="d in discounts" :key="d.id" class="discount-item">
+                  <div>
+                    <strong>{{ d.itemTitle }}</strong>
+                    <span class="discount-badge">−{{ d.percent }}%</span>
+                  </div>
+                  <button class="small-btn danger" @click="deleteDiscount(d.id)">Видалити</button>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
@@ -1112,6 +1243,40 @@ button:hover {
 
 .status {
   color: #38bdf8;
+}
+
+.discount-list {
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 10px;
+}
+
+.discount-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(148, 163, 184, 0.06);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+}
+
+.discount-item div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.discount-badge {
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.18);
+  color: #34d399;
+  font-weight: 700;
+  font-size: 13px;
+  border: 1px solid rgba(34, 197, 94, 0.3);
 }
 
 @media (max-width: 1100px) {

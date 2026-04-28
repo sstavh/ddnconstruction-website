@@ -7,7 +7,7 @@ import DetalsInformation from '../components/base/HiroPages/DetalsInformation.vu
 import Reviews from '../components/base/HiroPages/Reviews.vue';
 import FormaHiroSection from '../components/base/HiroPages/FormaHiroSection.vue';
 import QuickChatWidget from '../components/base/HiroPages/QuickChatWidget.vue';
-
+import VideoSection from '../components/base/HiroPages/VideoSection.vue';
 </script>
 
 <template>
@@ -17,6 +17,7 @@ import QuickChatWidget from '../components/base/HiroPages/QuickChatWidget.vue';
       <OurProcess /> 
       <DirectorMes />
       <DetalsInformation />
+        <VideoSection />
      <PortofolioSec />
        <FormaHiroSection />
    <Reviews />

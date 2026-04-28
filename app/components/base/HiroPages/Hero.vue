@@ -3,6 +3,7 @@ import Button from '../../ui/Button.vue';
 import ImdSwicher from '../../ui/bagFons/ImgSwitcher.vue';
 import TypeTextt  from '../../ui/TypedText.vue';
 console.log("hiro work");
+import discountButton from './discountButton.vue';
 
 
 </script>
@@ -21,11 +22,14 @@ console.log("hiro work");
                 <div data-aos="fade-up" data-aos-duration="10500">
                     <Button ext="Button"
   link="/catalog" />
+
                 </div>
                 
+  <discountButton data-aos="fade-up" data-aos-duration="10500" class="discountButton" />
             </div>
         </div>
     </div>
+
 </section>
 </template>
 
@@ -62,4 +66,8 @@ console.log("hiro work");
     }
  }
 
+
+.discountButton {
+margin-top: 40px;
+}
 </style>
