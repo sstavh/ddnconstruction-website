@@ -16,7 +16,8 @@ const buttons: ActionButton[] = [
   { label: "Кнопка 3", action: "btn3" },
   { label: "Кнопка 4", action: "btn4" },
   { label: "Кнопка 5", action: "btn5" },
-  { label: "Кнопка 6", action: "btn6" },
+  { label: "Кнопка 6", action: "btn6" }, 
+  { label: "фото", action: "btn6" },
 ];
 
 function toggle() {
@@ -30,7 +31,7 @@ function handleAction(action: BtnAction) {
 
 <template>
   <section class="section">
-    <div class="container">
+    <div class="container-button">
       <header class="head">
         <h3 data-aos="fade-up" class="title">Choose the type of project</h3>
         <p class="subtitle">Browse project by category</p>
@@ -75,8 +76,8 @@ function handleAction(action: BtnAction) {
   padding: 64px 0;
 }
 
-.container{
-  max-width: 1150px;
+.container-button{
+  max-width: 1550px;
   margin: 0 auto;
   padding: 0 20px;
 }
