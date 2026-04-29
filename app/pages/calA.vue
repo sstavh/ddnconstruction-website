@@ -10,7 +10,6 @@ type PricingItem = {
   categoryId: string
 }
 
-type ActiveDiscount = { id: number; itemId: number; itemTitle: string; percent: number }
 
 type PricingCategory = {
   id: string
@@ -27,22 +26,23 @@ const selectedCategoryId = ref('')
 const loading = ref(false)
 const errorMessage = ref('')
 
-const discounts = ref<ActiveDiscount[]>([])
+const globalDiscount = ref(0)
 
 const loadDiscounts = async () => {
   try {
-    const res = await fetch(`${apiUrl}/discounts`)
-    if (res.ok) discounts.value = await res.json()
+    const res = await fetch(`${apiUrl}/discounts/global`)
+    if (res.ok) {
+      const val = await res.json()
+      globalDiscount.value = typeof val === 'number' ? val : 0
+    }
   } catch {}
 }
 
-const getDiscount = (itemId: number): ActiveDiscount | undefined =>
-  discounts.value.find((d) => d.itemId === itemId)
-
-const discountedPrice = (price: string, percent: number): string => {
+const discountedPrice = (price: string): string => {
+  if (!globalDiscount.value) return price
   const num = parseFloat(price.replace(/[^\d.]/g, ''))
   if (isNaN(num)) return price
-  return Math.round(num * (1 - percent / 100)).toString()
+  return Math.round(num * (1 - globalDiscount.value / 100)).toString()
 }
 
 const categoryForm = reactive({
@@ -258,10 +258,10 @@ onMounted(() => { loadCategories(); loadDiscounts() })
             <li v-for="item in category.items" :key="item.id">
               <span>
                 {{ item.title }} / {{ item.titleUk }} —
-                <template v-if="getDiscount(item.id)">
+                <template v-if="globalDiscount > 0">
                   <s class="price-original">{{ item.price }}</s>
-                  <strong class="price-discounted">{{ discountedPrice(item.price, getDiscount(item.id)!.percent) }}</strong>
-                  <span class="price-badge">−{{ getDiscount(item.id)!.percent }}%</span>
+                  <strong class="price-discounted">{{ discountedPrice(item.price) }}</strong>
+                  <span class="price-badge">−{{ globalDiscount }}%</span>
                 </template>
                 <template v-else>{{ item.price }}</template>
                 {{ item.priceType === 'm2' ? '/м²' : '' }}
@@ -367,5 +367,27 @@ button:disabled {
   gap: 12px;
   padding: 10px 0;
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.price-original {
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: line-through;
+  margin-right: 4px;
+}
+
+.price-discounted {
+  color: #34d399;
+  margin-right: 4px;
+}
+
+.price-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.15);
+  color: #34d399;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid rgba(34, 197, 94, 0.3);
 }
 </style>

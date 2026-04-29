@@ -17,6 +17,7 @@
 
       <div class="about-video__media">
         <video
+          :key="videoSrc"
           controls
           autoplay
           muted
@@ -24,10 +25,7 @@
           playsinline
           poster="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1400"
         >
-          <source
-            src="https://www.w3schools.com/html/mov_bbb.mp4"
-            type="video/mp4"
-          />
+          <source :src="videoSrc" type="video/mp4" />
         </video>
       </div>
 
@@ -35,7 +33,23 @@
   </section>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+import { onMounted, ref } from 'vue'
+import { imgUrl } from '~/composables/useApi'
+
+const apiUrl = useRuntimeConfig().public.apiUrl
+const videoSrc = ref('https://www.w3schools.com/html/mov_bbb.mp4')
+
+onMounted(async () => {
+  try {
+    const res = await fetch(`${apiUrl}/section-images/section/videoSection`)
+    const data = await res.json()
+    if (Array.isArray(data) && data[0]?.imageUrl) {
+      videoSrc.value = imgUrl(data[0].imageUrl)
+    }
+  } catch {}
+})
+</script>
 
 <style scoped>
 

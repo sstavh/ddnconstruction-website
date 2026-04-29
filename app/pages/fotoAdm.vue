@@ -12,6 +12,39 @@
         <p class="header-logo-hint">Секція <strong>headerLogo</strong> — це логотип у верхній частині сайту (header).</p>
       </div>
 
+      <!-- Video Section -->
+      <div class="form-box video-box">
+        <h2 class="form-box__title">
+          <span class="form-box__dot" style="background:#8b5cf6"></span>
+          Відео (VideoSection)
+        </h2>
+        <div class="form-group">
+          <label>Завантажити відео (mp4):</label>
+          <div class="upload-area" @click="$refs.videoFileRef.click()" style="min-height:100px">
+            <input ref="videoFileRef" type="file" accept="video/*" class="file-input-hidden" @change="onVideoFileChange" />
+            <div v-if="videoFileName" class="upload-placeholder">
+              <span class="upload-icon">🎬</span>
+              <p>{{ videoFileName }}</p>
+            </div>
+            <div v-else class="upload-placeholder">
+              <span class="upload-icon">🎬</span>
+              <p>Натисни або перетягни відео сюди</p>
+              <p class="upload-hint">MP4, WebM, MOV до 200MB</p>
+            </div>
+          </div>
+        </div>
+        <p v-if="videoError" class="upload-error">{{ videoError }}</p>
+        <div class="form-actions">
+          <button @click="saveVideoFile" class="btn-save" :disabled="videoSaving">
+            {{ videoSaving ? 'Завантаження...' : (videoSavedId ? 'Замінити відео' : 'Завантажити відео') }}
+          </button>
+        </div>
+        <div v-if="videoUrl" style="margin-top:16px">
+          <p style="font-size:13px;color:#64748b;margin-bottom:8px">Поточне відео:</p>
+          <video :src="videoUrl" muted controls style="width:100%;max-height:220px;border-radius:12px;object-fit:cover"></video>
+        </div>
+      </div>
+
       <!-- Форма додавання/редагування -->
       <div class="form-box">
         <h2 class="form-box__title">
@@ -183,6 +216,12 @@ export default {
       uploadError: '',
       selectedFile: null,
       previewUrl: '',
+      videoUrl: '',
+      videoSavedId: null,
+      videoSaving: false,
+      videoError: '',
+      videoFile: null,
+      videoFileName: '',
       form: {
         section: '',
         title: '',
@@ -239,8 +278,58 @@ export default {
   },
   async mounted() {
     await this.fetchImages()
+    await this.fetchVideoSection()
   },
   methods: {
+    onVideoFileChange(e) {
+      const file = e.target.files[0]
+      if (!file) return
+      if (file.size > 200 * 1024 * 1024) { this.videoError = 'Файл занадто великий (максимум 200MB)'; return }
+      this.videoFile = file
+      this.videoFileName = file.name
+      this.videoError = ''
+    },
+    async saveVideoFile() {
+      if (!this.videoFile) { this.videoError = 'Оберіть відео-файл'; return }
+      this.videoSaving = true
+      this.videoError = ''
+      try {
+        const formData = new FormData()
+        formData.append('file', this.videoFile)
+        formData.append('section', 'videoSection')
+        formData.append('title', 'video')
+        formData.append('isActive', 'true')
+        formData.append('order', '0')
+
+        const url = this.videoSavedId
+          ? `http://localhost:3001/section-images/upload/${this.videoSavedId}`
+          : 'http://localhost:3001/section-images/upload'
+
+        const res = await fetch(url, { method: this.videoSavedId ? 'PUT' : 'POST', body: formData })
+        if (!res.ok) throw new Error('Помилка завантаження')
+        const saved = await res.json()
+        this.videoSavedId = saved.id
+        this.videoUrl = `http://localhost:3001/${saved.imageUrl}`
+        this.videoFile = null
+        this.videoFileName = ''
+        if (this.$refs.videoFileRef) this.$refs.videoFileRef.value = ''
+      } catch (e) {
+        this.videoError = 'Не вдалося завантажити відео'
+      } finally {
+        this.videoSaving = false
+      }
+    },
+    async fetchVideoSection() {
+      try {
+        const res = await fetch('http://localhost:3001/section-images/section/videoSection')
+        const data = await res.json()
+        if (Array.isArray(data) && data.length > 0) {
+          const raw = data[0].imageUrl || ''
+          this.videoUrl = raw.startsWith('http') ? raw : `http://localhost:3001/${raw}`
+          this.videoSavedId = data[0].id
+        }
+      } catch {}
+    },
     triggerFileInput() {
       this.$refs.fileInputRef.click()
     },

@@ -17,8 +17,63 @@ const sections = [
   { key: 'calAF', label: 'calAF', instruction: 'Це розділ для заявок калькулятора.' },
   { key: 'calA', label: 'calA', instruction: 'Адмінська панель для прайсу калькулятора.' },
   { key: 'discounts', label: 'Знижки', instruction: 'Встановіть знижку у відсотках на конкретний товар калькулятора.' },
+  { key: 'difficulties', label: 'Difficulties', instruction: 'Редагуйте імена та спеціальності працівників. Вмикайте/вимикайте секцію DirectorMes.' },
+  { key: 'icons', label: 'Іконки', instruction: 'Виберіть 5 іконок для головної сторінки.' },
   { key: 'logout', label: 'Вийти', instruction: 'Натисніть, щоб вийти з адмінки.', isLogout: true },
 ]
+// --- ICONS ---
+import { onBeforeMount } from 'vue'
+const iconFiles = ref<string[]>([])
+type IconValue = string | { name: string, url: string, file: File }
+const selectedIcons = ref<IconValue[]>(['', '', '', '', ''])
+const iconsLoading = ref(false)
+const iconsError = ref('')
+
+const fetchIcons = async () => {
+  iconsLoading.value = true
+  iconsError.value = ''
+  try {
+    // Список іконок жорстко, бо assets не доступні через fetch
+    iconFiles.value = [
+      'free-icon-badge-9285758.png',
+      'free-icon-deadline-8664666.png',
+      'free-icon-no-hidden-charges-10135467.png',
+      'free-icon-premium-quality-4212243.png',
+      'free-icon-specialist-user-80886.png',
+    ]
+  } catch (e) {
+    iconsError.value = 'Не вдалося завантажити іконки'
+  } finally {
+    iconsLoading.value = false
+  }
+}
+
+
+const saveIcons = () => {
+  // Тут можна додати API-запит для збереження
+  // selectedIcons.value містить або string (ім'я з assets), або {name, url, file} для кастомних
+  alert('Іконки збережено! (зараз лише локально)')
+}
+
+function handleIconFileChange(e: Event, idx: number) {
+  const input = e.target as HTMLInputElement
+  if (input.files && input.files[0]) {
+    const file = input.files[0]
+    const reader = new FileReader()
+    reader.onload = (ev) => {
+      selectedIcons.value[idx] = {
+        name: file.name,
+        url: ev.target?.result as string,
+        file
+      }
+    }
+    reader.readAsDataURL(file)
+  }
+}
+
+onBeforeMount(() => {
+  fetchIcons()
+})
 
 const activeInstruction = computed(() => {
   const section = sections.find((section) => section.key === activeSection.value)
@@ -94,7 +149,11 @@ const selectSection = async (sectionKey: string) => {
   } else if (sectionKey === 'calA') {
     await loadCalACategories()
   } else if (sectionKey === 'discounts') {
-    await Promise.all([loadDiscounts(), loadDiscountItems()])
+    await loadGlobalDiscount()
+  } else if (sectionKey === 'difficulties') {
+    await loadDifficulties()
+  } else if (sectionKey === 'icons') {
+    await fetchIcons()
   }
 }
 
@@ -525,60 +584,42 @@ const deleteCalAItem = async (id: number) => {
 }
 
 /* Discounts */
-type Discount = { id: number; itemId: number; itemTitle: string; percent: number }
-type FlatPricingItem = { id: number; title: string; categoryTitle: string }
-
-const discounts = ref<Discount[]>([])
-const discountItems = ref<FlatPricingItem[]>([])
+const globalDiscount = ref(0)
 const discountLoading = ref(false)
 const discountError = ref('')
-const discountForm = reactive({ itemTitle: '', percent: 10 })
+const discountPercent = ref(0)
 
-const loadDiscounts = async () => {
+const loadGlobalDiscount = async () => {
   try {
     discountLoading.value = true
     discountError.value = ''
-    const res = await fetch(`${apiUrl}/discounts`)
-    if (!res.ok) throw new Error('Не вдалося завантажити знижки')
-    discounts.value = await res.json()
+    const res = await fetch(`${apiUrl}/discounts/global`)
+    if (!res.ok) throw new Error('Не вдалося завантажити знижку')
+    const val = await res.json()
+    globalDiscount.value = typeof val === 'number' ? val : 0
+    discountPercent.value = globalDiscount.value
   } catch (error: any) {
-    discountError.value = error.message || 'Помилка завантаження знижок'
+    discountError.value = error.message || 'Помилка завантаження знижки'
   } finally {
     discountLoading.value = false
   }
 }
 
-const loadDiscountItems = async () => {
-  try {
-    const res = await fetch(`${apiUrl}/pricing`)
-    if (!res.ok) throw new Error('Не вдалося завантажити товари')
-    const data: PricingCategory[] = await res.json()
-    discountItems.value = data.flatMap((cat) =>
-      cat.items.map((item) => ({ id: item.id, title: item.title, categoryTitle: cat.title })),
-    )
-  } catch {}
-}
-
-const createDiscount = async () => {
-  const title = discountForm.itemTitle.trim()
-  if (!title) { discountError.value = 'Введіть назву товару'; return }
-  if (discountForm.percent < 1 || discountForm.percent > 99) { discountError.value = 'Відсоток від 1 до 99'; return }
-
-  const matched = discountItems.value.find((i) => i.title.toLowerCase() === title.toLowerCase())
-  const itemId = matched?.id ?? 0
-  const itemTitle = matched?.title ?? title
-
+const saveGlobalDiscount = async () => {
+  if (discountPercent.value < 0 || discountPercent.value > 99) {
+    discountError.value = 'Відсоток від 0 до 99'
+    return
+  }
   discountLoading.value = true
   discountError.value = ''
   try {
-    const res = await fetch(`${apiUrl}/discounts`, {
+    const res = await fetch(`${apiUrl}/discounts/global`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ itemId, itemTitle, percent: Number(discountForm.percent) }),
+      body: JSON.stringify({ percent: Number(discountPercent.value) }),
     })
     if (!res.ok) throw new Error('Не вдалося зберегти знижку')
-    discounts.value.unshift(await res.json())
-    discountForm.itemTitle = ''
+    globalDiscount.value = discountPercent.value
   } catch (error: any) {
     discountError.value = error.message || 'Помилка збереження знижки'
   } finally {
@@ -586,21 +627,125 @@ const createDiscount = async () => {
   }
 }
 
-const reloadDiscounts = () => Promise.all([loadDiscounts(), loadDiscountItems()])
-
-const deleteDiscount = async (id: number) => {
-  if (!confirm('Видалити знижку?')) return
+const clearGlobalDiscount = async () => {
   discountLoading.value = true
   discountError.value = ''
   try {
-    const res = await fetch(`${apiUrl}/discounts/${id}`, { method: 'DELETE' })
-    if (!res.ok) throw new Error('Не вдалося видалити знижку')
-    discounts.value = discounts.value.filter((d) => d.id !== id)
+    const res = await fetch(`${apiUrl}/discounts/global`, { method: 'DELETE' })
+    if (!res.ok) throw new Error('Не вдалося прибрати знижку')
+    globalDiscount.value = 0
+    discountPercent.value = 0
   } catch (error: any) {
     discountError.value = error.message || 'Помилка видалення знижки'
   } finally {
     discountLoading.value = false
   }
+}
+
+/* Difficulties workers + DirectorMes toggle */
+type DiffWorker = { id: number | null; name: string; specialty: string }
+const diffWorkers = ref<[DiffWorker, DiffWorker, DiffWorker]>([
+  { id: null, name: '', specialty: '' },
+  { id: null, name: '', specialty: '' },
+  { id: null, name: '', specialty: '' },
+])
+const directorMesVisible = ref(true)
+const directorMesRecordId = ref<number | null>(null)
+const workersVisible = ref(true)
+const workersRecordId = ref<number | null>(null)
+const diffLoading = ref(false)
+const diffError = ref('')
+const diffSaved = ref(false)
+
+async function loadToggle(section: string): Promise<{ id: number | null; visible: boolean }> {
+  try {
+    const res = await fetch(`${apiUrl}/section-images/section/${section}`)
+    const data = await res.json()
+    if (data?.length > 0) return { id: data[0].id, visible: data[0].title !== '0' }
+  } catch {}
+  return { id: null, visible: true }
+}
+
+async function saveToggle(recordId: number | null, section: string, visible: boolean): Promise<number | null> {
+  const body = JSON.stringify({ section, imageUrl: '', title: visible ? '1' : '0', isActive: true, order: 0 })
+  const headers = { 'Content-Type': 'application/json' }
+  try {
+    if (recordId) {
+      await fetch(`${apiUrl}/section-images/${recordId}`, { method: 'PUT', headers, body })
+      return recordId
+    } else {
+      const res = await fetch(`${apiUrl}/section-images`, { method: 'POST', headers, body })
+      const d = await res.json()
+      return d.id ?? null
+    }
+  } catch {}
+  return recordId
+}
+
+const loadDifficulties = async () => {
+  diffLoading.value = true
+  diffError.value = ''
+  diffSaved.value = false
+  try {
+    const sections = ['difficulties1', 'difficulties2', 'difficulties3']
+    const [results, dm, wv] = await Promise.all([
+      Promise.all(sections.map((s) => fetch(`${apiUrl}/section-images/section/${s}`).then((r) => r.json()))),
+      loadToggle('directorMesVisible'),
+      loadToggle('difficultiesWorkersVisible'),
+    ])
+    results.forEach((data, i) => {
+      if (data?.length > 0) {
+        diffWorkers.value[i] = { id: data[0].id, name: data[0].title || '', specialty: data[0].description || '' }
+      }
+    })
+    directorMesRecordId.value = dm.id
+    directorMesVisible.value = dm.visible
+    workersRecordId.value = wv.id
+    workersVisible.value = wv.visible
+  } catch (e: any) {
+    diffError.value = e.message || 'Помилка завантаження'
+  } finally {
+    diffLoading.value = false
+  }
+}
+
+const saveDiffWorker = async (idx: 0 | 1 | 2) => {
+  const worker = diffWorkers.value[idx]
+  diffError.value = ''
+  const sectionName = `difficulties${idx + 1}`
+  try {
+    if (worker.id) {
+      await fetch(`${apiUrl}/section-images/${worker.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ section: sectionName, title: worker.name, description: worker.specialty }),
+      })
+    } else {
+      const res = await fetch(`${apiUrl}/section-images`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ section: sectionName, imageUrl: '', title: worker.name, description: worker.specialty, isActive: true, order: 0 }),
+      })
+      const created = await res.json()
+      diffWorkers.value[idx].id = created.id
+    }
+    diffSaved.value = true
+    setTimeout(() => { diffSaved.value = false }, 2000)
+  } catch (e: any) {
+    diffError.value = e.message || 'Помилка збереження'
+  }
+}
+
+const saveDirectorMesToggle = async () => {
+  diffError.value = ''
+  const id = await saveToggle(directorMesRecordId.value, 'directorMesVisible', directorMesVisible.value)
+  directorMesRecordId.value = id
+}
+
+const saveWorkersToggle = async () => {
+  diffError.value = ''
+  const id = await saveToggle(workersRecordId.value, 'difficultiesWorkersVisible', workersVisible.value)
+  workersRecordId.value = id
 }
 </script>
 
@@ -954,52 +1099,108 @@ const deleteDiscount = async (id: number) => {
             </div>
           </div>
         </div>
+
         <div class="content-section" v-if="activeSection === 'discounts'">
           <div class="section-header">
-            <h2>Знижки на товари калькулятора</h2>
-            <button class="small-btn" @click="reloadDiscounts">Оновити</button>
+            <h2>Знижка для калькулятора</h2>
+            <button class="small-btn" @click="loadGlobalDiscount">Оновити</button>
           </div>
           <div v-if="discountLoading" class="status">Завантаження...</div>
           <div v-if="discountError" class="error">{{ discountError }}</div>
 
-          <div class="admin-forms">
-            <div class="form-block">
-              <h3>Додати знижку</h3>
-              <label>
-                Товар
-                <input
-                  v-model="discountForm.itemTitle"
-                  list="discount-items-list"
-                  placeholder="Введіть або виберіть назву товару"
-                />
-                <datalist id="discount-items-list">
-                  <option
-                    v-for="item in discountItems"
-                    :key="item.id"
-                    :value="item.title"
-                  >{{ item.categoryTitle }}</option>
-                </datalist>
-              </label>
-              <label>
-                Знижка (%)
-                <input v-model.number="discountForm.percent" type="number" min="1" max="99" />
-              </label>
-              <button class="small-btn" @click.prevent="createDiscount">Зберегти знижку</button>
+          <div class="form-block" style="max-width: 360px">
+            <div v-if="globalDiscount > 0" class="discount-current">
+              Активна знижка: <span class="discount-badge">−{{ globalDiscount }}%</span>
             </div>
+            <div v-else style="color: rgba(255,255,255,0.5); margin-bottom: 16px">Знижки немає</div>
 
-            <div class="form-block">
-              <h3>Активні знижки</h3>
-              <div v-if="discounts.length === 0" style="color: rgba(255,255,255,0.5)">Знижок немає</div>
-              <ul class="discount-list">
-                <li v-for="d in discounts" :key="d.id" class="discount-item">
-                  <div>
-                    <strong>{{ d.itemTitle }}</strong>
-                    <span class="discount-badge">−{{ d.percent }}%</span>
-                  </div>
-                  <button class="small-btn danger" @click="deleteDiscount(d.id)">Видалити</button>
-                </li>
-              </ul>
+            <label>
+              Нова знижка (%)
+              <input v-model.number="discountPercent" type="number" min="0" max="99" />
+            </label>
+            <div style="display:flex; gap:10px; margin-top:12px">
+              <button class="small-btn" @click.prevent="saveGlobalDiscount">Зберегти</button>
+              <button class="small-btn danger" @click.prevent="clearGlobalDiscount">Прибрати знижку</button>
             </div>
+          </div>
+        </div>
+
+        <div class="content-section" v-if="activeSection === 'difficulties'">
+          <div class="section-header">
+            <h2>Difficulties — працівники та DirectorMes</h2>
+            <button class="small-btn" @click="loadDifficulties">Оновити</button>
+          </div>
+          <div v-if="diffLoading" class="status">Завантаження...</div>
+          <div v-if="diffError" class="error">{{ diffError }}</div>
+          <div v-if="diffSaved" class="success-text">Збережено!</div>
+
+          <!-- Toggles -->
+          <div style="display:flex; flex-wrap:wrap; gap:12px; margin-bottom:18px">
+            <div class="form-block" style="display:flex; align-items:center; gap:16px; padding:14px 18px">
+              <label style="font-weight:600; margin:0">Секція DirectorMes:</label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                <input type="checkbox" v-model="directorMesVisible" @change="saveDirectorMesToggle" />
+                {{ directorMesVisible ? 'Увімкнена' : 'Вимкнена' }}
+              </label>
+            </div>
+            <div class="form-block" style="display:flex; align-items:center; gap:16px; padding:14px 18px">
+              <label style="font-weight:600; margin:0">Блок працівників (Difficulties):</label>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                <input type="checkbox" v-model="workersVisible" @change="saveWorkersToggle" />
+                {{ workersVisible ? 'Увімкнений' : 'Вимкнений' }}
+              </label>
+            </div>
+          </div>
+
+          <!-- Workers -->
+          <div class="admin-forms" style="grid-template-columns: repeat(3,1fr)">
+            <div v-for="(worker, idx) in diffWorkers" :key="idx" class="form-block">
+              <h3>Працівник {{ idx + 1 }}</h3>
+              <label>
+                Ім'я та прізвище
+                <input v-model="worker.name" placeholder="Іван Петренко" />
+              </label>
+              <label>
+                Спеціальність
+                <input v-model="worker.specialty" placeholder="Майстер плитки" />
+              </label>
+              <button class="small-btn" style="margin-top:10px" @click.prevent="saveDiffWorker(idx as 0|1|2)">Зберегти</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="content-section" v-if="activeSection === 'icons'">
+          <h2>Вибір іконок для головної</h2>
+          <div v-if="iconsLoading">Завантаження іконок...</div>
+          <div v-if="iconsError" class="error">{{ iconsError }}</div>
+          <div v-if="!iconsLoading && !iconsError">
+            <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+              <div v-for="n in 5" :key="n" style="display: flex; flex-direction: column; align-items: center; gap: 8px; min-width:140px;">
+                <label>Іконка {{ n }}</label>
+                <select v-model="selectedIcons[n-1]" :disabled="!!selectedIcons[n-1] && typeof selectedIcons[n-1] === 'object'">
+                  <option value="">(Не вибрано)</option>
+                  <option v-for="icon in iconFiles" :key="icon" :value="icon">{{ icon }}</option>
+                </select>
+                <input type="file" accept="image/*" @change="e => handleIconFileChange(e, n-1)" style="margin-top:6px" />
+                <div v-if="selectedIcons[n-1]">
+                  <img
+                    v-if="typeof selectedIcons[n-1] === 'string'"
+                    :src="`/app/assets/icon/${selectedIcons[n-1]}`"
+                    alt="icon"
+                    style="width:48px;height:48px;object-fit:contain;background:#fff;border-radius:8px;"
+                  />
+                  <img
+                    v-else
+                    :src="selectedIcons[n-1].url"
+                    :alt="selectedIcons[n-1].name"
+                    style="width:48px;height:48px;object-fit:contain;background:#fff;border-radius:8px;"
+                  />
+                  <div v-if="typeof selectedIcons[n-1] === 'object'" style="font-size:12px;max-width:120px;overflow-wrap:break-word;">{{ selectedIcons[n-1].name }}</div>
+                </div>
+                <button v-if="selectedIcons[n-1]" class="small-btn danger" style="margin-top:4px;" @click="selectedIcons[n-1]=''">Очистити</button>
+              </div>
+            </div>
+            <button class="login-btn" style="margin-top:24px;" @click="saveIcons">Зберегти іконки</button>
           </div>
         </div>
 
@@ -1243,6 +1444,15 @@ button:hover {
 
 .status {
   color: #38bdf8;
+}
+
+.discount-current {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+  font-weight: 600;
+  color: #e2e8f0;
 }
 
 .discount-list {

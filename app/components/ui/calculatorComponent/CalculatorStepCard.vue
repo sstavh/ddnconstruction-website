@@ -171,8 +171,7 @@ import type {
 
 const apiUrl = useRuntimeConfig().public.apiUrl
 
-type ActiveDiscount = { id: number; itemId: number; percent: number }
-const activeDiscounts = ref<ActiveDiscount[]>([])
+const globalDiscount = ref(0)
 const discountActive = ref(false)
 
 onMounted(async () => {
@@ -180,15 +179,16 @@ onMounted(async () => {
   discountActive.value = sessionStorage.getItem('discount_active') === 'true'
   if (!discountActive.value) return
   try {
-    const res = await fetch(`${apiUrl}/discounts`)
-    if (res.ok) activeDiscounts.value = await res.json()
+    const res = await fetch(`${apiUrl}/discounts/global`)
+    if (res.ok) {
+      const val = await res.json()
+      globalDiscount.value = typeof val === 'number' ? val : 0
+    }
   } catch {}
 })
 
-function getDiscountPercent(serviceId: string): number {
-  if (!discountActive.value) return 0
-  const id = Number(serviceId)
-  return activeDiscounts.value.find((d) => d.itemId === id)?.percent ?? 0
+function getDiscountPercent(_serviceId: string): number {
+  return discountActive.value ? globalDiscount.value : 0
 }
 
 const props = defineProps<{

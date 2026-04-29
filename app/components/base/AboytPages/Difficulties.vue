@@ -2,43 +2,57 @@
 import { ref, onMounted } from "vue";
 import { imgUrl } from '~/composables/useApi'
 
+const apiUrl = useRuntimeConfig().public.apiUrl
+
 const backgroundImage = ref('')
 const defaultBg = '/images/about/difficulties.jpg'
-const workerImages = ref(['', '', ''])
+type Worker = { image: string; name: string; specialty: string }
+const workers = ref<[Worker, Worker, Worker]>([
+  { image: '', name: '', specialty: '' },
+  { image: '', name: '', specialty: '' },
+  { image: '', name: '', specialty: '' },
+])
 
 async function fetchBackground() {
   try {
-    const response = await fetch('http://localhost:3001/section-images/section/difficulties')
+    const response = await fetch(`${apiUrl}/section-images/section/difficulties`)
     const data = await response.json()
-    if (data && data.length > 0) {
-      backgroundImage.value = imgUrl(data[0].imageUrl)
-    } else {
-      backgroundImage.value = defaultBg
-    }
-  } catch (error) {
-    console.error('Error fetching background:', error)
+    backgroundImage.value = data?.length > 0 ? imgUrl(data[0].imageUrl) : defaultBg
+  } catch {
     backgroundImage.value = defaultBg
   }
 }
 
-async function fetchWorkerImage(slot: number, section: string) {
+async function fetchWorker(slot: number, section: string) {
   try {
-    const response = await fetch(`http://localhost:3001/section-images/section/${section}`)
+    const response = await fetch(`${apiUrl}/section-images/section/${section}`)
     const data = await response.json()
-    if (data && data.length > 0) {
-      workerImages.value[slot] = imgUrl(data[0].imageUrl)
+    if (data?.length > 0) {
+      workers.value[slot] = {
+        image: imgUrl(data[0].imageUrl),
+        name: data[0].title || '',
+        specialty: data[0].description || '',
+      }
     }
-  } catch (error) {
-    console.error(`Error fetching worker image ${slot}:`, error)
-  }
+  } catch {}
 }
+
+const { data: workersFlagData } = useFetch<any[]>(
+  `${apiUrl}/section-images/section/difficultiesWorkersVisible`,
+  { key: 'difficultiesWorkersVisible', getCachedData: () => undefined },
+)
+
+const workersVisible = computed(() => {
+  const d = workersFlagData.value
+  return !(Array.isArray(d) && d.length > 0 && d[0].title === '0')
+})
 
 onMounted(async () => {
   await Promise.all([
     fetchBackground(),
-    fetchWorkerImage(0, 'difficulties1'),
-    fetchWorkerImage(1, 'difficulties2'),
-    fetchWorkerImage(2, 'difficulties3'),
+    fetchWorker(0, 'difficulties1'),
+    fetchWorker(1, 'difficulties2'),
+    fetchWorker(2, 'difficulties3'),
   ])
 })
 </script>
@@ -52,32 +66,32 @@ onMounted(async () => {
                     <h3 data-aos="fade-up" order: 1 class="diffic-box__tile">Трудності в роботі</h3>
                     <p class="diffic-box__pidtext">текст досить опширний і з хороши змістом і роботою агігаішгапінанімаіпам іп гапінап іап інамііма вшф8нвф98 вфва фвфв вф8 вшрвгфрв фрв ф8вн фвнрв гшфрвгшвфшгвфгв фав фнвп гірв ф78вф98в ф98вфврфв мимфрпвф </p>
 
-                    <ul class="diffic-box__ul">
+                   <ul v-if="workersVisible" class="diffic-box__ul">
                         <li data-aos="fade-right" class="diffic-ul__li">
                             <div
                               class="test-img"
-                              :style="workerImages[0] ? { backgroundImage: `url(${workerImages[0]})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}"
+                              :style="workers[0].image ? { backgroundImage: `url(${workers[0].image})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}"
                             ></div>
-                            <h4>Імя прізвище</h4>
-                            <p class="diffic-li-text">коротка спіціальність</p>
+                            <h4>{{ workers[0].name || 'Імя прізвище' }}</h4>
+                            <p class="diffic-li-text">{{ workers[0].specialty || 'коротка спеціальність' }}</p>
                         </li>
                         <li data-aos="fade-up" class="diffic-ul__li">
                             <div
                               class="test-img"
-                              :style="workerImages[1] ? { backgroundImage: `url(${workerImages[1]})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}"
+                              :style="workers[1].image ? { backgroundImage: `url(${workers[1].image})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}"
                             ></div>
-                            <h4>Імя Прізвище</h4>
-                            <p class="diffic-li-text">коротка спіціальність</p>
+                            <h4>{{ workers[1].name || 'Імя прізвище' }}</h4>
+                            <p class="diffic-li-text">{{ workers[1].specialty || 'коротка спеціальність' }}</p>
                         </li>
                         <li data-aos="fade-down" class="diffic-ul__li tt">
                             <div
                               class="test-img"
-                              :style="workerImages[2] ? { backgroundImage: `url(${workerImages[2]})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}"
+                              :style="workers[2].image ? { backgroundImage: `url(${workers[2].image})`, backgroundSize: 'cover', backgroundPosition: 'center' } : {}"
                             ></div>
-                            <h4>Імя прізвище</h4>
-                            <p class="diffic-li-text">коротка спіціальність</p>
+                            <h4>{{ workers[2].name || 'Імя прізвище' }}</h4>
+                            <p class="diffic-li-text">{{ workers[2].specialty || 'коротка спеціальність' }}</p>
                         </li>
-                    </ul>
+                    </ul> 
                 </div> 
             </div>
         </div>

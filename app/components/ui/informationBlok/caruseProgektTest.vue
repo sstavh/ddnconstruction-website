@@ -69,16 +69,24 @@ const isAnimating = ref(false)
 const wipeKey = ref(0)
 const dbSlides = ref<SlideItem[]>([])
 
+const fallbackSlides: SlideItem[] = [
+  { color: '#1a3a5c', title: 'Наші проекти', text: 'Завантаження даних...' },
+  { color: '#1e4d2b', title: 'Якісне будівництво', text: 'Завантаження даних...' },
+]
+
 const allSlides = computed(() => {
   if (props.section && dbSlides.value.length > 0) return dbSlides.value
-  return props.slides || []
+  if (props.slides && props.slides.length > 0) return props.slides
+  return fallbackSlides
 })
 
-const currentItem = computed(() => allSlides.value[index.value] || { title: '', text: '' })
-const nextItem = computed(() =>
-  allSlides.value[(index.value + 1) % allSlides.value.length] || { title: '', text: '' }
+const empty: SlideItem = { color: '#1a3a5c', title: '', text: '' }
+
+const currentItem = computed<SlideItem>(() => allSlides.value[index.value] ?? empty)
+const nextItem = computed<SlideItem>(() =>
+  allSlides.value[(index.value + 1) % allSlides.value.length] ?? empty
 )
-const displayItem = computed(() =>
+const displayItem = computed<SlideItem>(() =>
   isAnimating.value ? nextItem.value : currentItem.value
 )
 
