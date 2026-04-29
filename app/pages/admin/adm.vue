@@ -10,14 +10,14 @@ const loggedIn = ref(false)
 const activeSection = ref<string>('')
 
 const sections = [
-  { key: 'reviewsbd', label: 'ReviewsBD', instruction: 'У цьому розділі можна переглядати та керувати відгуками.' },
-  { key: 'pep', label: 'PEP', instruction: 'Це розділ заявок PEP. Тут показуються ліди з форми.' },
-  { key: 'pa', label: 'PA', instruction: 'Це адмін-розділ управління категоріями прайсу PA.' },
-  { key: 'pricing', label: 'Pricing', instruction: 'Показує прайс-каталог з API.' },
-  { key: 'calAF', label: 'calAF', instruction: 'Це розділ для заявок калькулятора.' },
-  { key: 'calA', label: 'calA', instruction: 'Адмінська панель для прайсу калькулятора.' },
+  { key: 'reviewsbd', label: 'Відгуки', instruction: 'У цьому розділі можна переглядати та керувати відгуками.' },
+  { key: 'pep', label: 'Форма звернення', instruction: 'Це розділ заявок PEP. Тут показуються ліди з форми.' },
+  { key: 'pa', label: 'Прайс', instruction: 'Це адмін-розділ управління категоріями прайсу PA.' },
+  { key: 'pricing', label: 'Прайс огляд', instruction: 'Показує прайс-каталог з API.' },
+  { key: 'calAF', label: 'Калькулятор Форми', instruction: 'Це розділ для заявок калькулятора.' },
+  { key: 'calA', label: 'Калькулятор Прайсу', instruction: 'Адмінська панель для прайсу калькулятора.' },
   { key: 'discounts', label: 'Знижки', instruction: 'Встановіть знижку у відсотках на конкретний товар калькулятора.' },
-  { key: 'difficulties', label: 'Difficulties', instruction: 'Редагуйте імена та спеціальності працівників. Вмикайте/вимикайте секцію DirectorMes.' },
+  { key: 'difficulties', label: 'Вимикач секцій', instruction: 'Редагуйте імена та спеціальності працівників. Вмикайте/вимикайте секцію DirectorMes.' },
   { key: 'icons', label: 'Іконки', instruction: 'Виберіть 5 іконок для головної сторінки.' },
   { key: 'logout', label: 'Вийти', instruction: 'Натисніть, щоб вийти з адмінки.', isLogout: true },
 ]
