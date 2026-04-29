@@ -4,11 +4,11 @@ import SocialMediaTest from "./ui/footerComponents/SocialMediaTest.vue";
 import FooterCopyright from "./ui/footerComponents/FooterCopyright.vue";
 
 const menu = [
-  { title: "Про нас", link: "/" },
-  { title: "Портфоліо", link: "/" },
-  { title: "Каркулятор", link: "/" },
-  { title: "Послуги", link: "/" },
-  { title: "Прайс", link: "/" },
+  { title: "About Us", link: "/" },
+  { title: "Portfolio", link: "/" },
+  { title: "Calculator", link: "/" },
+  { title: "Services", link: "/" },
+  { title: "Pricing", link: "/" },
 ];
 </script>
 
@@ -20,13 +20,13 @@ const menu = [
           <div class="brand">
             <ButtonBlef />
             <p class="tagline">
-              Ремонт та оздоблення. <br />
-              Працюємо швидко, акуратно і прозоро.
+              Renovation and Finishing. <br />
+             We work quickly,neatly,and transparently.
             </p>
           </div>
 
           <div class="navBox" aria-label="Навігація футера">
-            <h4 class="title">Меню</h4>
+            <h4 class="title">Menu</h4>
             <nav class="nav">
               <NuxtLink
                 v-for="(item, i) in menu"
@@ -40,7 +40,7 @@ const menu = [
           </div>
 
           <div class="socialBox" aria-label="Соцмережі">
-            <h4 class="title">Ми на звʼязку</h4>
+            <h4 class="title">We are in touch</h4>
             <div class="socialCard">
               <SocialMediaTest />
             </div>

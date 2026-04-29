@@ -1,16 +1,17 @@
 <template>
   <header class="page-header">
     <div>
-      <p class="page-header__label">Калькулятор ремонту</p>
-      <h1 class="page-header__title">Розрахуйте ремонт по кімнатах</h1>
+      <p class="page-header__label">Project Cost Calculator</p>
+      <h1 class="page-header__title">Estimate Your Renovation Cost by Room
+</h1>
     </div>
 
     <div class="page-header__actions">
       <button class="top-button top-button--light" :disabled="!canGoBack" @click="$emit('back')">
-        Назад
+        Back
       </button>
       <button class="top-button top-button--dark" :disabled="!canGoNext" @click="$emit('next')">
-        Далі
+        Next
       </button>
     </div>
   </header>
@@ -67,8 +68,7 @@ defineEmits<{
 
 .page-header__title {
   margin: 0;
-  font-size: clamp(28px, 4vw, 42px);
-  line-height: 1.12;
+font-size: clamp(22px, 3vw, 34px);  line-height: 1.12;
   font-weight: 600;
   color: #ffffff;
   max-width: 720px;

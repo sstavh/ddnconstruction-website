@@ -1,26 +1,54 @@
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+import { ref, onMounted } from "vue";
+import { imgUrl, fetchSection } from '~/composables/useApi'
+
+const backgroundImage = ref('')
+const defaultBg = '/images/about/history.jpg'
+
+async function fetchBackground() {
+  try {
+    const response = await fetch('http://localhost:3001/section-images/section/history')
+    const data = await response.json()
+    if (data && data.length > 0) {
+      backgroundImage.value = imgUrl(data[0].imageUrl)
+    } else {
+      backgroundImage.value = defaultBg
+    }
+  } catch (error) {
+    console.error('Error fetching background:', error)
+    backgroundImage.value = defaultBg
+  }
+}
+
+onMounted(async () => {
+  await fetchBackground()
+})
+</script>
 
 <template>
-    <section>
+    <section :style="{ backgroundImage: `url(${backgroundImage})` }">
+        <div class="overlay"></div>
         <div class="container">
             <div class="historyWork-container">
                 <div class="historyWork-container__box">
-                    <h3 order: 1 data-aos="fade-up" class="historyWork-box__title">Іторія початку</h3>
+                    <h3 order: 1 data-aos="fade-up" class="historyWork-box__title">How It Started</h3>
                     <ul class="historyWork-ul">
                         <li class="historyWork-ul__li">
                             <div data-aos="fade-right" order: 2 class="test-img">
                             </div>
                             <div class="historyWork-li__box">
-                                <h4 order: 2 data-aos="fade-up" class="historyWork-li">Лого про компонент</h4>
-                                <p class="historyWork-li__text">текс про початок і про наступні етапи </p>
+                                <h4 order: 2 data-aos="fade-up" class="historyWork-li">Our Beginning</h4>
+                                <p class="historyWork-li__text">We started with small projects and a simple goal — do quality work and do it right.
+</p>
                             </div>
                             
                         </li>
                         <li class="historyWork-ul__li">
                             
                             <div  class="historyWork-li__box">
-                                <h4 order: 3 data-aos="fade-up" class="historyWork-li">Лого про компонент</h4>
-                                <p class="historyWork-li__text">текс про початок і про наступні етапи </p>
+                                <h4 order: 3 data-aos="fade-up" class="historyWork-li">Growth & Experience</h4>
+                                <p class="historyWork-li__text">We took on more projects, improved our processes, and earned the trust of our clients.
+</p>
                             </div>
                             <div order: 3 data-aos="fade-right" class="test-img tt">
                             </div>
@@ -30,8 +58,8 @@
                             <div data-aos="fade-right" order: 4 class="test-img">
                             </div>
                             <div class="historyWork-li__box">
-                                <h4 order: 4 data-aos="fade-up" class="historyWork-li">Лого про компонент</h4>
-                                <p class="historyWork-li__text">текс про початок і про наступні етапи </p>
+                                <h4 order: 4 data-aos="fade-up" class="historyWork-li">Stability & result</h4>
+                                <p class="historyWork-li__text">Today, we’re proud to be a trusted team delivering reliable, high-quality remodeling for every client.</p>
                             </div>
                             
                         </li>
@@ -43,6 +71,29 @@
 </template>
 
 <style scoped>
+section {
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    padding-bottom: 80px;
+}
+
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  
+    z-index: 1;
+}
+
+section .container {
+    position: relative;
+    z-index: 2;
+}
+
 .historyWork-container{
     margin-top: 160px;
 }

@@ -4,6 +4,9 @@
   <!-- Таблиця лідів -->
   <div>
     <h2>Заявки</h2>
+    <div v-if="loadError" style="color: red; margin-bottom: 1rem;">
+      {{ loadError }}
+    </div>
     <table border="1">
       <thead>
         <tr>
@@ -25,7 +28,7 @@
           <td>{{ lead.lastName }}</td>
           <td>{{ lead.email }}</td>
           <td>{{ lead.phone }}</td>
-          <td>{{ lead.jobs.join(', ') }}</td>
+          <td>{{ lead.jobs?.join(', ') ?? '' }}</td>
           <td>{{ JSON.stringify(lead.areas) }}</td>
           <td>{{ lead.comment }}</td>
           <td>{{ new Date(lead.createdAt).toLocaleString() }}</td>
@@ -35,33 +38,32 @@
   </div>
 </template>
 
-<script>
-export default {
-  data() {
-    return {
-      leads: [],
-    };
-  },
-  async mounted() {
-    await this.loadLeads();
-  },
-  methods: {
-    async loadLeads() {
-      try {
-        const response = await fetch(`${apiUrl}/leads`);
-        if (!response.ok) {
-          throw new Error(`Server error: ${response.status}`);
-        }
-        this.leads = await response.json();
-      } catch (error) {
-        console.error('Помилка завантаження лідів:', error);
-      }
-    },
-    async handleSubmit() {
-      // Твій існуючий код відправки форми
-      // Після успіху:
-      await this.loadLeads(); // Оновити таблицю
-    },
-  },
-};
+<script setup>
+import { ref, onMounted } from 'vue'
+
+const apiUrl = useRuntimeConfig().public.apiUrl || 'http://127.0.0.1:3001'
+const leads = ref([])
+const loadError = ref(null)
+
+const loadLeads = async () => {
+  try {
+    loadError.value = null
+    const response = await fetch(`${apiUrl}/leads`)
+    if (!response.ok) {
+      throw new Error(`Server error: ${response.status}`)
+    }
+    leads.value = await response.json()
+  } catch (error) {
+    console.error('Помилка завантаження лідів:', error)
+    loadError.value = error instanceof Error ? error.message : String(error)
+  }
+}
+
+const handleSubmit = async () => {
+  // Твій існуючий код відправки форми
+  // Після успіху:
+  await loadLeads()
+}
+
+onMounted(loadLeads)
 </script>

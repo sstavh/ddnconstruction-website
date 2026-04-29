@@ -10,6 +10,7 @@ type PricingItem = {
   categoryId: string
 }
 
+
 type PricingCategory = {
   id: string
   title: string
@@ -24,6 +25,25 @@ const categories = ref<PricingCategory[]>([])
 const selectedCategoryId = ref('')
 const loading = ref(false)
 const errorMessage = ref('')
+
+const globalDiscount = ref(0)
+
+const loadDiscounts = async () => {
+  try {
+    const res = await fetch(`${apiUrl}/discounts/global`)
+    if (res.ok) {
+      const val = await res.json()
+      globalDiscount.value = typeof val === 'number' ? val : 0
+    }
+  } catch {}
+}
+
+const discountedPrice = (price: string): string => {
+  if (!globalDiscount.value) return price
+  const num = parseFloat(price.replace(/[^\d.]/g, ''))
+  if (isNaN(num)) return price
+  return Math.round(num * (1 - globalDiscount.value / 100)).toString()
+}
 
 const categoryForm = reactive({
   id: '',
@@ -158,7 +178,7 @@ const deleteItem = async (id: number) => {
   }
 }
 
-onMounted(loadCategories)
+onMounted(() => { loadCategories(); loadDiscounts() })
 </script>
 
 <template>
@@ -236,7 +256,16 @@ onMounted(loadCategories)
           <div v-if="category.items.length === 0">Немає елементів</div>
           <ul>
             <li v-for="item in category.items" :key="item.id">
-              <span>{{ item.title }} / {{ item.titleUk }} — {{ item.price }} {{ item.priceType === 'm2' ? '/м²' : '' }}</span>
+              <span>
+                {{ item.title }} / {{ item.titleUk }} —
+                <template v-if="globalDiscount > 0">
+                  <s class="price-original">{{ item.price }}</s>
+                  <strong class="price-discounted">{{ discountedPrice(item.price) }}</strong>
+                  <span class="price-badge">−{{ globalDiscount }}%</span>
+                </template>
+                <template v-else>{{ item.price }}</template>
+                {{ item.priceType === 'm2' ? '/м²' : '' }}
+              </span>
               <button @click.prevent="deleteItem(item.id)" :disabled="loading">Видалити</button>
             </li>
           </ul>
@@ -338,5 +367,27 @@ button:disabled {
   gap: 12px;
   padding: 10px 0;
   border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+}
+
+.price-original {
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: line-through;
+  margin-right: 4px;
+}
+
+.price-discounted {
+  color: #34d399;
+  margin-right: 4px;
+}
+
+.price-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.15);
+  color: #34d399;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid rgba(34, 197, 94, 0.3);
 }
 </style>

@@ -4,7 +4,7 @@ console.log("good Button");
 </script>
 
 <template>
-<button class="button">Button</button>
+<button class="button">Contact</button>
 </template>
 
 <style scoped>

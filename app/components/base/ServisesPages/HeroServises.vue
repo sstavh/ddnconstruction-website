@@ -1,8 +1,36 @@
 <script lang="ts" setup>
+import { ref, onMounted } from "vue";
+import { imgUrl, fetchSection } from '~/composables/useApi'
+
+const backgroundImage = ref('')
+const defaultBg = '/images/services/hero.jpg'
+
+async function fetchBackground() {
+  try {
+    const response = await fetch('http://localhost:3001/section-images/section/services')
+    const data = await response.json()
+    if (data && data.length > 0) {
+      backgroundImage.value = imgUrl(data[0].imageUrl)
+    } else {
+      backgroundImage.value = defaultBg
+    }
+  } catch (error) {
+    console.error('Error fetching background:', error)
+    backgroundImage.value = defaultBg
+  }
+}
+
+onMounted(async () => {
+  await fetchBackground()
+})
 </script>
 
 <template>
-    <section class="heroAbaut-section">
+    <section 
+        class="heroAbaut-section"
+        :style="{ backgroundImage: `url(${backgroundImage})` }"
+    >
+        <div class="overlay"></div>
         <div class="container">
             <div class="heroAbaut-container">
                 <div class="heroAbout-container-box">

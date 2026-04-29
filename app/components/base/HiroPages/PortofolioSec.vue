@@ -11,7 +11,7 @@ import ButtonNextPort from '~/components/ui/ButtonNextPort.vue'
         <div class="">
 
           <h3 class="portfoliosec-box__logo">
-            Портфоліо
+            Portfolio
           </h3>
 
           <div class="box-galeri">
@@ -23,7 +23,8 @@ import ButtonNextPort from '~/components/ui/ButtonNextPort.vue'
                   data-aos-duration="1500"
                   data-aos-delay="0">
                 <FotosPortaolio
-                  text="Текст з’являється на hover або рандомно на 6с"
+                  section="portfolioSec1"
+                  text="Custom Home Construction"
                   :colors="['#ff4d4d', '#7c3aed', '#22c55e']"
                   :cycle-seconds="25"
                   :random-min-wait-seconds="2"
@@ -37,7 +38,8 @@ import ButtonNextPort from '~/components/ui/ButtonNextPort.vue'
                   data-aos-duration="1500"
                   data-aos-delay="400">
                 <FotosPortaolio
-                  text="Текст з’являється на hover або рандомно на 6с"
+                  section="portfolioSec2"
+                  text="Commercial Property Renovation"
                   :colors="['#ff4d4d', '#7c3aed', '#22c55e']"
                   :cycle-seconds="25"
                   :random-min-wait-seconds="5"
@@ -51,7 +53,8 @@ import ButtonNextPort from '~/components/ui/ButtonNextPort.vue'
                   data-aos-duration="1500"
                   data-aos-delay="800">
                 <FotosPortaolio
-                  text="Текст з’являється на hover або рандомно на 6с"
+                  section="portfolioSec3"
+                  text="Interior Renovation & Finishing"
                   :colors="['#ff4d4d', '#7c3aed', '#22c55e']"
                   :cycle-seconds="25"
                   :random-min-wait-seconds="5"

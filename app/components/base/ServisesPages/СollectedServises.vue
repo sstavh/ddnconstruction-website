@@ -1,86 +1,99 @@
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import PromoCard from '../../ui/ServisesComponents/PromoCard.vue'
 import BeforeAfter from '../../ui/informationBlok/beforeAfter.vue';
 import TextBlok from '../../ui/informationBlok/TextBlok.vue';
+import { imgUrl, fetchSection } from '~/composables/useApi'
 
+const imgs = ref<{ imageUrl: string }[]>([])
+
+function img(index: number): string {
+  return imgs.value[index]?.imageUrl || ''
+}
+
+async function fetchImages() {
+  try {
+    const data = await fetchSection('collectedServices')
+    if (Array.isArray(data)) {
+      imgs.value = data.map((item: { imageUrl: string }) => ({ imageUrl: imgUrl(item.imageUrl) }))
+    }
+  } catch (e) {}
+}
+
+onMounted(fetchImages)
 </script>
 
 <template>
     <section>
         <div class="container">
             <div class="collected-contaoner">
-                <h3 class="collected-title"
-                 >
+                <h3 class="collected-title">
                     Вибирай що тобі потрібно
                 </h3>
 
                 <div class="collected-box">
-                    
-                     <PromoCard class="aa"
 
-                     data-aos="fade-up" order: 1
+                     <PromoCard class="aa"
+                     data-aos="fade-up"
                       logo="/logos/spotify.svg"
-                      color="#1db954"
                       width="292.5px"
                       height="400px"
-                      bg-image="/images/music.jpg"
-                      link="/music"
-                      button-text="Перейти"
+                      :bg-image="img(0)"
+                      link="/services/KitchenServise"
+                      button-text="Kitchen Service"
                     />
-                    <BeforeAfter data-aos="fade-up" order: 1 class="ttt"/>
+                    <div class="before-after-wrap" data-aos="fade-up">
+                      <p class="before-after-label">Before / After</p>
+                      <BeforeAfter class="ttt" left-section="beforeAfterLeft" right-section="beforeAfterRight"/>
+                    </div>
                     <PromoCard
-                    data-aos="fade-up" order: 1
+                    data-aos="fade-up"
                       logo="/logos/spotify.svg"
-                      color="#1db954"
                       width="292.5px"
                       height="400px"
-                      bg-image="/images/music.jpg"
-                      link="/music"
-                      button-text="Перейти"
+                      :bg-image="img(1)"
+                      link="/services/bathroom"
+                      button-text="Bathroom"
                     />
                     <PromoCard
-                    data-aos="fade-up" order: 2
+                    data-aos="fade-up"
                       logo="/logos/spotify.svg"
-                      color="#1db954"
                       width="380px"
                       height="370px"
-                      bg-image="/images/music.jpg"
-                      link="/music"
-                      button-text="Перейти"
+                      :bg-image="img(2)"
+                      link="/services/tiles"
+                      button-text="Tiles"
                     />
                     <PromoCard
-                     data-aos="fade-up" order: 2
+                     data-aos="fade-up"
                       logo="/logos/spotify.svg"
-                      color="#1db954"
                       width="370px"
                       height="370px"
-                      bg-image="/images/music.jpg"
-                      link="/music"
-                      button-text="Перейти"
+                      :bg-image="img(3)"
+                      link="/services/painting"
+                      button-text="Spackling / Painting"
                     />
                     <TextBlok class="ttt-text"
-                     data-aos="fade-up" order: 2
-                        text="Це текст із головного файлу. Тут ти можеш писати будь-який опис для інформаційного блока."
+                     data-aos="fade-up"
+                        text="Вибирай сервіс який тобі потрібен. Ми пропонуємо повний спектр ремонтних і будівельних послуг — від кухні до електрики."
                       />
                       <PromoCard
-                       data-aos="fade-up" order: 3
+                       data-aos="fade-up"
                       logo="/logos/spotify.svg"
-                      color="#1db954"
                       width="575px"
                       height="450px"
-                      bg-image="/images/music.jpg"
-                      link="/music"
-                      button-text="Перейти"
+                      :bg-image="img(4)"
+                      link="/services/electric"
+                      button-text="Electrical Work"
                     />
                     <PromoCard
-                     data-aos="fade-up" order: 3
+                     data-aos="fade-up"
                       logo="/logos/spotify.svg"
-                      color="#1db954"
                       width="575px"
                       height="450px"
-                      bg-image="/images/music.jpg"
-                      link="/music"
-                      button-text="Перейти"
+                      :bg-image="img(5)"
+                      link="/services/plumbing"
+                      button-text="Plumbing"
                     />
 
                 </div>
@@ -110,6 +123,21 @@ import TextBlok from '../../ui/informationBlok/TextBlok.vue';
 }
 
 /* великі кастомні блоки */
+.before-after-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.before-after-label {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--color-praymeri-blekText, #555);
+}
+
 .ttt{
     width: 530px;
     height: 400px;

@@ -3,7 +3,7 @@ console.log("ButtonInformationTest component loaded");
 </script>
 
 <template>
-   <button class="button-information-test">Натисни щоб дізнатися більше &rarr; </button>
+   <button class="button-information-test">Learn More &rarr; </button>
 </template>
 
 <style scoped>

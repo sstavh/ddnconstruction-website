@@ -1,17 +1,35 @@
 <script lang="ts" setup>
+import { ref, onMounted } from 'vue'
 import Button from '../../ui/Button.vue'
+import { imgUrl } from '~/composables/useApi'
 
 interface Props {
   title: string
   buttonText: string
   buttonLink: string
+  section?: string
 }
 
-defineProps<Props>()
+const props = defineProps<Props>()
+const backgroundImage = ref('')
+
+onMounted(async () => {
+  if (!props.section) return
+  try {
+    const res = await fetch(`http://localhost:3001/section-images/section/${props.section}`)
+    const data = await res.json()
+    if (Array.isArray(data) && data.length > 0) backgroundImage.value = imgUrl(data[0].imageUrl)
+  } catch (e) {
+    console.error('HeroSECComponent fetch error:', e)
+  }
+})
 </script>
 
 <template>
-  <section class="heroAbaut-section">
+  <section
+    class="heroAbaut-section"
+    :style="backgroundImage ? { backgroundImage: `url(${backgroundImage})` } : {}"
+  >
     <div class="container">
       <div class="heroAbaut-container">
         <div class="heroAbout-container-box">
@@ -38,12 +56,14 @@ defineProps<Props>()
 .heroAbaut-section{
   margin-top: -60px;
   height: 470px;
+  background-size: cover;
+  background-position: center;
   background: linear-gradient(
       to top,
       rgba(0, 0, 0, 0.8),
       rgba(0, 0, 0, 0)
     ),
-    blueviolet;
+    #1a1a2e;
 }
 
 .heroAbout-box__title{

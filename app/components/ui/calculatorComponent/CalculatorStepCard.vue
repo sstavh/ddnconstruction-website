@@ -20,7 +20,7 @@
 
     <div v-else-if="step.key === 'rooms'" class="rooms-box">
       <div class="helper-box">
-        Можна вибрати не більше ніж <strong>{{ formData.roomCount }}</strong> кімнат(и).
+        You can choose no more than <strong>{{ formData.roomCount }}</strong> room(s).
       </div>
 
       <div class="rooms-grid">
@@ -70,7 +70,7 @@
         class="field-group"
       >
         <label class="field-group__label">
-          {{ getRoomLabel(room) }} — площа, м²
+          {{ getRoomLabel(room) }} — area, m²
         </label>
 
         <input
@@ -87,7 +87,7 @@
     <div v-else-if="step.key === 'summary'" class="summary-box">
       <div class="receipt-card">
         <div class="receipt-card__row">
-          <span>Кількість кімнат</span>
+          <span>Number of Rooms</span>
           <strong>{{ formData.roomCount }}</strong>
         </div>
 
@@ -98,7 +98,7 @@
         >
           <div class="receipt-room__head">
             <h3>{{ getRoomLabel(room) }}</h3>
-            <span>{{ formData.areasByRoom[room] || 0 }} м²</span>
+            <span>{{ formData.areasByRoom[room] || 0 }} m²</span>
           </div>
 
           <div
@@ -109,21 +109,33 @@
             <div class="receipt-line__info">
               <strong>{{ getServiceById(room, serviceId)?.title }}</strong>
               <small>{{ getServiceCalculationText(room, serviceId) }}</small>
+              <span v-if="getDiscountPercent(serviceId) > 0" class="receipt-discount-badge">
+                −{{ getDiscountPercent(serviceId) }}%
+              </span>
             </div>
 
             <div class="receipt-line__price">
-              {{ formatCurrency(getServiceTotal(room, serviceId)) }}
+              <span
+                v-if="getDiscountPercent(serviceId) > 0"
+                class="receipt-line__price-original"
+              >{{ formatCurrency(getServiceTotal(room, serviceId)) }}</span>
+              {{ formatCurrency(getServiceTotalDiscounted(room, serviceId)) }}
             </div>
           </div>
 
           <div class="receipt-room__subtotal">
-            <span>Разом по кімнаті</span>
+            <span>Subtotal for Room</span>
             <strong>{{ formatCurrency(getRoomTotal(room)) }}</strong>
           </div>
         </div>
 
+        <div v-if="discountActive && grandTotal !== grandTotalNoDiscount" class="receipt-savings">
+          <span>Ваша знижка</span>
+          <strong>−{{ formatCurrency(grandTotalNoDiscount - grandTotal) }}</strong>
+        </div>
+
         <div class="receipt-total">
-          <span>Загальна сума</span>
+          <span>Grand Total</span>
           <strong>{{ formatCurrency(grandTotal) }}</strong>
         </div>
       </div>
@@ -146,7 +158,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, reactive, watch } from 'vue'
+import { computed, onMounted, reactive, ref, watch } from 'vue'
 import ContactForm from './ContactForm.vue'
 import type {
   CalculatorData,
@@ -156,6 +168,28 @@ import type {
   ServiceCatalog,
   ServiceItem,
 } from '../../../types/calculator'
+
+const apiUrl = useRuntimeConfig().public.apiUrl
+
+const globalDiscount = ref(0)
+const discountActive = ref(false)
+
+onMounted(async () => {
+  if (typeof sessionStorage === 'undefined') return
+  discountActive.value = sessionStorage.getItem('discount_active') === 'true'
+  if (!discountActive.value) return
+  try {
+    const res = await fetch(`${apiUrl}/discounts/global`)
+    if (res.ok) {
+      const val = await res.json()
+      globalDiscount.value = typeof val === 'number' ? val : 0
+    }
+  } catch {}
+})
+
+function getDiscountPercent(_serviceId: string): number {
+  return discountActive.value ? globalDiscount.value : 0
+}
 
 const props = defineProps<{
   step: CalculatorStep
@@ -218,11 +252,16 @@ const isStepValid = computed(() => {
   return false
 })
 
-const grandTotal = computed(() => {
-  return props.formData.selectedRooms.reduce((roomAcc, room) => {
-    return roomAcc + getRoomTotal(room)
+const grandTotalNoDiscount = computed(() =>
+  props.formData.selectedRooms.reduce((acc, room) => {
+    const roomServices = props.formData.servicesByRoom[room] || []
+    return acc + roomServices.reduce((s, sid) => s + getServiceTotal(room, sid), 0)
   }, 0)
-})
+)
+
+const grandTotal = computed(() =>
+  props.formData.selectedRooms.reduce((acc, room) => acc + getRoomTotal(room), 0)
+)
 
 function getRoomLabel(roomValue: string) {
   return props.roomOptions.find((room) => room.value === roomValue)?.label || roomValue
@@ -287,22 +326,19 @@ function updateArea(roomValue: string, value: string) {
 function getServiceTotal(roomValue: string, serviceId: string) {
   const service = getServiceById(roomValue, serviceId)
   if (!service) return 0
-
   const area = Number(props.formData.areasByRoom[roomValue] || 0)
+  return service.priceType === 'm2' ? service.price * area : service.price
+}
 
-  if (service.priceType === 'm2') {
-    return service.price * area
-  }
-
-  return service.price
+function getServiceTotalDiscounted(roomValue: string, serviceId: string) {
+  const base = getServiceTotal(roomValue, serviceId)
+  const pct = getDiscountPercent(serviceId)
+  return pct > 0 ? Math.round(base * (1 - pct / 100)) : base
 }
 
 function getRoomTotal(roomValue: string) {
   const roomServices = props.formData.servicesByRoom[roomValue] || []
-
-  return roomServices.reduce((sum, serviceId) => {
-    return sum + getServiceTotal(roomValue, serviceId)
-  }, 0)
+  return roomServices.reduce((sum, serviceId) => sum + getServiceTotalDiscounted(roomValue, serviceId), 0)
 }
 
 function getServiceCalculationText(roomValue: string, serviceId: string) {
@@ -315,7 +351,7 @@ function getServiceCalculationText(roomValue: string, serviceId: string) {
     return `${service.price}$/м² × ${area} м²`
   }
 
-  return `Фіксована ціна: ${service.price}$`
+  return `Фіксована ціна: ${service.price}$`//////////////////////////////////////
 }
 
 function formatPriceLabel(service: ServiceItem) {
@@ -380,6 +416,8 @@ function handleComplete() {
 }
 
 function handleSubmitForm(payload: ContactFormType) {
+  sessionStorage.removeItem('discount_active')
+  discountActive.value = false
   emit('submit-form', payload)
 }
 </script>
@@ -752,6 +790,46 @@ function handleSubmitForm(payload: ContactFormType) {
 .receipt-total strong {
   color: #9ec5ff;
   font-size: 24px;
+}
+
+.receipt-discount-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.18);
+  color: #34d399;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  margin-top: 2px;
+}
+
+.receipt-line__price-original {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.38);
+  text-decoration: line-through;
+  margin-bottom: 2px;
+}
+
+.receipt-savings {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 14px;
+  margin-top: 16px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.25);
+  color: #34d399;
+  font-weight: 600;
+}
+
+.receipt-savings strong {
+  font-size: 18px;
+  color: #34d399;
 }
 
 /* mobile */

@@ -1,40 +1,40 @@
 <template>
   <form class="contact-form" @submit.prevent="submit">
     <div class="contact-form__note">
-      У заявку автоматично підуть усі дані з вашого чеку.
+      All data from your check will automatically be included in the application.
     </div>
 
     <div class="field-group">
-      <label class="field-group__label">Ім’я</label>
+      <label class="field-group__label">Name</label>
       <input
         v-model="form.name"
         class="field-group__control"
         type="text"
-        placeholder="Ваше ім’я"
+        placeholder="Your name"
       >
     </div>
 
     <div class="field-group">
-      <label class="field-group__label">Телефон</label>
+      <label class="field-group__label">Phone</label>
       <input
         v-model="form.phone"
         class="field-group__control"
         type="text"
-        placeholder="Ваш телефон"
+        placeholder="Your phone"
       >
     </div>
 
     <div class="field-group">
-      <label class="field-group__label">Коментар</label>
+      <label class="field-group__label">Comment</label>
       <textarea
         v-model="form.comment"
         class="field-group__control field-group__control--textarea"
-        placeholder="Ваш коментар"
+        placeholder="Your comment"
       />
     </div>
 
     <button class="step-card__button" type="submit" :disabled="!canSubmit">
-      Надіслати форму
+      Submit Form
     </button>
   </form>
 </template>

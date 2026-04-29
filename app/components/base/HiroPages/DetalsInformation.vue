@@ -10,14 +10,6 @@ import TextBlok from '~/components/ui/informationBlok/TextBlok.vue'
 import beforeAfter from '~/components/ui/informationBlok/beforeAfter.vue'
 import caruseProgektTest from '~/components/ui/informationBlok/caruseProgektTest.vue'
 
-const slides = [
-  { color: '#ff004c', title: 'Title 1', text: 'Text for slide 1' },
-  { color: '#ffb300', title: 'Title 2', text: 'Text for slide 2' },
-  { color: '#00d084', title: 'Title 3', text: 'Text for slide 3' },
-  { color: '#007bff', title: 'Title 4', text: 'Text for slide 4' },
-  { color: '#7c3aed', title: 'Title 5', text: 'Text for slide 5' }
-]
-
 type Item = {
   key: string
   component: any
@@ -30,11 +22,11 @@ type Item = {
 }
 
 const items: Item[] = [
-  { key: 'foto', component: FotoImgTest, aos: 'fade-right', duration: 1200, easing: 'ease-out-cubic', order: 3 },
-  { key: 'portfolio', component: FotosPortaolio, props: { class: 'update' }, aos: 'zoom-in', duration: 1200, easing: 'ease-out-back', order: 5 },
+  { key: 'foto', component: FotoImgTest, props: { section: 'fotoImgTest' }, aos: 'fade-right', duration: 1200, easing: 'ease-out-cubic', order: 3 },
+  { key: 'portfolio', component: FotosPortaolio, props: { section: 'infoportfolio', class: 'update' }, aos: 'zoom-in', duration: 1200, easing: 'ease-out-back', order: 5 },
   { key: 'btn', component: ButtonInformationTest, aos: 'fade-up', duration: 1200, easing: 'ease-out-cubic', order: 1 },
-  { key: 'beforeAfter', component: beforeAfter, props: { 'left-color': '#ff0000', 'right-color': '#0000ff', class: 'h-56' }, aos: 'flip-left', duration: 1200, easing: 'ease-out-cubic', order: 2 },
-  { key: 'carousel', component: caruseProgektTest, props: { slides }, aos: 'fade-left', duration: 1200, easing: 'ease-out-cubic', order: 6 },
+  { key: 'beforeAfter', component: beforeAfter, props: { 'left-section': 'beforeAfterLeft', 'right-section': 'beforeAfterRight', 'left-color': '#ff0000', 'right-color': '#0000ff', class: 'h-56' }, aos: 'flip-left', duration: 1200, easing: 'ease-out-cubic', order: 2 },
+  { key: 'carousel', component: caruseProgektTest, props: { section: 'carousel' }, aos: 'fade-left', duration: 1200, easing: 'ease-out-cubic', order: 6 },
   { key: 'text', component: TextBlok, aos: 'fade-up', duration: 1200, easing: 'ease-out-cubic', order: 4 }
 ]
 
@@ -83,7 +75,7 @@ onMounted(async () => {
                 :data-aos-easing="item.easing"
                 :data-aos-anchor-placement="item.anchorPlacement || 'top-bottom'"
               >
-                <component :is="item.component" v-bind="item.props" />
+                <component class="re" :is="item.component" v-bind="item.props" />
               </li>
             </ul>
           </div>
@@ -151,13 +143,15 @@ onMounted(async () => {
 
 .group__li {
   display: flex;
+  
   width: 100%;
   height: 100%;
 }
 
 .group__li > * {
+  
   width: 100%;
-  height: 100%;
+height: 350px;
 }
 
 /* FIX COMPONENT SIZE */

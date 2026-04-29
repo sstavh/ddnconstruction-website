@@ -7,7 +7,7 @@ import ImgsBlocFoto from '~/components/ui/informationBlok/blokImgs/ImgsBlocFoto.
   <div class="container">
     <div class="form-container">
       <div class="form-container__box">
-        <h3 class="form-container__title">Зв'яжіться з нами</h3>
+        <h3 class="form-container__title">Get in Touch</h3>
         <div class="form-box">
           <FormСontact />
           <ImgsBlocFoto class="tt"  data-aos="fade-left"/>

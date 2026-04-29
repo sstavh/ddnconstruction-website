@@ -43,7 +43,7 @@ const emit = defineEmits<{
       />
     </svg>
 
-    <span class="cloud-text">Всі відгуки →</span>
+    <span class="cloud-text">leave a review →</span>
   </button>
 </template>
 

@@ -2,16 +2,15 @@
   <aside class="calculator-aside">
     <div class="calculator-aside__overlay">
       <p class="calculator-aside__caption">Construction & Remodeling Services</p>
-      <h2 class="calculator-aside__title">Калькулятор ремонтних робіт</h2>
+      <h2 class="calculator-aside__title">Renovation Cost Calculator</h2>
       <p class="calculator-aside__text">
-        Спочатку оберіть кількість кімнат, потім самі кімнати, далі види робіт,
-        площу і в кінці отримайте готовий чек для заявки.
+        Easily estimate your renovation cost in just a few steps — select rooms, choose services, and get a detailed quote ready to submit.
       </p>
 
       <ul class="calculator-aside__list">
-        <li>Вибір кімнат під вашу кількість</li>
-        <li>Послуги окремо по кожній кімнаті</li>
-        <li>Фінальний чек перед заявкою</li>
+        <li>Select the number of rooms</li>
+        <li>Choose services for each room</li>
+        <li>Get a detailed quote before submitting</li>
       </ul>
     </div>
   </aside>

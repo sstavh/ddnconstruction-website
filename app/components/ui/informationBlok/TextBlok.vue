@@ -4,7 +4,7 @@ interface Props {
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  text: 'текст який охарактеризовує інформаційний блок. Довгий текст, що відображається у інформаційному блоці.'
+  text: 'Our company is focused on results and long-term quality. We do the job right the first time — so you don’t have to fix it later.'
 })
 
 console.log("TextBlok component loaded")

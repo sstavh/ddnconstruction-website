@@ -32,8 +32,8 @@ function handleAction(action: BtnAction) {
   <section class="section">
     <div class="container">
       <header class="head">
-        <h3 data-aos="fade-up" class="title">Меню з вибором</h3>
-        <p class="subtitle">Натискай, щоб обрати дизайн</p>
+        <h3 data-aos="fade-up" class="title">Choose the type of project</h3>
+        <p class="subtitle">Browse project by category</p>
       </header>
 
       <div class="menu" :class="{ open: opened }">
