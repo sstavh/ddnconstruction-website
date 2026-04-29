@@ -43,7 +43,6 @@ onMounted(fetchImages)
                       button-text="Kitchen Service"
                     />
                     <div class="before-after-wrap" data-aos="fade-up">
-                      <p class="before-after-label">Before / After</p>
                       <BeforeAfter class="ttt" left-section="beforeAfterLeft" right-section="beforeAfterRight"/>
                     </div>
                     <PromoCard

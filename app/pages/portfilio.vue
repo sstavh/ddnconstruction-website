@@ -2,6 +2,7 @@
 import ButtonNAvigation from '../components/base/PortfolioPage/ButtonNAvigation.vue';
 import GeneralHeroPortfolio from '../components/base/PortfolioPage/GeneralHeroPortfolio.vue';
 import HeroPortfolio from '../components/base/PortfolioPage/HeroPortfolio.vue';
+import VideoPortfolio from '../components/base/PortfolioPage/VideoPortfolio.vue';
 import PortfolioContainer from '../components/base/PortfolioPage/PortfolioContainer.vue';
 </script>
 
@@ -51,6 +52,9 @@ import PortfolioContainer from '../components/base/PortfolioPage/PortfolioContai
       service-slug="plumbing"
       text="Reliable plumbing services including pipe installation, fixture replacement, and leak repairs. We keep your systems flowing efficiently and safely."
     />
+
+    <!-- Video Portfolio -->
+    <VideoPortfolio/>
 </template>
 
 <style></style>

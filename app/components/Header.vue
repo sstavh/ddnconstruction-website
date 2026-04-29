@@ -23,11 +23,11 @@ const menu = [
 
 const services = [
   { title: "Kitchen Service", link: "/services/KitchenServise" },
-  { title: "Bathroom", link: "/services/bathroom" },
-  { title: "Tiles", link: "/services/tiles" },
-  { title: "Spackling / Painting", link: "/services/painting" },
-  { title: "Electrical Work", link: "/services/electric" },
-  { title: "Plumbing", link: "/services/plumbing" },
+  { title: "Bathroom", link: "/services/BathroomServises" },
+  { title: "Tiles", link: "/services/TilesSection" },
+  { title: "Spackling / Painting", link: "/services/PaintingServises" },
+  { title: "Electrical Work", link: "/services/ElectricalSection" },
+  { title: "Plumbing", link: "/services/PlumbingSection" },
 ];
 
 const isServicesOpen = ref(false);
