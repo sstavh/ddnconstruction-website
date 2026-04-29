@@ -10,7 +10,8 @@ type Slide = {
 };
 
 const props = defineProps<{
-  slides: Slide[];
+  slides?: Slide[];
+  sectionKey?: string;
   autoplayMs?: number;
 }>();
 
@@ -39,12 +40,34 @@ const dir = ref<Dir>(null);
 watch(
   () => props.slides,
   (v) => {
-    items.value = [...(v ?? [])];
-    position.value = 1;
-    anim.value = false;
+    if (!props.sectionKey) {
+      items.value = [...(v ?? [])];
+      position.value = 1;
+      anim.value = false;
+    }
   },
   { immediate: true }
 );
+
+async function fetchFromApi() {
+  if (!props.sectionKey) return
+  try {
+    const res = await fetch(`http://localhost:3001/section-images/section/${props.sectionKey}`)
+    const data = await res.json()
+    if (Array.isArray(data) && data.length > 0) {
+      items.value = data
+        .slice()
+        .sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0))
+        .map((item: any) => ({
+          id: item.id,
+          imageUrl: item.imageUrl?.startsWith('http') ? item.imageUrl : `http://localhost:3001/${item.imageUrl}`,
+          title: item.title || '',
+          subtitle: item.description || '',
+        }))
+      position.value = 1
+    }
+  } catch {}
+}
 
 const leftClone = computed(() =>
   items.value.length ? items.value[items.value.length - 1] : null
@@ -141,9 +164,10 @@ function onTouchEnd(e: TouchEvent) {
 /* ===================== */
 /* LIFECYCLE */
 /* ===================== */
-onMounted(() => {
+onMounted(async () => {
   updateVisible();
   window.addEventListener("resize", updateVisible);
+  await fetchFromApi();
   start();
 });
 

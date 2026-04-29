@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import beforeAfter from '../informationBlok/beforeAfter.vue'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 
 interface Item {
   leftColor: string
   rightColor: string
+  leftSection?: string
+  rightSection?: string
 }
 
 const props = defineProps<{
@@ -12,7 +14,10 @@ const props = defineProps<{
   items: Item[]
 }>()
 
-const value = ref(50)
+const values = ref<number[]>([])
+watch(() => props.items.length, (len) => {
+  values.value = Array(len).fill(50)
+}, { immediate: true })
 </script>
 
 <template>
@@ -24,15 +29,19 @@ const value = ref(50)
       </h3>
 
       <ul class="befAft-list">
-        <li     data-aos="fade-up" data-aos-delay="300"
+        <li
+          data-aos="fade-up" data-aos-delay="300"
           v-for="(item, index) in items"
           :key="index"
         >
           <beforeAfter
-          class="tt"
-            v-model="value"
+            class="tt"
+            :model-value="values[index] ?? 50"
+            @update:model-value="values[index] = $event"
             :leftColor="item.leftColor"
             :rightColor="item.rightColor"
+            :left-section="item.leftSection"
+            :right-section="item.rightSection"
           />
         </li>
       </ul>

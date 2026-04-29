@@ -1,162 +1,51 @@
-<template>
-  <section class="contactCard">
-
-    <div class="contactList">
-      <a class="contactItem" :href="`tel:${phoneHref}`">
-        <div class="label">Phone</div>
-        <div class="value">{{ phone }}</div>
-      </a>
-
-      <a class="contactItem" :href="`mailto:${email}`">
-        <div class="label">Email</div>
-        <div class="value">{{ email }}</div>
-      </a>
-    </div>
-
-    <div class="socialBlock">
-      <div class="socialRow">
-
-        <a :href="socials.tiktok" target="_blank" class="socialBtn tg">
-          <img :src="tiktokIcon" alt="TikTok" class="socialIcon" />
-        </a>
-
-        <a :href="socials.instagram" target="_blank" class="socialBtn ig">
-          <img :src="instagramIcon" alt="Instagram" class="socialIcon" />
-        </a>
-
-        <a :href="socials.facebook" target="_blank" class="socialBtn fb">
-          <img :src="facebookIcon" alt="Facebook" class="socialIcon" />
-        </a>
-
-      </div>
-    </div>
-
-  </section>
-</template>
-
 <script setup lang="ts">
-import tiktokIcon from "~/assets/icon/free-icon-tiktok-3669950.png"
-import instagramIcon from "~/assets/icon/free-icon-instagram-1384015.png"
-import facebookIcon from "~/assets/icon/free-icon-facebook-circular-logo-20673.png"
+import HeroSECComponent from '../../components/base/DetalsServises/HeroSECComponent.vue';
+import PortofolioSec from '../../components/base/HiroPages/PortofolioSec.vue';
+import BeforAfterSecContainer from '../../components/ui/DetalsServisesComponents/beforAfterSecContainer.vue';
+import InformationCards from '../../components/ui/DetalsServisesComponents/Information-Cards.vue';
+import TextTeclolojig from '../../components/ui/DetalsServisesComponents/textTeclolojig.vue';
 
-const phone = "+12242620179"
-const email = "ddnconstruction1111@gmail.com"
+const plumbingCards = [
+  { logo: "/logo.png", title: "Pipe Installation", description: "New plumbing pipe runs for kitchens, bathrooms, and whole-home systems.", colors: ['#3b82f6', '#8b5cf6', '#22c55e'], blockColor: "#111827" },
+  { logo: "/logo.png", title: "Fixture Replacement", description: "Faucets, sinks, toilets, and showers swapped out quickly and cleanly.", colors: ['#f97316', '#eab308', '#22c55e'], blockColor: "#111827" },
+  { logo: "/logo.png", title: "Leak Repair", description: "Fast diagnosis and repair of leaks before they cause serious damage.", colors: ['#06b6d4', '#3b82f6', '#8b5cf6'], blockColor: "#111827" },
+  { logo: "/logo.png", title: "Drain Cleaning", description: "Professional drain clearing and hydro-jetting for stubborn blockages.", colors: ['#ec4899', '#f97316', '#eab308'], blockColor: "#111827" },
+  { logo: "/logo.png", title: "Water Heaters", description: "Water heater installation, replacement, and maintenance.", colors: ['#10b981', '#06b6d4', '#3b82f6'], blockColor: "#111827" },
+  { logo: "/logo.png", title: "Full Renovations", description: "Complete plumbing rough-in for full bathroom and kitchen remodels.", colors: ['#8b5cf6', '#ec4899', '#f97316'], blockColor: "#111827" },
+];
 
-const phoneHref = phone.replace(/[^\d+]/g, "")
-
-const socials = {
-  tiktok: "https://www.tiktok.com/",
-  instagram: "https://www.instagram.com/",
-  facebook: "https://www.facebook.com/"
-}
+const beforeAfterBlocks = [
+  { leftColor: '#22c55e', rightColor: '#3b82f6', leftSection: 'plumbingBefore1', rightSection: 'plumbingAfter1' },
+  { leftColor: '#f97316', rightColor: '#6366f1', leftSection: 'plumbingBefore2', rightSection: 'plumbingAfter2' },
+  { leftColor: '#10b981', rightColor: '#ef4444', leftSection: 'plumbingBefore3', rightSection: 'plumbingAfter3' },
+];
 </script>
 
+<template>
+  <HeroSECComponent
+    title="Plumbing"
+    buttonText="Переглянути каталог"
+    buttonLink="/catalog"
+    section="plumbing"
+  />
+
+  <InformationCards :cards="plumbingCards"/>
+
+  <TextTeclolojig
+    title="Наші технології"
+    text="Ми використовуємо сучасні матеріали та обладнання для забезпечення найвищої якості кожного проекту. Від планування до фінального результату — кожен крок продуманий."
+  />
+
+  <BeforAfterSecContainer
+    title="Before & After — Сантехніка"
+    :items="beforeAfterBlocks"
+  />
+
+  <PortofolioSec class="tt"/>
+</template>
+
 <style scoped>
-.contactCard {
-  max-width: 240px;
-}
-
-.contactList {
-  display: grid;
-  gap: 14px;
-  margin-bottom: 18px;
-}
-
-.contactItem {
-  color: var(--color-praymeri-light);
-  text-decoration: none;
-  transition: 0.25s ease;
-}
-
-.contactItem:hover {
-  opacity: 0.8;
-}
-
-.label {
-  font-size: 16px;
-  color: #ffffff;
-}
-
-.value {
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.socialRow {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.socialBtn {
-  width: 48px;
-  height: 48px;
-  min-width: 48px;
-  min-height: 48px;
-
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  flex-shrink: 0;
-  text-decoration: none;
-
-  transition: 0.25s ease;
-}
-
-.socialBtn:hover {
-  transform: translateY(-3px) scale(1.05);
-}
-
-.socialIcon {
-  width: 42px;
-  height: 42px;
-  min-width: 42px;
-  min-height: 42px;
-  object-fit: contain;
-  display: block;
-}
-
-.tg {
-  background: #373737;
-}
-
-.ig {
-  background: #E1306C;
-}
-
-.fb {
-  background: #1877F2;
-}
-
-.tg:hover {
-  background: #222;
-}
-
-.ig:hover {
-  background: #c1255d;
-}
-
-.fb:hover {
-  background: #155db8;
-}
-
-@media (max-width: 430px) {
-  .contactCard {
-    max-width: 100%;
-  }
-
-  .socialBtn {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
-  }
-
-  .socialIcon {
-    width: 20px;
-    height: 20px;
-  }
+.tt {
+  margin-bottom: 70px;
 }
 </style>

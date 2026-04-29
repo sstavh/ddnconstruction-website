@@ -19,6 +19,7 @@ const sections = [
   { key: 'discounts', label: 'Знижки', instruction: 'Встановіть знижку у відсотках на конкретний товар калькулятора.' },
   { key: 'difficulties', label: 'Вимикач секцій', instruction: 'Редагуйте імена та спеціальності працівників. Вмикайте/вимикайте секцію DirectorMes.' },
   { key: 'icons', label: 'Іконки', instruction: 'Виберіть 5 іконок для головної сторінки.' },
+  { key: 'fotoAdm', label: 'Фото / Медіа', instruction: 'Перейти до панелі керування фото, логотипом та медіа.', isLink: true, href: '/fotoAdm' },
   { key: 'logout', label: 'Вийти', instruction: 'Натисніть, щоб вийти з адмінки.', isLogout: true },
 ]
 // --- ICONS ---
@@ -132,6 +133,11 @@ const selectSection = async (sectionKey: string) => {
 
   if (section.isLogout) {
     logout()
+    return
+  }
+
+  if (section.isLink && section.href) {
+    navigateTo(section.href)
     return
   }
 
@@ -671,15 +677,19 @@ async function saveToggle(recordId: number | null, section: string, visible: boo
   const headers = { 'Content-Type': 'application/json' }
   try {
     if (recordId) {
-      await fetch(`${apiUrl}/section-images/${recordId}`, { method: 'PUT', headers, body })
+      const res = await fetch(`${apiUrl}/section-images/${recordId}`, { method: 'PUT', headers, body })
+      if (!res.ok) throw new Error(`PUT failed: ${res.status}`)
       return recordId
     } else {
       const res = await fetch(`${apiUrl}/section-images`, { method: 'POST', headers, body })
+      if (!res.ok) throw new Error(`POST failed: ${res.status}`)
       const d = await res.json()
       return d.id ?? null
     }
-  } catch {}
-  return recordId
+  } catch (e: any) {
+    diffError.value = e?.message || 'Помилка збереження'
+  }
+  return null
 }
 
 const loadDifficulties = async () => {
@@ -739,13 +749,21 @@ const saveDiffWorker = async (idx: 0 | 1 | 2) => {
 const saveDirectorMesToggle = async () => {
   diffError.value = ''
   const id = await saveToggle(directorMesRecordId.value, 'directorMesVisible', directorMesVisible.value)
-  directorMesRecordId.value = id
+  if (!diffError.value) {
+    if (id !== null) directorMesRecordId.value = id
+    diffSaved.value = true
+    setTimeout(() => { diffSaved.value = false }, 2000)
+  }
 }
 
 const saveWorkersToggle = async () => {
   diffError.value = ''
   const id = await saveToggle(workersRecordId.value, 'difficultiesWorkersVisible', workersVisible.value)
-  workersRecordId.value = id
+  if (!diffError.value) {
+    if (id !== null) workersRecordId.value = id
+    diffSaved.value = true
+    setTimeout(() => { diffSaved.value = false }, 2000)
+  }
 }
 </script>
 
@@ -778,7 +796,7 @@ const saveWorkersToggle = async () => {
           <button
             v-for="section in sections"
             :key="section.key"
-            :class="['admin-button', { logout: section.isLogout } ]"
+            :class="['admin-button', { logout: section.isLogout, link: section.isLink }]"
             @click="selectSection(section.key)"
           >
             {{ section.label }}
@@ -1285,6 +1303,15 @@ button:hover {
 .small-btn.danger {
   background: #dc2626;
   color: white;
+}
+
+.admin-button.link {
+  background: #15803d;
+  color: white;
+}
+
+.admin-button.link:hover {
+  background: #16a34a;
 }
 
 .error-text,

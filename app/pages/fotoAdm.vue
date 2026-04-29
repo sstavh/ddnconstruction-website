@@ -45,6 +45,70 @@
         </div>
       </div>
 
+      <!-- Portfolio Videos -->
+      <div class="form-box video-box">
+        <h2 class="form-box__title">
+          <span class="form-box__dot" style="background:#8b5cf6"></span>
+          Відео портфоліо (VideoPortfolio)
+        </h2>
+        <div class="form-group">
+          <label>Назва відео:</label>
+          <input v-model="pvTitle" type="text" placeholder="Наприклад: Modern apartment renovation" />
+        </div>
+        <div class="form-group">
+          <label>Категорія:</label>
+          <input v-model="pvCategory" type="text" placeholder="Наприклад: Apartment" />
+        </div>
+        <div class="form-group">
+          <label>Порядок відображення:</label>
+          <input v-model.number="pvOrder" type="number" min="0" />
+        </div>
+        <div class="form-group">
+          <label>Завантажити відео (mp4):</label>
+          <div class="upload-area" @click="$refs.pvFileRef.click()" style="min-height:100px">
+            <input ref="pvFileRef" type="file" accept="video/*" class="file-input-hidden" @change="onPvFileChange" />
+            <div v-if="pvFileName" class="upload-placeholder">
+              <span class="upload-icon">🎬</span>
+              <p>{{ pvFileName }}</p>
+            </div>
+            <div v-else class="upload-placeholder">
+              <span class="upload-icon">🎬</span>
+              <p>Натисни або перетягни відео сюди</p>
+              <p class="upload-hint">MP4, WebM, MOV до 200MB</p>
+            </div>
+          </div>
+        </div>
+        <p v-if="pvError" class="upload-error">{{ pvError }}</p>
+        <div class="form-actions">
+          <button @click="savePortfolioVideo" class="btn-save" :disabled="pvSaving">
+            {{ pvSaving ? 'Завантаження...' : 'Додати відео' }}
+          </button>
+        </div>
+        <div v-if="portfolioVideos.length" style="margin-top:24px">
+          <p style="font-size:13px;color:#64748b;margin-bottom:12px">Поточні відео портфоліо:</p>
+          <div style="display:flex;flex-direction:column;gap:14px">
+            <div
+              v-for="pv in portfolioVideos"
+              :key="pv.id"
+              style="background:#1e293b;border-radius:12px;padding:14px;display:flex;gap:14px;align-items:center"
+            >
+              <video
+                :src="`http://localhost:3001/${pv.imageUrl}`"
+                muted
+                preload="metadata"
+                style="width:140px;height:90px;border-radius:8px;object-fit:cover;flex-shrink:0"
+              ></video>
+              <div style="flex:1">
+                <p style="font-weight:600;color:#f1f5f9;margin:0 0 4px">{{ pv.title || 'Без назви' }}</p>
+                <p style="font-size:12px;color:#64748b;margin:0 0 4px">{{ pv.description || '—' }}</p>
+                <p style="font-size:11px;color:#475569;margin:0">Порядок: {{ pv.order }}</p>
+              </div>
+              <button @click="deletePortfolioVideo(pv.id)" class="btn-delete" style="flex-shrink:0;padding:9px 14px">🗑</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Форма додавання/редагування -->
       <div class="form-box">
         <h2 class="form-box__title">
@@ -59,6 +123,7 @@
             <optgroup label="--- Головна ---">
               <option value="headerLogo">🔷 Header Logo (логотип у шапці)</option>
               <option value="hero">Hero (Головна)</option>
+              <option value="directorMes">🧑‍💼 DirectorMes (фото директора)</option>
               <option value="ourProcess">Our Process (фон)</option>
               <option value="ourProcess1">Our Process - Картка 1</option>
               <option value="ourProcess2">Our Process - Картка 2</option>
@@ -80,6 +145,70 @@
               <option value="portfolioSec1">Portfolio Sec - Картка 1</option>
               <option value="portfolioSec2">Portfolio Sec - Картка 2</option>
               <option value="portfolioSec3">Portfolio Sec - Картка 3</option>
+              <option value="kitchenPhoto1">🍳 Kitchen - Велике фото 1</option>
+              <option value="kitchenPhoto2">🍳 Kitchen - Велике фото 2</option>
+              <option value="kitchenPhoto3">🍳 Kitchen - Велике фото 3</option>
+              <option value="bathroomPhoto1">🚿 Bathroom - Велике фото 1</option>
+              <option value="bathroomPhoto2">🚿 Bathroom - Велике фото 2</option>
+              <option value="bathroomPhoto3">🚿 Bathroom - Велике фото 3</option>
+              <option value="tilesPhoto1">🔲 Tiles - Велике фото 1</option>
+              <option value="tilesPhoto2">🔲 Tiles - Велике фото 2</option>
+              <option value="tilesPhoto3">🔲 Tiles - Велике фото 3</option>
+              <option value="paintingPhoto1">🎨 Painting - Велике фото 1</option>
+              <option value="paintingPhoto2">🎨 Painting - Велике фото 2</option>
+              <option value="paintingPhoto3">🎨 Painting - Велике фото 3</option>
+              <option value="electricPhoto1">⚡ Electric - Велике фото 1</option>
+              <option value="electricPhoto2">⚡ Electric - Велике фото 2</option>
+              <option value="electricPhoto3">⚡ Electric - Велике фото 3</option>
+              <option value="plumbingPhoto1">🔧 Plumbing - Велике фото 1</option>
+              <option value="plumbingPhoto2">🔧 Plumbing - Велике фото 2</option>
+              <option value="plumbingPhoto3">🔧 Plumbing - Велике фото 3</option>
+            </optgroup>
+            <optgroup label="--- Карусель (Portfolio) ---">
+              <option value="kitchenCarousel">🍳 Kitchen - Карусель</option>
+              <option value="bathroomCarousel">🚿 Bathroom - Карусель</option>
+              <option value="tilesCarousel">🔲 Tiles - Карусель</option>
+              <option value="paintingCarousel">🎨 Painting - Карусель</option>
+              <option value="electricCarousel">⚡ Electric - Карусель</option>
+              <option value="plumbingCarousel">🔧 Plumbing - Карусель</option>
+            </optgroup>
+            <optgroup label="--- Before/After (Сервіси) ---">
+              <option value="kitchenBefore1">🍳 Kitchen — До 1</option>
+              <option value="kitchenAfter1">🍳 Kitchen — Після 1</option>
+              <option value="kitchenBefore2">🍳 Kitchen — До 2</option>
+              <option value="kitchenAfter2">🍳 Kitchen — Після 2</option>
+              <option value="kitchenBefore3">🍳 Kitchen — До 3</option>
+              <option value="kitchenAfter3">🍳 Kitchen — Після 3</option>
+              <option value="bathroomBefore1">🚿 Bathroom — До 1</option>
+              <option value="bathroomAfter1">🚿 Bathroom — Після 1</option>
+              <option value="bathroomBefore2">🚿 Bathroom — До 2</option>
+              <option value="bathroomAfter2">🚿 Bathroom — Після 2</option>
+              <option value="bathroomBefore3">🚿 Bathroom — До 3</option>
+              <option value="bathroomAfter3">🚿 Bathroom — Після 3</option>
+              <option value="tilesBefore1">🔲 Tiles — До 1</option>
+              <option value="tilesAfter1">🔲 Tiles — Після 1</option>
+              <option value="tilesBefore2">🔲 Tiles — До 2</option>
+              <option value="tilesAfter2">🔲 Tiles — Після 2</option>
+              <option value="tilesBefore3">🔲 Tiles — До 3</option>
+              <option value="tilesAfter3">🔲 Tiles — Після 3</option>
+              <option value="paintingBefore1">🎨 Painting — До 1</option>
+              <option value="paintingAfter1">🎨 Painting — Після 1</option>
+              <option value="paintingBefore2">🎨 Painting — До 2</option>
+              <option value="paintingAfter2">🎨 Painting — Після 2</option>
+              <option value="paintingBefore3">🎨 Painting — До 3</option>
+              <option value="paintingAfter3">🎨 Painting — Після 3</option>
+              <option value="electricBefore1">⚡ Electric — До 1</option>
+              <option value="electricAfter1">⚡ Electric — Після 1</option>
+              <option value="electricBefore2">⚡ Electric — До 2</option>
+              <option value="electricAfter2">⚡ Electric — Після 2</option>
+              <option value="electricBefore3">⚡ Electric — До 3</option>
+              <option value="electricAfter3">⚡ Electric — Після 3</option>
+              <option value="plumbingBefore1">🔧 Plumbing — До 1</option>
+              <option value="plumbingAfter1">🔧 Plumbing — Після 1</option>
+              <option value="plumbingBefore2">🔧 Plumbing — До 2</option>
+              <option value="plumbingAfter2">🔧 Plumbing — Після 2</option>
+              <option value="plumbingBefore3">🔧 Plumbing — До 3</option>
+              <option value="plumbingAfter3">🔧 Plumbing — Після 3</option>
             </optgroup>
             <optgroup label="--- Сервіси ---">
               <option value="services">Services Hero</option>
@@ -222,6 +351,14 @@ export default {
       videoError: '',
       videoFile: null,
       videoFileName: '',
+      portfolioVideos: [],
+      pvFile: null,
+      pvFileName: '',
+      pvTitle: '',
+      pvCategory: '',
+      pvOrder: 0,
+      pvSaving: false,
+      pvError: '',
       form: {
         section: '',
         title: '',
@@ -233,6 +370,7 @@ export default {
       sections: [
         { name: 'headerLogo', label: '🔷 Header Logo (логотип у шапці)' },
         { name: 'hero', label: 'Hero (Головна)' },
+        { name: 'directorMes', label: '🧑‍💼 DirectorMes (фото директора)' },
         { name: 'ourProcess', label: 'Our Process (фон)' },
         { name: 'ourProcess1', label: 'Our Process - Картка 1' },
         { name: 'ourProcess2', label: 'Our Process - Картка 2' },
@@ -250,6 +388,66 @@ export default {
         { name: 'portfolioSec1', label: 'Portfolio Sec - Картка 1' },
         { name: 'portfolioSec2', label: 'Portfolio Sec - Картка 2' },
         { name: 'portfolioSec3', label: 'Portfolio Sec - Картка 3' },
+        { name: 'kitchenPhoto1', label: '🍳 Kitchen - Велике фото 1' },
+        { name: 'kitchenPhoto2', label: '🍳 Kitchen - Велике фото 2' },
+        { name: 'kitchenPhoto3', label: '🍳 Kitchen - Велике фото 3' },
+        { name: 'bathroomPhoto1', label: '🚿 Bathroom - Велике фото 1' },
+        { name: 'bathroomPhoto2', label: '🚿 Bathroom - Велике фото 2' },
+        { name: 'bathroomPhoto3', label: '🚿 Bathroom - Велике фото 3' },
+        { name: 'tilesPhoto1', label: '🔲 Tiles - Велике фото 1' },
+        { name: 'tilesPhoto2', label: '🔲 Tiles - Велике фото 2' },
+        { name: 'tilesPhoto3', label: '🔲 Tiles - Велике фото 3' },
+        { name: 'paintingPhoto1', label: '🎨 Painting - Велике фото 1' },
+        { name: 'paintingPhoto2', label: '🎨 Painting - Велике фото 2' },
+        { name: 'paintingPhoto3', label: '🎨 Painting - Велике фото 3' },
+        { name: 'electricPhoto1', label: '⚡ Electric - Велике фото 1' },
+        { name: 'electricPhoto2', label: '⚡ Electric - Велике фото 2' },
+        { name: 'electricPhoto3', label: '⚡ Electric - Велике фото 3' },
+        { name: 'plumbingPhoto1', label: '🔧 Plumbing - Велике фото 1' },
+        { name: 'plumbingPhoto2', label: '🔧 Plumbing - Велике фото 2' },
+        { name: 'plumbingPhoto3', label: '🔧 Plumbing - Велике фото 3' },
+        { name: 'kitchenCarousel', label: '🍳 Kitchen - Карусель' },
+        { name: 'bathroomCarousel', label: '🚿 Bathroom - Карусель' },
+        { name: 'tilesCarousel', label: '🔲 Tiles - Карусель' },
+        { name: 'paintingCarousel', label: '🎨 Painting - Карусель' },
+        { name: 'electricCarousel', label: '⚡ Electric - Карусель' },
+        { name: 'plumbingCarousel', label: '🔧 Plumbing - Карусель' },
+        { name: 'kitchenBefore1', label: '🍳 Kitchen — До 1' },
+        { name: 'kitchenAfter1', label: '🍳 Kitchen — Після 1' },
+        { name: 'kitchenBefore2', label: '🍳 Kitchen — До 2' },
+        { name: 'kitchenAfter2', label: '🍳 Kitchen — Після 2' },
+        { name: 'kitchenBefore3', label: '🍳 Kitchen — До 3' },
+        { name: 'kitchenAfter3', label: '🍳 Kitchen — Після 3' },
+        { name: 'bathroomBefore1', label: '🚿 Bathroom — До 1' },
+        { name: 'bathroomAfter1', label: '🚿 Bathroom — Після 1' },
+        { name: 'bathroomBefore2', label: '🚿 Bathroom — До 2' },
+        { name: 'bathroomAfter2', label: '🚿 Bathroom — Після 2' },
+        { name: 'bathroomBefore3', label: '🚿 Bathroom — До 3' },
+        { name: 'bathroomAfter3', label: '🚿 Bathroom — Після 3' },
+        { name: 'tilesBefore1', label: '🔲 Tiles — До 1' },
+        { name: 'tilesAfter1', label: '🔲 Tiles — Після 1' },
+        { name: 'tilesBefore2', label: '🔲 Tiles — До 2' },
+        { name: 'tilesAfter2', label: '🔲 Tiles — Після 2' },
+        { name: 'tilesBefore3', label: '🔲 Tiles — До 3' },
+        { name: 'tilesAfter3', label: '🔲 Tiles — Після 3' },
+        { name: 'paintingBefore1', label: '🎨 Painting — До 1' },
+        { name: 'paintingAfter1', label: '🎨 Painting — Після 1' },
+        { name: 'paintingBefore2', label: '🎨 Painting — До 2' },
+        { name: 'paintingAfter2', label: '🎨 Painting — Після 2' },
+        { name: 'paintingBefore3', label: '🎨 Painting — До 3' },
+        { name: 'paintingAfter3', label: '🎨 Painting — Після 3' },
+        { name: 'electricBefore1', label: '⚡ Electric — До 1' },
+        { name: 'electricAfter1', label: '⚡ Electric — Після 1' },
+        { name: 'electricBefore2', label: '⚡ Electric — До 2' },
+        { name: 'electricAfter2', label: '⚡ Electric — Після 2' },
+        { name: 'electricBefore3', label: '⚡ Electric — До 3' },
+        { name: 'electricAfter3', label: '⚡ Electric — Після 3' },
+        { name: 'plumbingBefore1', label: '🔧 Plumbing — До 1' },
+        { name: 'plumbingAfter1', label: '🔧 Plumbing — Після 1' },
+        { name: 'plumbingBefore2', label: '🔧 Plumbing — До 2' },
+        { name: 'plumbingAfter2', label: '🔧 Plumbing — Після 2' },
+        { name: 'plumbingBefore3', label: '🔧 Plumbing — До 3' },
+        { name: 'plumbingAfter3', label: '🔧 Plumbing — Після 3' },
         { name: 'services', label: 'Services Hero' },
         { name: 'collectedServices', label: 'Collected Services (картки)' },
         { name: 'kitchen', label: 'Kitchen Service' },
@@ -279,6 +477,7 @@ export default {
   async mounted() {
     await this.fetchImages()
     await this.fetchVideoSection()
+    await this.fetchPortfolioVideos()
   },
   methods: {
     onVideoFileChange(e) {
@@ -328,6 +527,57 @@ export default {
           this.videoUrl = raw.startsWith('http') ? raw : `http://localhost:3001/${raw}`
           this.videoSavedId = data[0].id
         }
+      } catch {}
+    },
+    async fetchPortfolioVideos() {
+      try {
+        const res = await fetch('http://localhost:3001/section-images/section/videoPortfolio')
+        const data = await res.json()
+        if (Array.isArray(data)) {
+          this.portfolioVideos = data.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+        }
+      } catch {}
+    },
+    onPvFileChange(e) {
+      const file = e.target.files[0]
+      if (!file) return
+      if (file.size > 200 * 1024 * 1024) { this.pvError = 'Файл занадто великий (максимум 200MB)'; return }
+      this.pvFile = file
+      this.pvFileName = file.name
+      this.pvError = ''
+    },
+    async savePortfolioVideo() {
+      if (!this.pvFile) { this.pvError = 'Оберіть відео-файл'; return }
+      this.pvSaving = true
+      this.pvError = ''
+      try {
+        const formData = new FormData()
+        formData.append('file', this.pvFile)
+        formData.append('section', 'videoPortfolio')
+        formData.append('title', this.pvTitle || '')
+        formData.append('description', this.pvCategory || '')
+        formData.append('order', String(this.pvOrder || 0))
+        formData.append('isActive', 'true')
+        const res = await fetch('http://localhost:3001/section-images/upload', { method: 'POST', body: formData })
+        if (!res.ok) throw new Error('Помилка завантаження')
+        this.pvFile = null
+        this.pvFileName = ''
+        this.pvTitle = ''
+        this.pvCategory = ''
+        this.pvOrder = 0
+        if (this.$refs.pvFileRef) this.$refs.pvFileRef.value = ''
+        await this.fetchPortfolioVideos()
+      } catch {
+        this.pvError = 'Не вдалося завантажити відео'
+      } finally {
+        this.pvSaving = false
+      }
+    },
+    async deletePortfolioVideo(id) {
+      if (!confirm('Видалити це відео?')) return
+      try {
+        await fetch(`http://localhost:3001/section-images/${id}`, { method: 'DELETE' })
+        await this.fetchPortfolioVideos()
       } catch {}
     },
     triggerFileInput() {

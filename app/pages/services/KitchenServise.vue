@@ -22,9 +22,9 @@ const kitchenCards = [
 
 // ─── Before/After blocks (3) ────────────────────────────────────────────────
 const beforeAfterBlocks1 = [
-  { leftColor: '#22c55e', rightColor: '#3b82f6' },
-  { leftColor: '#f97316', rightColor: '#6366f1' },
-  { leftColor: '#10b981', rightColor: '#ef4444' },
+  { leftColor: '#22c55e', rightColor: '#3b82f6', leftSection: 'kitchenBefore1', rightSection: 'kitchenAfter1' },
+  { leftColor: '#f97316', rightColor: '#6366f1', leftSection: 'kitchenBefore2', rightSection: 'kitchenAfter2' },
+  { leftColor: '#10b981', rightColor: '#ef4444', leftSection: 'kitchenBefore3', rightSection: 'kitchenAfter3' },
 ];
 
 

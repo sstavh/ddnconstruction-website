@@ -1,31 +1,29 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 
-type BtnAction = "btn1" | "btn2" | "btn3" | "btn4" | "btn5" | "btn6";
-
 type ActionButton = {
   label: string;
-  action: BtnAction;
+  target: string;
 };
 
 const opened = ref(false);
 
 const buttons: ActionButton[] = [
-  { label: "Кнопка 1", action: "btn1" },
-  { label: "Кнопка 2", action: "btn2" },
-  { label: "Кнопка 3", action: "btn3" },
-  { label: "Кнопка 4", action: "btn4" },
-  { label: "Кнопка 5", action: "btn5" },
-  { label: "Кнопка 6", action: "btn6" }, 
-  { label: "фото", action: "btn6" },
+  { label: "Kitchen",   target: "portfolio-kitchen" },
+  { label: "Bathroom",  target: "portfolio-bathroom" },
+  { label: "Tiles",     target: "portfolio-tiles" },
+  { label: "Painting",  target: "portfolio-painting" },
+  { label: "Electrical",target: "portfolio-electric" },
+  { label: "Plumbing",  target: "portfolio-plumbing" },
+  { label: "Відео",     target: "portfolio-video" },
 ];
 
 function toggle() {
   opened.value = !opened.value;
 }
 
-function handleAction(action: BtnAction) {
-  console.log("clicked:", action);
+function scrollTo(target: string) {
+  document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 </script>
 
@@ -55,12 +53,12 @@ function handleAction(action: BtnAction) {
         <div id="actions" class="actions" role="group" aria-label="Дії">
           <button
             v-for="(b, i) in buttons"
-            :key="b.action"
+            :key="b.target"
             class="btn btn--sub"
             :class="[opened ? 'show' : '', i % 2 === 0 ? 'from-top' : 'from-bottom']"
             :style="{ transitionDelay: opened ? `${i * 80}ms` : '0ms' }"
             type="button"
-            @click="handleAction(b.action)"
+            @click="scrollTo(b.target)"
           >
             {{ b.label }}
           </button>

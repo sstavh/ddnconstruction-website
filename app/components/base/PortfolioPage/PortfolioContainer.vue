@@ -49,7 +49,11 @@ const defaultColors = ["#FF6B6B", "#FFD93D", "#6BCB77", "#4D96FF", "#845EC2"]
                       :colors="defaultColors"
                     />
                 </div>
-                <CaruselBlok :slides="activeSlides" :autoplay-ms="2500" />
+                <CaruselBlok
+                  :slides="activeSlides"
+                  :section-key="serviceSlug ? `${serviceSlug}Carousel` : undefined"
+                  :autoplay-ms="2500"
+                />
             </div>
         </div>
     </div>

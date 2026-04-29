@@ -13,6 +13,7 @@ import PortfolioContainer from '../components/base/PortfolioPage/PortfolioContai
 
     <!-- Kitchen Service -->
     <PortfolioContainer
+      id="portfolio-kitchen"
       title="Kitchen Service"
       service-slug="kitchen"
       text="We design and renovate kitchens with premium materials and precise craftsmanship. From layout planning to final installation — every detail matters."
@@ -20,6 +21,7 @@ import PortfolioContainer from '../components/base/PortfolioPage/PortfolioContai
 
     <!-- Bathroom -->
     <PortfolioContainer
+      id="portfolio-bathroom"
       title="Bathroom"
       service-slug="bathroom"
       text="Complete bathroom renovations: tile work, plumbing fixtures, waterproofing, and modern finishes. We transform bathrooms into relaxing, functional spaces."
@@ -27,6 +29,7 @@ import PortfolioContainer from '../components/base/PortfolioPage/PortfolioContai
 
     <!-- Tiles -->
     <PortfolioContainer
+      id="portfolio-tiles"
       title="Tiles"
       service-slug="tiles"
       text="Expert tile installation for floors, walls, and backsplashes. We work with all tile types — ceramic, porcelain, natural stone — with precision and care."
@@ -34,6 +37,7 @@ import PortfolioContainer from '../components/base/PortfolioPage/PortfolioContai
 
     <!-- Spackling / Painting -->
     <PortfolioContainer
+      id="portfolio-painting"
       title="Spackling / Painting"
       service-slug="painting"
       text="Smooth, flawless wall preparation and professional painting. We deliver crisp lines, even coats, and lasting results for any interior or exterior surface."
@@ -41,6 +45,7 @@ import PortfolioContainer from '../components/base/PortfolioPage/PortfolioContai
 
     <!-- Electrical Work -->
     <PortfolioContainer
+      id="portfolio-electric"
       title="Electrical Work"
       service-slug="electric"
       text="Safe and code-compliant electrical installations, upgrades, and repairs. Our licensed electricians handle everything from panel upgrades to lighting design."
@@ -48,13 +53,14 @@ import PortfolioContainer from '../components/base/PortfolioPage/PortfolioContai
 
     <!-- Plumbing -->
     <PortfolioContainer
+      id="portfolio-plumbing"
       title="Plumbing"
       service-slug="plumbing"
       text="Reliable plumbing services including pipe installation, fixture replacement, and leak repairs. We keep your systems flowing efficiently and safely."
     />
 
     <!-- Video Portfolio -->
-    <VideoPortfolio/>
+    <VideoPortfolio id="portfolio-video"/>
 </template>
 
 <style></style>

@@ -1,7 +1,19 @@
 <script setup lang="ts">
-import Button from '../../ui/Button.vue';
+import { computed } from 'vue'
+import Button from '../../ui/Button.vue'
+import { imgUrl } from '~/composables/useApi'
 
-console.log("director mes work");
+const apiUrl = useRuntimeConfig().public.apiUrl
+
+const { data: imgData } = useFetch<any[]>(
+  `${apiUrl}/section-images/section/directorMes`,
+  { key: 'directorMesImg', getCachedData: () => undefined },
+)
+
+const directorImgUrl = computed(() => {
+  const d = imgData.value
+  return Array.isArray(d) && d.length > 0 ? imgUrl(d[0].imageUrl) : ''
+})
 </script>
 
 <template>
@@ -11,9 +23,11 @@ console.log("director mes work");
              <h3 class="directorMes-box__logo">Слова Директора</h3>
             <div class="directorMes-box">
                <div data-aos="fade-up-right">
-                <div data-aos="zoom-out-right" class="img-cont">IMGS</div>
+                <div data-aos="zoom-out-right" class="img-cont">
+                  <img v-if="directorImgUrl" :src="directorImgUrl" alt="Директор" class="director-img" />
+                </div>
                </div>
-                
+
                 <div class="directorMes-box__container">
                     <p class="directorMes-box__text">Тут може бути текст, який буде відображатися у розділі "Слова Директора".</p>
                     <Button ext="Button"
@@ -46,8 +60,16 @@ console.log("director mes work");
 .img-cont{
     height: 500px;
     width: 430px;
-    background-color: red;
+    background-color: #1e293b;
     margin-right: 55px;
+    overflow: hidden;
+}
+
+.director-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .directorMes-box__text{
@@ -62,7 +84,7 @@ console.log("director mes work");
 
    @media (max-width: 768px) {
     .directorMes-box{
-        display: block;     
+        display: block;
     }
    }
 

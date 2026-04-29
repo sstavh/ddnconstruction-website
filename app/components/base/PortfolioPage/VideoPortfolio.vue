@@ -65,7 +65,8 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onBeforeUnmount } from 'vue'
+import { ref, computed, onBeforeUnmount } from 'vue'
+import { imgUrl } from '~/composables/useApi'
 
 interface PortfolioVideo {
   id: number
@@ -75,31 +76,28 @@ interface PortfolioVideo {
   poster: string
 }
 
-const activeVideo = ref<PortfolioVideo | null>(null)
+const apiUrl = useRuntimeConfig().public.apiUrl
 
-const videos: PortfolioVideo[] = [
-  {
-    id: 1,
-    title: 'Modern apartment renovation',
-    category: 'Apartment',
-    src: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    poster: 'https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1200'
-  },
-  {
-    id: 2,
-    title: 'Luxury kitchen project',
-    category: 'Kitchen',
-    src: 'https://www.w3schools.com/html/movie.mp4',
-    poster: 'https://images.unsplash.com/photo-1556912173-3bb406ef7e77?w=1200'
-  },
-  {
-    id: 3,
-    title: 'Bathroom transformation',
-    category: 'Bathroom',
-    src: 'https://www.w3schools.com/html/mov_bbb.mp4',
-    poster: 'https://images.unsplash.com/photo-1620626011761-996317b8d101?w=1200'
-  }
-]
+const { data: rawVideos } = useFetch<any[]>(
+  `${apiUrl}/section-images/section/videoPortfolio`,
+  { key: 'videoPortfolio', getCachedData: () => undefined }
+)
+
+const videos = computed<PortfolioVideo[]>(() => {
+  if (!Array.isArray(rawVideos.value)) return []
+  return rawVideos.value
+    .slice()
+    .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+    .map(v => ({
+      id: v.id,
+      title: v.title || '',
+      category: v.description || '',
+      src: imgUrl(v.imageUrl),
+      poster: '',
+    }))
+})
+
+const activeVideo = ref<PortfolioVideo | null>(null)
 
 const openVideo = (video: PortfolioVideo) => {
   activeVideo.value = video
