@@ -414,10 +414,26 @@ const goToCalculator = () => {
 }
 
 /* ── Mobile ── */
+@media (max-width: 768px) {
+  .discount-float {
+    bottom: 20px;
+    right: auto;
+    left: 20px;
+    align-items: flex-start;
+  }
+
+  .discount-tooltip::after {
+    right: auto;
+    left: 22px;
+  }
+}
+
 @media (max-width: 430px) {
   .discount-float {
     bottom: 20px;
-    right: 20px;
+    right: auto;
+    left: 16px;
+    align-items: flex-start;
   }
   .discount-circle {
     width: 52px;

@@ -34,7 +34,7 @@ const openFromClick = (e: MouseEvent) => {
     </div>
 
     <BaseModalTest :open="open" :origin="origin" @close="open = false">
-      <FormСontact />
+      <FormСontact  class="ttr"/>
     </BaseModalTest>
 </section>
 </template>
@@ -77,23 +77,45 @@ const openFromClick = (e: MouseEvent) => {
     transform: translateY(-3px);
     box-shadow: 0 16px 36px rgba(59, 130, 246, 0.42);
 }
- @media (max-width: 430px) {
-    .hiro-container{
-        padding-top: 100px;
-        margin-left: 0px;
-    }
+@media (max-width: 768px) {
+  .hiro-container {
+    padding-top: 130px;
+    margin-left: 0;
+  }
 
-    .hero-box__logo{
-        font-size: var( --font-s-Mobalh1);
-    }
+  .hero-box__logo {
+    max-width: 100%;
+  }
 
-    .fade-right{
-        font-size: var(--font-s-MobalText);
-    }
- }
+  .hero-box__pidtext {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 430px) {
+  .hiro-container {
+    padding-top: 100px;
+    margin-left: 0;
+  }
+
+  .hero-box__logo {
+    font-size: var(--font-s-Mobalh1);
+  }
+
+  .hero-box__pidtext {
+    font-size: var(--font-s-MobalText);
+  }
+}
 
 
 .discountButton {
 margin-top: 40px;
+}.ttr{
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    padding-right: 60px;
 }
+
+
 </style>

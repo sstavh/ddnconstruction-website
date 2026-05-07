@@ -222,7 +222,7 @@ onBeforeUnmount(() => {
 .header {
   position: sticky;
   top: 0;
-  z-index: 1000;
+  z-index: 3002;
 }
 
 .header--scrolled {
@@ -443,7 +443,9 @@ onBeforeUnmount(() => {
   .mobile-menu-head {
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 24px;
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
   }
 
   .mobile-menu-title {
@@ -457,67 +459,90 @@ onBeforeUnmount(() => {
     width: 40px;
     height: 40px;
     border-radius: 50%;
-    border: 1px solid rgba(255,255,255,0.08);
-    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.12);
+    background: rgba(255,255,255,0.07);
     color: #fff;
-    font-size: 26px;
+    font-size: 24px;
+    line-height: 1;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.2s ease;
   }
 
+  .mobile-close:hover {
+    background: rgba(59,130,246,0.25);
+    border-color: rgba(59,130,246,0.4);
+  }
+
+  /* Full-screen overlay — з'являється зверху */
   .nav {
     position: fixed;
     top: 0;
-    right: -100%;
-    z-index: 3000;
-    width: min(390px, 88vw);
+    left: 0;
+    width: 100vw;
     height: 100vh;
-    padding: 28px 22px;
+    z-index: 3000;
+    padding: 28px 22px 40px;
+    overflow-y: auto;
     flex-direction: column;
     align-items: stretch;
-    gap: 12px;
-    transition: right 0.35s ease;
+    gap: 10px;
+
+    /* прихований стан */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-20px) scale(0.98);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
 
     background:
-      radial-gradient(circle at top right, rgba(59,130,246,0.22), transparent 36%),
-      linear-gradient(180deg, rgba(255,255,255,0.055), rgba(255,255,255,0.018)),
+      radial-gradient(circle at top right, rgba(59,130,246,0.22), transparent 38%),
+      radial-gradient(circle at bottom left, rgba(59,130,246,0.08), transparent 40%),
+      linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.015)),
       var(--color-praymeri-bg);
 
-    border-left: 1px solid rgba(59,130,246,0.22);
-    box-shadow: -24px 0 70px rgba(0,0,0,0.45);
-    backdrop-filter: blur(26px);
-    -webkit-backdrop-filter: blur(26px);
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
   }
 
+  /* видимий стан */
   .nav--open {
-    right: 0;
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0) scale(1);
+    pointer-events: auto;
   }
 
   .nav-link {
     width: 100%;
-    padding: 16px 16px;
+    padding: 16px 18px;
     border-radius: 16px;
     color: rgba(245,245,245,0.9);
-    background: rgba(255,255,255,0.035);
-    border: 1px solid rgba(255,255,255,0.055);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
     font-size: 17px;
+    transition: 0.2s ease;
   }
 
   .nav-link:hover {
     color: #fff;
     background: rgba(59,130,246,0.2);
-    transform: translateX(4px);
+    border-color: rgba(59,130,246,0.3);
   }
 
   .nav-link--button {
     padding: 0;
-    background: rgba(255,255,255,0.035);
-    border: 1px solid rgba(255,255,255,0.055);
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
     border-radius: 16px;
   }
 
   .nav-link__text {
     flex: 1;
-    padding: 16px 16px;
+    padding: 16px 18px;
     font-size: 17px;
     color: rgba(245,245,245,0.9);
   }
@@ -531,10 +556,11 @@ onBeforeUnmount(() => {
     position: static;
     width: 100%;
     transform: none;
-    margin-top: 10px;
+    margin-top: 8px;
     padding: 10px;
-    border-radius: 16px;
-    background: rgba(255,255,255,0.035);
+    border-radius: 14px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.06);
     box-shadow: none;
   }
 
@@ -551,7 +577,7 @@ onBeforeUnmount(() => {
 
   .mobile-menu-footer {
     margin-top: auto;
-    padding-top: 20px;
+    padding-top: 24px;
   }
 
   .mobile-menu-footer :deep(button) {
@@ -559,12 +585,7 @@ onBeforeUnmount(() => {
   }
 
   .mobile-overlay {
-    position: fixed;
-    inset: 0;
-    z-index: 2500;
-    background: rgba(0,0,0,0.55);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+    display: none;
   }
 }
 
@@ -605,8 +626,8 @@ onBeforeUnmount(() => {
   }
 
   .nav {
-    width: 100%;
-    padding: 26px 18px;
+    padding: 24px 16px 36px;
+    gap: 8px;
   }
 
   .nav-link {
@@ -615,10 +636,9 @@ onBeforeUnmount(() => {
   }
 
   .header-form__box {
-   width: 130px; 
+   width: 130px;
    padding: 0;
    margin: 0;
-
   }
 
   .header-form{

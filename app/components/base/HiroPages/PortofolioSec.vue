@@ -183,7 +183,7 @@ import ButtonNextPort from '~/components/ui/ButtonNextPort.vue'
 /* ===================== */
 
 @media (max-width: 1024px) {
-.box-galeri__item:nth-child(n+3) {
+  .box-galeri__item:nth-child(n+3) {
     display: none;
   }
 
@@ -192,14 +192,17 @@ import ButtonNextPort from '~/components/ui/ButtonNextPort.vue'
   }
 }
 
-/* 2 items */
-
-/* 1 item */
-@media (max-width: 430px) {
-  .container {
-    max-width: 360px;
+@media (max-width: 768px) {
+  .box-galeri__item:nth-child(n+2) {
+    display: none;
   }
 
+  .box-galeri__list {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 430px) {
   .portfoliosec-container__box {
     padding: 40px 14px;
     border-radius: 20px;

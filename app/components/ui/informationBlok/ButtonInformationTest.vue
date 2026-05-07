@@ -6,8 +6,9 @@
 .button-information-test{
     display: flex;
     align-items: flex-start;
-    width: 270px;
-    height: 350px;
+    width: 100%;
+    height: 100%;
+    min-height: 280px;
     padding: 20px;
     background-color: var(--color-praymeri-blue);
     color: var(--color-praymeri-light);
@@ -17,6 +18,7 @@
     transition: background-color 0.3s ease;
     text-decoration: none;
     border-radius: 20px;
+    box-sizing: border-box;
 }
 .button-information-test:hover{
     background-color: var(--color-praymeri-blueHover);

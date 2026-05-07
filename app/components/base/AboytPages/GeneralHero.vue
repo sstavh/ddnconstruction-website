@@ -71,7 +71,9 @@ Every project reflects our reputation — that's why we handle every detail from
 
     <div v-if="showModal" class="popup-overlay" @click.self="showModal = false">
       <div class="popup">
-        <button class="popup-close" @click="showModal = false">x</button>
+        <div class="popup-head">
+          <button class="popup-close" @click="showModal = false">×</button>
+        </div>
         <FormСontact />
       </div>
     </div>
@@ -114,12 +116,16 @@ section .container {
 .foto-test {
   width: 580px;
   height: 500px;
+  flex-shrink: 0;
   background-color: blueviolet;
+  border-radius: 16px;
 }
 
 .generel-box {
   margin-top: 90px;
-  width: 760px;
+  flex: 1;
+  max-width: 760px;
+  min-width: 0;
 }
 
 .generel-box__title {
@@ -170,8 +176,9 @@ section .container {
   position: relative;
   width: 100%;
   max-width: 620px;
+  max-height: 90vh;
+  overflow-y: auto;
   border-radius: 30px;
-  overflow: hidden;
   background:
     radial-gradient(circle at top right, rgba(59, 130, 246, 0.18), transparent 34%),
     linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
@@ -181,11 +188,18 @@ section .container {
   backdrop-filter: blur(22px);
 }
 
-.popup-close {
-  position: absolute;
-  top: 16px;
-  right: 16px;
+.popup-head {
+  position: sticky;
+  top: 0;
   z-index: 10;
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 12px 0;
+  pointer-events: none;
+}
+
+.popup-close {
+  pointer-events: all;
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -204,32 +218,54 @@ section .container {
 }
 
 @media (max-width: 1024px) {
-  .foto-test {
-    height: 420px;
-    width: 470px;
-  }
   .general-container {
     margin-top: 100px;
+    margin-bottom: 80px;
+  }
+  .general-container__box {
+    gap: 32px;
+  }
+  .foto-test {
+    width: 380px;
+    height: 420px;
+  }
+  .generel-box {
+    margin-top: 40px;
+  }
+  .generel-box__title {
+    font-size: 42px;
   }
 }
 
 @media (max-width: 768px) {
+  .general-container {
+    margin-top: 80px;
+    margin-bottom: 60px;
+  }
   .foto-test {
     display: none;
   }
   .general-container__box {
-    margin-left: 70px;
-    display: block;
+    flex-direction: column;
+    gap: 0;
+  }
+  .generel-box {
+    margin-top: 0;
+    max-width: 100%;
+  }
+  .generel-box__title {
+    font-size: 36px;
   }
 }
 
 @media (max-width: 430px) {
+  .general-container {
+    margin-top: 60px;
+    margin-bottom: 50px;
+  }
   .generel-box__title {
     font-size: var(--font-s-Mobalh1);
     text-align: center;
-  }
-  .general-container__box {
-    margin-left: 0;
   }
   .generel-box {
     text-align: center;

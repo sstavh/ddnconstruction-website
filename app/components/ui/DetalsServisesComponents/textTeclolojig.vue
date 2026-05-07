@@ -38,4 +38,36 @@ const props = defineProps<{
 .textTec-box__text{
     margin-bottom: 40px;
 }
+
+@media (max-width: 1024px) {
+  .textTec-container__title {
+    margin-top: 80px;
+    margin-bottom: 36px;
+  }
+}
+
+@media (max-width: 768px) {
+  .textTec-container__title {
+    margin-top: 60px;
+    margin-bottom: 28px;
+    font-size: 28px;
+  }
+  .textTec-box__text {
+    margin-bottom: 28px;
+    font-size: 15px;
+    line-height: 1.7;
+  }
+}
+
+@media (max-width: 430px) {
+  .textTec-container__title {
+    margin-top: 48px;
+    margin-bottom: 20px;
+    font-size: var(--font-s-Mobalh1, 22px);
+  }
+  .textTec-box__text {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+}
 </style>
