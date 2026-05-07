@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { fetchSection, imgUrl } from '~/composables/useApi'
 
 const props = withDefaults(defineProps<{
   text?: string
@@ -80,11 +81,10 @@ function scheduleRandomShow() {
 async function fetchFromDb() {
   if (!props.section) return
   try {
-    const res = await fetch(`http://localhost:3001/section-images/section/${props.section}`)
-    const data = await res.json()
+    const data = await fetchSection(props.section)
     if (Array.isArray(data) && data.length > 0) {
       dbImages.value = data.map((item: { imageUrl: string; title: string }) => ({
-        imageUrl: item.imageUrl.startsWith('http') ? item.imageUrl : `http://localhost:3001/${item.imageUrl}`,
+        imageUrl: imgUrl(item.imageUrl),
         title: item.title || '',
       }))
     }

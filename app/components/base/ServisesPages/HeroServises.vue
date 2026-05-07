@@ -1,22 +1,19 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
-import { imgUrl, fetchSection } from '~/composables/useApi'
+import { imgUrl } from '~/composables/useApi'
 
 const backgroundImage = ref('')
-const defaultBg = '/images/services/hero.jpg'
+const apiUrl = useRuntimeConfig().public.apiUrl
 
 async function fetchBackground() {
   try {
-    const response = await fetch('http://localhost:3001/section-images/section/services')
+    const response = await fetch(`${apiUrl}/section-images/section/services`)
     const data = await response.json()
     if (data && data.length > 0) {
       backgroundImage.value = imgUrl(data[0].imageUrl)
-    } else {
-      backgroundImage.value = defaultBg
     }
   } catch (error) {
     console.error('Error fetching background:', error)
-    backgroundImage.value = defaultBg
   }
 }
 
@@ -26,18 +23,21 @@ onMounted(async () => {
 </script>
 
 <template>
-    <section 
+    <section
         class="heroAbaut-section"
-        :style="{ backgroundImage: `url(${backgroundImage})` }"
+        :style="backgroundImage ? { backgroundImage: `url(${backgroundImage})` } : {}"
     >
         <div class="overlay"></div>
         <div class="container">
             <div class="heroAbaut-container">
                 <div class="heroAbout-container-box">
                     <h1 class="heroAbout-box__title">
-                        <span class="title-text">Сервіси</span>
+                        <span class="title-text">Services</span>
                     </h1>
-                    
+                    <p class="hero-subtitle">
+                        Expert renovation from start to finish — kitchens, bathrooms, electrical, plumbing, tiles & painting.
+                    </p>
+
                 </div>
             </div>
         </div>
@@ -46,14 +46,29 @@ onMounted(async () => {
 
 <style scoped>
 .heroAbaut-section{
+    position: relative;
     margin-top: -60px;
     height: 470px;
+    background-color: #1a1a2e;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.overlay {
+    position: absolute;
+    inset: 0;
     background: linear-gradient(
         to top,
-        rgba(0, 0, 0, 0.8),
-        rgba(0, 0, 0, 0)
-    ),
-    blueviolet;
+        rgba(0, 0, 0, 0.85),
+        rgba(0, 0, 0, 0.2)
+    );
+    z-index: 0;
+}
+
+.container {
+    position: relative;
+    z-index: 1;
 }
 
 .heroAbout-box__title{
@@ -70,6 +85,17 @@ onMounted(async () => {
     display: inline-block;
     opacity: 0;
     animation: fadeUp 1s ease forwards;
+}
+
+.hero-subtitle {
+    text-align: center;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 17px;
+    font-weight: 400;
+    letter-spacing: 0.3px;
+    margin-top: 20px;
+    opacity: 0;
+    animation: fadeUp 1s ease 0.3s forwards;
 }
 
 @keyframes fadeUp{

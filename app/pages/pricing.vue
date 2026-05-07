@@ -5,6 +5,8 @@ type PricingItem = {
   title: string
   titleUk: string
   price: string
+  priceMax?: string
+  priceType?: string
 }
 
 type PricingCategory = {
@@ -99,7 +101,12 @@ onMounted(loadPricing)
               </div>
 
               <div class="pricing-item-price">
-                {{ item.price }}
+                <span class="price-value">
+                  ${{ item.price }}{{ item.priceMax ? ` – $${item.priceMax}` : '' }}
+                </span>
+                <span v-if="item.priceType && item.priceType !== 'fixed'" class="price-unit">
+                  {{ item.priceType === 'm2' ? '/ sq ft' : item.priceType === 'lft' ? '/ linear ft' : item.priceType === 'm2l' ? '/ sq ft (labor)' : '' }}
+                </span>
               </div>
             </div>
           </div>
@@ -274,9 +281,23 @@ onMounted(loadPricing)
 .pricing-item-price {
   flex-shrink: 0;
   white-space: nowrap;
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 2px;
+}
+
+.price-value {
   color: var(--color-praymeri-blue);
   font-size: var(--font-s-Mobalh4);
   font-weight: var(--font-w-h1);
+}
+
+.price-unit {
+  font-size: var(--font-s-textSmoll);
+  color: #94a3b8;
+  font-weight: 400;
 }
 
 @media (max-width: 1100px) {

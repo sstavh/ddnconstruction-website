@@ -1,15 +1,9 @@
-<script setup lang="ts">
-console.log("button Good Work");
-
-</script>
-
 <template>
     <div class="container">
-        <button class="button-next">
+        <NuxtLink to="/portfilio" class="button-next">
             <div>Click to see more!!!</div>
             <div class="tt">></div>
-        
-        </button>
+        </NuxtLink>
     </div>
 </template>
 <style scoped>
@@ -22,10 +16,10 @@ console.log("button Good Work");
     padding: 20px 35px;
     background-color: #007BFF;
     color: var( --color-praymeri-light);
-    border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 16px; 
+    font-size: 16px;
+    text-decoration: none;
     transition: all 0.3s ease;
 } 
 

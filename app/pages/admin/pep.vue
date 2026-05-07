@@ -39,6 +39,7 @@
 </template>
 
 <script setup>
+definePageMeta({ middleware: 'admin-auth' })
 import { ref, onMounted } from 'vue'
 
 const apiUrl = useRuntimeConfig().public.apiUrl || 'http://127.0.0.1:3001'

@@ -5,7 +5,7 @@ import BeforAfterSecContainer from '../../components/ui/DetalsServisesComponents
 import InformationCards from '../../components/ui/DetalsServisesComponents/Information-Cards.vue';
 import TextTeclolojig from '../../components/ui/DetalsServisesComponents/textTeclolojig.vue';
 
-const bathroomCards = [
+const electricCards = [
   { logo: "/logo.png", title: "Construction Quality", description: "We use proven materials and follow all technological standards.", colors: ['#3b82f6', '#8b5cf6', '#22c55e'], blockColor: "#111827", section: "infoBlock1" },
   { logo: "/logo.png", title: "Clear Deadlines", description: "We work according to an agreed schedule and complete projects on time.", colors: ['#f97316', '#eab308', '#22c55e'], blockColor: "#111827", section: "infoBlock2" },
   { logo: "/logo.png", title: "Transparent Pricing", description: "No hidden fees — you know the project budget from the start.", colors: ['#06b6d4', '#3b82f6', '#8b5cf6'], blockColor: "#111827", section: "infoBlock3" },
@@ -15,31 +15,31 @@ const bathroomCards = [
 ];
 
 const beforeAfterBlocks = [
-  { leftColor: '#22c55e', rightColor: '#3b82f6', leftSection: 'bathroomBefore1', rightSection: 'bathroomAfter1' },
-  { leftColor: '#f97316', rightColor: '#6366f1', leftSection: 'bathroomBefore2', rightSection: 'bathroomAfter2' },
-  { leftColor: '#10b981', rightColor: '#ef4444', leftSection: 'bathroomBefore3', rightSection: 'bathroomAfter3' },
+  { leftColor: '#22c55e', rightColor: '#3b82f6', leftSection: 'electricBefore1', rightSection: 'electricAfter1' },
+  { leftColor: '#f97316', rightColor: '#6366f1', leftSection: 'electricBefore2', rightSection: 'electricAfter2' },
+  { leftColor: '#10b981', rightColor: '#ef4444', leftSection: 'electricBefore3', rightSection: 'electricAfter3' },
 ];
 </script>
 
 <template>
   <HeroSECComponent
-    title="Bathroom Renovation"
+    title="Electrical Work"
     buttonText="Contact"
     buttonLink="/catalog"
-    section="bathroom"
+    section="electric"
   />
 
-  <InformationCards :cards="bathroomCards"/>
+  <InformationCards :cards="electricCards"/>
 
   <TextTeclolojig
     title="Our technologies"
-    text="We create modern and functional bathrooms with attention to every detail, combining practical layouts with clean, elegant design. Our team focuses on quality craftsmanship to ensure every element is both durable and visually refined.<br/><br/>We provide full bathroom remodeling services, including tile installation, walk-in showers, plumbing, vanities, and lighting. Each stage of the project is carefully planned and executed to deliver a seamless and efficient renovation process.<br/><br/>From concept to completion, we tailor every project to meet the client’s needs, creating spaces that are comfortable, stylish, and built to last."
+    text="We deliver safe, code-compliant electrical installations for residential and commercial projects of any scale. Our licensed electricians work with precision and care, ensuring every connection, panel, and circuit is installed to the highest standard.<br/><br/>From full rewiring and panel upgrades to outlet installation and lighting design, we handle it all with meticulous attention to safety and detail. Every project is planned thoroughly before execution to minimize disruption and ensure long-term reliability.<br/><br/>We stay current with modern electrical standards and use only certified materials, giving you peace of mind that your home or business is powered safely, efficiently, and built to last."
     buttonText="View Portfolio"
     buttonLink="/portfilio"
   />
 
   <BeforAfterSecContainer
-    title="Before & After — Bathroom Renovation"
+    title="Before & After — Electrical Work"
     :items="beforeAfterBlocks"
   />
 

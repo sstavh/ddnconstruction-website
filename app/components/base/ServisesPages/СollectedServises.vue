@@ -5,22 +5,32 @@ import BeforeAfter from '../../ui/informationBlok/beforeAfter.vue';
 import TextBlok from '../../ui/informationBlok/TextBlok.vue';
 import { imgUrl, fetchSection } from '~/composables/useApi'
 
-const imgs = ref<{ imageUrl: string }[]>([])
+const serviceImages = ref<Record<string, string>>({
+  kitchen: '',
+  bathroom: '',
+  tiles: '',
+  painting: '',
+  electrical: '',
+  plumbing: '',
+})
 
-function img(index: number): string {
-  return imgs.value[index]?.imageUrl || ''
-}
-
-async function fetchImages() {
+async function fetchServiceImage(key: string, section: string) {
   try {
-    const data = await fetchSection('collectedServices')
-    if (Array.isArray(data)) {
-      imgs.value = data.map((item: { imageUrl: string }) => ({ imageUrl: imgUrl(item.imageUrl) }))
+    const data = await fetchSection(section)
+    if (Array.isArray(data) && data.length > 0) {
+      serviceImages.value[key] = imgUrl(data[0].imageUrl)
     }
   } catch (e) {}
 }
 
-onMounted(fetchImages)
+onMounted(() => {
+  fetchServiceImage('kitchen', 'collectedKitchen')
+  fetchServiceImage('bathroom', 'collectedBathroom')
+  fetchServiceImage('tiles', 'collectedTiles')
+  fetchServiceImage('painting', 'collectedPainting')
+  fetchServiceImage('electrical', 'collectedElectrical')
+  fetchServiceImage('plumbing', 'collectedPlumbing')
+})
 </script>
 
 <template>
@@ -28,17 +38,16 @@ onMounted(fetchImages)
         <div class="container">
             <div class="collected-contaoner">
                 <h3 class="collected-title">
-                    Вибирай що тобі потрібно
+                    Choose Your Services
                 </h3>
 
                 <div class="collected-box">
 
                      <PromoCard class="aa"
                      data-aos="fade-up"
-                      logo="/logos/spotify.svg"
                       width="292.5px"
                       height="400px"
-                      :bg-image="img(0)"
+                      :bg-image="serviceImages.kitchen"
                       link="/services/KitchenServise"
                       button-text="Kitchen Service"
                     />
@@ -47,51 +56,50 @@ onMounted(fetchImages)
                     </div>
                     <PromoCard
                     data-aos="fade-up"
-                      logo="/logos/spotify.svg"
                       width="292.5px"
                       height="400px"
-                      :bg-image="img(1)"
-                      link="/services/bathroom"
+                      :bg-image="serviceImages.bathroom"
+                      link="/services/BathroomServises"
                       button-text="Bathroom"
                     />
                     <PromoCard
                     data-aos="fade-up"
-                      logo="/logos/spotify.svg"
                       width="380px"
                       height="370px"
-                      :bg-image="img(2)"
-                      link="/services/tiles"
+                      :bg-image="serviceImages.tiles"
+                      link="/services/TilesSection"
                       button-text="Tiles"
                     />
                     <PromoCard
                      data-aos="fade-up"
-                      logo="/logos/spotify.svg"
                       width="370px"
                       height="370px"
-                      :bg-image="img(3)"
-                      link="/services/painting"
+                      :bg-image="serviceImages.painting"
+                      link="/services/PaintingServises"
                       button-text="Spackling / Painting"
                     />
                     <TextBlok class="ttt-text"
                      data-aos="fade-up"
-                        text="Вибирай сервіс який тобі потрібен. Ми пропонуємо повний спектр ремонтних і будівельних послуг — від кухні до електрики."
+                        text="
+                        Honest Approach. Transparent Pricing. Quality You Can Trust.
+We believe in clear communication and no surprises. Every project starts with a detailed estimate, so you always know what to expect.
+Our team carefully manages each stage of the work — from planning to final touches — ensuring high-quality results and attention to every detail.
+"
                       />
                       <PromoCard
                        data-aos="fade-up"
-                      logo="/logos/spotify.svg"
                       width="575px"
                       height="450px"
-                      :bg-image="img(4)"
-                      link="/services/electric"
+                      :bg-image="serviceImages.electrical"
+                      link="/services/ElectricalSection"
                       button-text="Electrical Work"
                     />
                     <PromoCard
                      data-aos="fade-up"
-                      logo="/logos/spotify.svg"
                       width="575px"
                       height="450px"
-                      :bg-image="img(5)"
-                      link="/services/plumbing"
+                      :bg-image="serviceImages.plumbing"
+                      link="/services/PlumbingSection"
                       button-text="Plumbing"
                     />
 

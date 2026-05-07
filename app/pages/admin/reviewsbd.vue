@@ -1,7 +1,9 @@
 <script setup lang="ts">
+definePageMeta({ middleware: 'admin-auth' })
 import { ref, onMounted } from 'vue'
-import ReviewsFormaTest from '../components/ui/ReviewsFormaTest.vue'
-import BaseModalTest from '../components/ui/BaseModalTest.vue'
+import ReviewsFormaTest from '~/components/ui/ReviewsFormaTest.vue'
+import BaseModalTest from '~/components/ui/BaseModalTest.vue'
+import { getApiBase } from '~/composables/useApi'
 
 type Review = {
   id: number
@@ -21,7 +23,7 @@ const deletingId = ref<number | null>(null)
 const open = ref(false)
 const origin = ref<{ x: number; y: number } | null>(null)
 
-const apiUrl = useRuntimeConfig().public.apiUrl || 'http://localhost:3001'
+const apiUrl = getApiBase()
 
 const loadReviews = async () => {
   try {
@@ -92,8 +94,10 @@ const deleteReview = async (id: number) => {
   try {
     deletingId.value = id
 
+    const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : ''
     const res = await fetch(`${apiUrl}/reviews/${id}`, {
       method: 'DELETE',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
     })
 
     if (!res.ok) {

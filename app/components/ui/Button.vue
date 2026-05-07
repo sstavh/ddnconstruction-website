@@ -1,10 +1,17 @@
 <script setup lang="ts">
-console.log("good Button");
-
+const props = defineProps<{
+  link?: string
+  text?: string
+}>()
 </script>
 
 <template>
-<button class="button">Contact</button>
+  <NuxtLink v-if="link" :to="link" class="button">
+    {{ text || 'Contact' }}
+  </NuxtLink>
+  <button v-else class="button">
+    {{ text || 'Contact' }}
+  </button>
 </template>
 
 <style scoped>

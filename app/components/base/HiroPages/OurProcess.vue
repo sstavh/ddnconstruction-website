@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onBeforeUnmount } from "vue";
 import type { CSSProperties } from "vue";
-import { imgUrl } from '~/composables/useApi'
+import { imgUrl, fetchSection } from '~/composables/useApi'
 
 /* ====== НАЛАШТУВАННЯ ====== */
 const PIN_TOP = 80;                 // відступ під хедер
@@ -21,8 +21,7 @@ const cards = ref([
 
 async function fetchBackground() {
   try {
-    const response = await fetch('http://localhost:3001/section-images/section/ourProcess')
-    const data = await response.json()
+    const data = await fetchSection('ourProcess')
     if (data && data.length > 0) {
       backgroundImage.value = imgUrl(data[0].imageUrl)
     } else {
@@ -37,8 +36,7 @@ async function fetchBackground() {
 async function fetchCardImages() {
   for (const card of cards.value) {
     try {
-      const response = await fetch(`http://localhost:3001/section-images/section/${card.section}`)
-      const data = await response.json()
+      const data = await fetchSection(card.section)
       if (data && data.length > 0) {
         card.imageUrl = imgUrl(data[0].imageUrl)
       }
@@ -46,7 +44,7 @@ async function fetchCardImages() {
   }
 }
 
-// Звідки “прилітає” кожна картка
+// Звідки "прилітає" кожна картка
 // 1-ша центральна: без прильоту (стоїть)
 const flyFrom = [
   { x: 0, y: 0 },        // c1 — центральна, не рухаємо
@@ -279,7 +277,7 @@ function cardStyle(i: number): CSSProperties {
 
 .cardTitle {
   margin: 0 0 10px;
-  color: var(--color-praymeri-blek);
+  color: var(--color-praymeri-light);
 }
 
 .cardText {
@@ -287,7 +285,7 @@ function cardStyle(i: number): CSSProperties {
   bottom: 0;
   line-height: 1.55;
   opacity: 0.95;
-  color: var(--color-praymeri-blek);
+  color: var(--color-praymeri-light);
 }
 
 @media (max-width: 1024px) {

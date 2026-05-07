@@ -4,6 +4,8 @@ import Button from '../Button.vue';
 const props = defineProps<{
   title: string
   text: string
+  buttonLink?: string
+  buttonText?: string
 }>()
 </script>
 
@@ -16,11 +18,10 @@ const props = defineProps<{
                 </h3>
 
                 <div class="textTec-container__box">
-                    <p class="textTec-box__text">
-                        {{ text }}
+                    <p class="textTec-box__text" v-html="text">
                     </p>
 
-                    <Button/>
+                    <Button :link="buttonLink" :text="buttonText" />
                 </div>
             </div>
         </div>

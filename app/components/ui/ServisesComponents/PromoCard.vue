@@ -8,7 +8,7 @@
     <div class="promo-card__overlay"></div>
 
     <div class="promo-card__content">
-      <img class="promo-card__logo" :src="logo" alt="logo" />
+      <img v-if="logo" class="promo-card__logo" :src="logo" alt="logo" />
 
       <NuxtLink :to="link" class="promo-card__button">
         {{ buttonText }}
@@ -23,7 +23,7 @@
 import { computed } from "vue"
 
 interface Props {
-  logo: string
+  logo?: string
   color?: string
   bgImage?: string
   width?: string

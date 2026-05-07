@@ -8,6 +8,9 @@
     @mouseleave="hideCloud"
   >
     <div class="card-darkness"></div>
+    <div class="card-text">
+      <span v-if="title" class="card-tag">{{ title }}</span>
+    </div>
   </div>
 
   <Teleport to="body">
@@ -22,15 +25,14 @@
       @mouseenter="showCloud"
       @mouseleave="hideCloud"
     >
-      <div class="cloud-bg bg-1"></div>
-      <div class="cloud-bg bg-2"></div>
-      <div class="cloud-bg bg-3"></div>
+      <div v-if="!fetchedBgImage" class="cloud-bg bg-1"></div>
+      <div v-if="!fetchedBgImage" class="cloud-bg bg-2"></div>
+      <div v-if="!fetchedBgImage" class="cloud-bg bg-3"></div>
+      <div v-if="fetchedBgImage" class="cloud-img-overlay"></div>
 
       <div class="cloud-tail"></div>
 
-      <div v-if="logo" class="logo-wrap">
-        <img :src="logo" :alt="title || 'logo'" class="logo" />
-      </div>
+     
 
       <div class="cloud-texts">
         <h3 v-if="title" class="cloud-title">{{ title }}</h3>
@@ -42,6 +44,7 @@
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue'
+import { imgUrl, fetchSection } from '~/composables/useApi'
 
 interface Props {
   logo?: string
@@ -52,6 +55,7 @@ interface Props {
   height?: string
   radius?: string
   bgImage?: string
+  section?: string
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -62,12 +66,14 @@ const props = withDefaults(defineProps<Props>(), {
   blockColor: '#0f172a',
   height: '420px',
   radius: '28px',
-  bgImage: ''
+  bgImage: '',
+  section: ''
 })
 
 const cardRef = ref<HTMLElement | null>(null)
 const isHovered = ref(false)
 const isClosing = ref(false)
+const fetchedBgImage = ref('')
 
 const cloudSide = ref<'left' | 'right' | 'top' | 'bottom'>('right')
 const cloudTop = ref(0)
@@ -82,20 +88,25 @@ const ANIMATION_DURATION = 320
 let hideTimer: ReturnType<typeof setTimeout> | null = null
 let closeTimer: ReturnType<typeof setTimeout> | null = null
 
-const cardStyle = computed(() => ({
-  backgroundColor: props.blockColor,
-  backgroundImage: props.bgImage ? `url(${props.bgImage})` : 'none',
-  backgroundSize: 'cover',
-  backgroundPosition: 'center',
-  backgroundRepeat: 'no-repeat',
-  height: props.height,
-  borderRadius: props.radius
-}))
+const cardStyle = computed(() => {
+  const bg = props.bgImage || fetchedBgImage.value
+  return {
+    backgroundColor: props.blockColor,
+    backgroundImage: bg ? `url(${bg})` : 'none',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
+    height: props.height,
+    borderRadius: props.radius
+  }
+})
 
 const cloudStyle = computed(() => {
   const fallback = ['#3b82f6', '#8b5cf6', '#22c55e']
   const safeColors = [...props.colors, ...fallback].slice(0, 3)
   const width = Math.min(CLOUD_WIDTH, window.innerWidth - VIEWPORT_PADDING * 2)
+
+  const bg = fetchedBgImage.value
 
   return {
     top: `${cloudTop.value}px`,
@@ -103,7 +114,12 @@ const cloudStyle = computed(() => {
     '--cloud-width': `${width}px`,
     '--cloud-color-1': safeColors[0],
     '--cloud-color-2': safeColors[1],
-    '--cloud-color-3': safeColors[2]
+    '--cloud-color-3': safeColors[2],
+    ...(bg ? {
+      backgroundImage: `url(${bg})`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    } : {})
   }
 })
 
@@ -224,9 +240,20 @@ function handleScroll() {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   window.addEventListener('resize', handleResize)
   window.addEventListener('scroll', handleScroll, true)
+
+  const sectionsToTry = props.section ? [props.section, 'imgCloud'] : ['imgCloud']
+  for (const sec of sectionsToTry) {
+    try {
+      const data = await fetchSection(sec)
+      if (Array.isArray(data) && data.length > 0) {
+        fetchedBgImage.value = imgUrl(data[0].imageUrl)
+        break
+      }
+    } catch (e) {}
+  }
 })
 
 onBeforeUnmount(() => {
@@ -264,7 +291,31 @@ onBeforeUnmount(() => {
 }
 
 .smart-card:hover .card-darkness {
-  opacity: 0.08;
+  opacity: 0.18;
+}
+
+.card-text {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 2;
+  padding: 16px 18px;
+  background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 100%);
+}
+
+.card-tag {
+  display: inline-block;
+  padding: 5px 14px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(6px);
 }
 
 .info-cloud {
@@ -311,6 +362,15 @@ onBeforeUnmount(() => {
   border-radius: inherit;
   z-index: 0;
   opacity: 0;
+  pointer-events: none;
+}
+
+.cloud-img-overlay {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: 0;
+  background: rgba(0, 0, 0, 0.45);
   pointer-events: none;
 }
 

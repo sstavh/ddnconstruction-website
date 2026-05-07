@@ -1,23 +1,46 @@
 <script setup lang="ts">
-import Button from '../../ui/Button.vue';
+import { computed } from 'vue'
+import { imgUrl } from '~/composables/useApi'
 
-console.log("director mes work");
+const apiUrl = useRuntimeConfig().public.apiUrl
+
+const { data: imgData } = useFetch<any[]>(
+  `${apiUrl}/section-images/section/directorMes`,
+  { key: 'directorMesImg', getCachedData: () => undefined },
+)
+
+const { data: textData } = useFetch<any[]>(
+  `${apiUrl}/section-images/section/directorMesText`,
+  { key: 'directorMesText', getCachedData: () => undefined },
+)
+
+const directorImgUrl = computed(() => {
+  const d = imgData.value
+  return Array.isArray(d) && d.length > 0 ? imgUrl(d[0].imageUrl) : ''
+})
+
+const directorMesText = computed(() => {
+  const d = textData.value
+  return Array.isArray(d) && d.length > 0 ? d[0].description : ''
+})
 </script>
 
 <template>
 <section>
     <div class="container">
         <div class="directorMes-container">
-             <h3 class="directorMes-box__logo">Слова Директора</h3>
+             <h3 class="directorMes-box__logo">
+Director's words</h3>
             <div class="directorMes-box">
                <div data-aos="fade-up-right">
-                <div data-aos="zoom-out-right" class="img-cont">IMGS</div>
+                <div data-aos="zoom-out-right" class="img-cont">
+                  <img v-if="directorImgUrl" :src="directorImgUrl" alt="Директор" class="director-img" />
+                </div>
                </div>
-                
+
                 <div class="directorMes-box__container">
-                    <p class="directorMes-box__text">Тут може бути текст, який буде відображатися у розділі "Слова Директора".</p>
-                    <Button ext="Button"
-  link="/catalog"/>
+                    <p class="directorMes-box__text">{{ directorMesText }}</p>
+                    <NuxtLink to="/about" class="director-btn">Про нас</NuxtLink>
                 </div>
             </div>
         </div>
@@ -46,12 +69,41 @@ console.log("director mes work");
 .img-cont{
     height: 500px;
     width: 430px;
-    background-color: red;
+    background-color: #1e293b;
     margin-right: 55px;
+    overflow: hidden;
+}
+
+.director-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
 }
 
 .directorMes-box__text{
     padding-bottom: 25px;
+}
+
+.director-btn {
+    display: inline-block;
+    font-size: var(--font-s-button);
+    border: 1px solid var(--color-praymeri-blue);
+    background-color: var(--color-praymeri-blue);
+    padding: var(--padding-size-basis);
+    color: var(--color-praymeri-light);
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.director-btn:hover {
+    border-color: var(--color-praymeri-blueHover);
+    background-color: var(--color-praymeri-blueHover);
+}
+
+.director-btn:active {
+    transform: translateY(1.4px);
 }
 
  @media (max-width: 1024px) {
@@ -62,7 +114,7 @@ console.log("director mes work");
 
    @media (max-width: 768px) {
     .directorMes-box{
-        display: block;     
+        display: block;
     }
    }
 

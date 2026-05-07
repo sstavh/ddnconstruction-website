@@ -18,7 +18,9 @@ const sections = [
   { key: 'calA', label: 'Калькулятор Прайсу', instruction: 'Адмінська панель для прайсу калькулятора.' },
   { key: 'discounts', label: 'Знижки', instruction: 'Встановіть знижку у відсотках на конкретний товар калькулятора.' },
   { key: 'difficulties', label: 'Вимикач секцій', instruction: 'Редагуйте імена та спеціальності працівників. Вмикайте/вимикайте секцію DirectorMes.' },
+  { key: 'directorMesText', label: 'Слова Директора', instruction: 'Редагуйте текст, який відображається у розділі "Слова Директора" на головній сторінці.' },
   { key: 'icons', label: 'Іконки', instruction: 'Виберіть 5 іконок для головної сторінки.' },
+  { key: 'fotoAdm', label: 'Фото / Медіа', instruction: 'Перейти до панелі керування фото, логотипом та медіа.', isLink: true, href: '/admin/fotoAdm' },
   { key: 'logout', label: 'Вийти', instruction: 'Натисніть, щоб вийти з адмінки.', isLogout: true },
 ]
 // --- ICONS ---
@@ -55,6 +57,11 @@ const saveIcons = () => {
   alert('Іконки збережено! (зараз лише локально)')
 }
 
+function iconAsObject(idx: number): { name: string; url: string; file: File } | null {
+  const val = selectedIcons.value[idx]
+  return typeof val === 'object' && val !== null ? val as { name: string; url: string; file: File } : null
+}
+
 function handleIconFileChange(e: Event, idx: number) {
   const input = e.target as HTMLInputElement
   if (input.files && input.files[0]) {
@@ -88,6 +95,14 @@ const checkSavedLogin = () => {
   }
 }
 
+const getAuthHeaders = (): Record<string, string> => {
+  const token = isClient ? localStorage.getItem('adminToken') : ''
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  }
+}
+
 const submitLogin = async () => {
   try {
     loginError.value = ''
@@ -109,6 +124,7 @@ const submitLogin = async () => {
     loggedIn.value = true
     if (isClient) {
       localStorage.setItem('adminLogged', 'true')
+      if (result.token) localStorage.setItem('adminToken', result.token)
     }
     activeSection.value = ''
   } catch (error: any) {
@@ -123,6 +139,7 @@ const logout = () => {
   password.value = ''
   if (isClient) {
     localStorage.removeItem('adminLogged')
+    localStorage.removeItem('adminToken')
   }
 }
 
@@ -132,6 +149,11 @@ const selectSection = async (sectionKey: string) => {
 
   if (section.isLogout) {
     logout()
+    return
+  }
+
+  if (section.isLink && section.href) {
+    navigateTo(section.href)
     return
   }
 
@@ -154,6 +176,8 @@ const selectSection = async (sectionKey: string) => {
     await loadDifficulties()
   } else if (sectionKey === 'icons') {
     await fetchIcons()
+  } else if (sectionKey === 'directorMesText') {
+    await loadDirectorMesText()
   }
 }
 
@@ -210,7 +234,7 @@ const deleteReview = async (id: number) => {
 
   try {
     deletingReviewId.value = id
-    const res = await fetch(`${apiUrl}/reviews/${id}`, { method: 'DELETE' })
+    const res = await fetch(`${apiUrl}/reviews/${id}`, { method: 'DELETE', headers: getAuthHeaders() })
     if (!res.ok) throw new Error(`Failed to delete review: ${res.status}`)
     reviews.value = reviews.value.filter((review) => review.id !== id)
   } catch (error) {
@@ -229,7 +253,7 @@ const loadPepLeads = async () => {
   try {
     pepLoading.value = true
     pepError.value = null
-    const res = await fetch(`${apiUrl}/leads`)
+    const res = await fetch(`${apiUrl}/leads`, { headers: getAuthHeaders() })
     if (!res.ok) throw new Error(`Failed to load leads: ${res.status}`)
     pepLeads.value = await res.json()
   } catch (error: any) {
@@ -245,7 +269,8 @@ type PricingItem = {
   title: string
   titleUk: string
   price: string
-  priceType?: 'fixed' | 'm2'
+  priceMax?: string
+  priceType?: 'fixed' | 'm2' | 'lft' | 'm2l'
 }
 
 type PricingCategory = {
@@ -306,7 +331,7 @@ const loadCalLeads = async () => {
   try {
     calLoading.value = true
     calError.value = ''
-    const response = await fetch(`${apiUrl}/calculator-leads`)
+    const response = await fetch(`${apiUrl}/calculator-leads`, { headers: getAuthHeaders() })
     if (!response.ok) throw new Error('Не вдалося завантажити заявки')
     calLeads.value = await response.json()
   } catch (error: any) {
@@ -323,7 +348,7 @@ const formatServices = (servicesByRoom: Record<string, string[]>) =>
 
 const formatAreas = (areasByRoom: Record<string, number>) =>
   Object.entries(areasByRoom)
-    .map(([room, area]) => `${room}: ${area} м²`)
+    .map(([room, area]) => `${room}: ${area} sq ft`)
     .join(' | ')
 
 /* PA admin */
@@ -333,7 +358,7 @@ const paLoading = ref(false)
 const paError = ref('')
 
 const categoryForm = reactive({ id: '', title: '', description: '' })
-const itemForm = reactive({ categoryId: '', title: '', titleUk: '', price: '' })
+const itemForm = reactive({ categoryId: '', title: '', titleUk: '', price: '', priceMax: '', priceType: 'fixed' })
 
 const loadPaCategories = async () => {
   try {
@@ -368,7 +393,7 @@ const createPaCategory = async () => {
   try {
     const response = await fetch(`${apiUrl}/pricing/category`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify(categoryForm),
     })
     if (!response.ok) throw new Error('Не вдалося створити категорію')
@@ -392,7 +417,7 @@ const deletePaCategory = async (id: string) => {
   paError.value = ''
 
   try {
-    const response = await fetch(`${apiUrl}/pricing/category/${id}`, { method: 'DELETE' })
+    const response = await fetch(`${apiUrl}/pricing/category/${encodeURIComponent(id)}`, { method: 'DELETE', headers: getAuthHeaders() })
     if (!response.ok) throw new Error('Не вдалося видалити категорію')
     paCategories.value = paCategories.value.filter((category) => category.id !== id)
     if (selectedPaCategoryId.value === id) {
@@ -418,7 +443,7 @@ const createPaItem = async () => {
   try {
     const response = await fetch(`${apiUrl}/pricing/item`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify(itemForm),
     })
     if (!response.ok) throw new Error('Не вдалося створити елемент')
@@ -428,6 +453,8 @@ const createPaItem = async () => {
     itemForm.title = ''
     itemForm.titleUk = ''
     itemForm.price = ''
+    itemForm.priceMax = ''
+    itemForm.priceType = 'fixed'
   } catch (error: any) {
     paError.value = error.message || 'Помилка створення елемента'
   } finally {
@@ -441,7 +468,7 @@ const deletePaItem = async (id: number) => {
   paLoading.value = true
   paError.value = ''
   try {
-    const response = await fetch(`${apiUrl}/pricing/item/${id}`, { method: 'DELETE' })
+    const response = await fetch(`${apiUrl}/pricing/item/${id}`, { method: 'DELETE', headers: getAuthHeaders() })
     if (!response.ok) throw new Error('Не вдалося видалити елемент')
     paCategories.value = paCategories.value.map((category) => ({
       ...category,
@@ -461,7 +488,7 @@ const calALoading = ref(false)
 const calAError = ref('')
 
 const calACategoryForm = reactive({ id: '', title: '', description: '' })
-const calAItemForm = reactive({ categoryId: '', title: '', titleUk: '', price: '', priceType: 'fixed' })
+const calAItemForm = reactive({ categoryId: '', title: '', titleUk: '', price: '', priceMax: '', priceType: 'fixed' })
 
 const loadCalACategories = async () => {
   try {
@@ -490,13 +517,18 @@ const createCalACategory = async () => {
     return
   }
 
+  if (calACategories.value.some((c) => c.id === calACategoryForm.id)) {
+    calAError.value = `Категорія з ID "${calACategoryForm.id}" вже існує. Просто додайте елементи до неї.`
+    return
+  }
+
   calALoading.value = true
   calAError.value = ''
 
   try {
     const response = await fetch(`${apiUrl}/pricing/category`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify(calACategoryForm),
     })
     if (!response.ok) throw new Error('Не вдалося створити категорію')
@@ -520,7 +552,7 @@ const deleteCalACategory = async (id: string) => {
   calAError.value = ''
 
   try {
-    const response = await fetch(`${apiUrl}/pricing/category/${id}`, { method: 'DELETE' })
+    const response = await fetch(`${apiUrl}/pricing/category/${encodeURIComponent(id)}`, { method: 'DELETE', headers: getAuthHeaders() })
     if (!response.ok) throw new Error('Не вдалося видалити категорію')
     calACategories.value = calACategories.value.filter((category) => category.id !== id)
     if (selectedCalAId.value === id) {
@@ -546,7 +578,7 @@ const createCalAItem = async () => {
   try {
     const response = await fetch(`${apiUrl}/pricing/item`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify(calAItemForm),
     })
     if (!response.ok) throw new Error('Не вдалося створити елемент')
@@ -556,6 +588,7 @@ const createCalAItem = async () => {
     calAItemForm.title = ''
     calAItemForm.titleUk = ''
     calAItemForm.price = ''
+    calAItemForm.priceMax = ''
     calAItemForm.priceType = 'fixed'
   } catch (error: any) {
     calAError.value = error.message || 'Помилка створення елемента'
@@ -570,7 +603,7 @@ const deleteCalAItem = async (id: number) => {
   calAError.value = ''
 
   try {
-    const response = await fetch(`${apiUrl}/pricing/item/${id}`, { method: 'DELETE' })
+    const response = await fetch(`${apiUrl}/pricing/item/${id}`, { method: 'DELETE', headers: getAuthHeaders() })
     if (!response.ok) throw new Error('Не вдалося видалити елемент')
     calACategories.value = calACategories.value.map((category) => ({
       ...category,
@@ -581,6 +614,18 @@ const deleteCalAItem = async (id: number) => {
   } finally {
     calALoading.value = false
   }
+}
+
+const calACategoryRoomsHint = (id: string): string => {
+  const map: Record<string, string> = {
+    kitchen: 'Kitchen Service',
+    bathroom: 'Bathroom',
+    tiles: 'Tiles',
+    'spackling-painting': 'Spackling / Painting',
+    electrical: 'Electrical Work',
+    plumbing: 'Plumbing',
+  }
+  return map[id] ? `Категорія: ${map[id]}` : 'Невідома група — не відображається в калькуляторі!'
 }
 
 /* Discounts */
@@ -615,7 +660,7 @@ const saveGlobalDiscount = async () => {
   try {
     const res = await fetch(`${apiUrl}/discounts/global`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: getAuthHeaders(),
       body: JSON.stringify({ percent: Number(discountPercent.value) }),
     })
     if (!res.ok) throw new Error('Не вдалося зберегти знижку')
@@ -631,7 +676,7 @@ const clearGlobalDiscount = async () => {
   discountLoading.value = true
   discountError.value = ''
   try {
-    const res = await fetch(`${apiUrl}/discounts/global`, { method: 'DELETE' })
+    const res = await fetch(`${apiUrl}/discounts/global`, { method: 'DELETE', headers: getAuthHeaders() })
     if (!res.ok) throw new Error('Не вдалося прибрати знижку')
     globalDiscount.value = 0
     discountPercent.value = 0
@@ -668,18 +713,21 @@ async function loadToggle(section: string): Promise<{ id: number | null; visible
 
 async function saveToggle(recordId: number | null, section: string, visible: boolean): Promise<number | null> {
   const body = JSON.stringify({ section, imageUrl: '', title: visible ? '1' : '0', isActive: true, order: 0 })
-  const headers = { 'Content-Type': 'application/json' }
   try {
     if (recordId) {
-      await fetch(`${apiUrl}/section-images/${recordId}`, { method: 'PUT', headers, body })
+      const res = await fetch(`${apiUrl}/section-images/${recordId}`, { method: 'PUT', headers: getAuthHeaders(), body })
+      if (!res.ok) throw new Error(`PUT failed: ${res.status}`)
       return recordId
     } else {
-      const res = await fetch(`${apiUrl}/section-images`, { method: 'POST', headers, body })
+      const res = await fetch(`${apiUrl}/section-images`, { method: 'POST', headers: getAuthHeaders(), body })
+      if (!res.ok) throw new Error(`POST failed: ${res.status}`)
       const d = await res.json()
       return d.id ?? null
     }
-  } catch {}
-  return recordId
+  } catch (e: any) {
+    diffError.value = e?.message || 'Помилка збереження'
+  }
+  return null
 }
 
 const loadDifficulties = async () => {
@@ -717,13 +765,13 @@ const saveDiffWorker = async (idx: 0 | 1 | 2) => {
     if (worker.id) {
       await fetch(`${apiUrl}/section-images/${worker.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ section: sectionName, title: worker.name, description: worker.specialty }),
       })
     } else {
       const res = await fetch(`${apiUrl}/section-images`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ section: sectionName, imageUrl: '', title: worker.name, description: worker.specialty, isActive: true, order: 0 }),
       })
       const created = await res.json()
@@ -739,13 +787,78 @@ const saveDiffWorker = async (idx: 0 | 1 | 2) => {
 const saveDirectorMesToggle = async () => {
   diffError.value = ''
   const id = await saveToggle(directorMesRecordId.value, 'directorMesVisible', directorMesVisible.value)
-  directorMesRecordId.value = id
+  if (!diffError.value) {
+    if (id !== null) directorMesRecordId.value = id
+    diffSaved.value = true
+    setTimeout(() => { diffSaved.value = false }, 2000)
+  }
 }
 
 const saveWorkersToggle = async () => {
   diffError.value = ''
   const id = await saveToggle(workersRecordId.value, 'difficultiesWorkersVisible', workersVisible.value)
-  workersRecordId.value = id
+  if (!diffError.value) {
+    if (id !== null) workersRecordId.value = id
+    diffSaved.value = true
+    setTimeout(() => { diffSaved.value = false }, 2000)
+  }
+}
+
+/* Director Message Text */
+const directorMesTextValue = ref('')
+const directorMesTextRecordId = ref<number | null>(null)
+const directorMesTextLoading = ref(false)
+const directorMesTextError = ref('')
+const directorMesTextSaved = ref(false)
+
+const loadDirectorMesText = async () => {
+  directorMesTextLoading.value = true
+  directorMesTextError.value = ''
+  try {
+    const res = await fetch(`${apiUrl}/section-images/section/directorMesText`)
+    const data = await res.json()
+    if (Array.isArray(data) && data.length > 0) {
+      directorMesTextRecordId.value = data[0].id
+      directorMesTextValue.value = data[0].description || ''
+    } else {
+      directorMesTextRecordId.value = null
+      directorMesTextValue.value = ''
+    }
+  } catch (e: any) {
+    directorMesTextError.value = e?.message || 'Помилка завантаження'
+  } finally {
+    directorMesTextLoading.value = false
+  }
+}
+
+const saveDirectorMesText = async () => {
+  directorMesTextLoading.value = true
+  directorMesTextError.value = ''
+  try {
+    const body = JSON.stringify({
+      section: 'directorMesText',
+      imageUrl: '',
+      title: 'directorMesText',
+      description: directorMesTextValue.value,
+      isActive: true,
+      order: 0,
+    })
+    if (directorMesTextRecordId.value) {
+      const res = await fetch(`${apiUrl}/section-images/${directorMesTextRecordId.value}`, { method: 'PUT', headers: getAuthHeaders(), body })
+      if (!res.ok) throw new Error(`PUT failed: ${res.status}`)
+    } else {
+      const res = await fetch(`${apiUrl}/section-images`, { method: 'POST', headers: getAuthHeaders(), body })
+      if (!res.ok) throw new Error(`POST failed: ${res.status}`)
+      const d = await res.json()
+      directorMesTextRecordId.value = d.id ?? null
+    }
+    directorMesTextSaved.value = true
+    setTimeout(() => { directorMesTextSaved.value = false }, 2000)
+  } catch (e: any) {
+    directorMesTextError.value = e?.message || 'Помилка збереження'
+  } finally {
+    directorMesTextLoading.value = false
+  }
 }
 </script>
 
@@ -778,7 +891,7 @@ const saveWorkersToggle = async () => {
           <button
             v-for="section in sections"
             :key="section.key"
-            :class="['admin-button', { logout: section.isLogout } ]"
+            :class="['admin-button', { logout: section.isLogout, link: section.isLink }]"
             @click="selectSection(section.key)"
           >
             {{ section.label }}
@@ -1000,8 +1113,21 @@ const saveWorkersToggle = async () => {
                 <input v-model="itemForm.titleUk" />
               </label>
               <label>
-                Ціна
-                <input v-model="itemForm.price" />
+                Ціна від (мін)
+                <input v-model="itemForm.price" placeholder="900" />
+              </label>
+              <label>
+                Ціна до (макс, необов'язково)
+                <input v-model="itemForm.priceMax" placeholder="1500" />
+              </label>
+              <label>
+                Тип ціни
+                <select v-model="itemForm.priceType">
+                  <option value="fixed">За роботу (fixed)</option>
+                  <option value="m2">За sq ft (m2)</option>
+                  <option value="lft">За linear ft (lft)</option>
+                  <option value="m2l">За sq ft labor (m2l)</option>
+                </select>
               </label>
               <button class="small-btn" @click.prevent="createPaItem">Додати елемент</button>
             </div>
@@ -1017,7 +1143,7 @@ const saveWorkersToggle = async () => {
               <div v-if="category.items.length === 0">Немає елементів</div>
               <ul>
                 <li v-for="item in category.items" :key="item.id">
-                  {{ item.title }} / {{ item.titleUk }} — {{ item.price }}
+                  {{ item.title }} / {{ item.titleUk }} — ${{ item.price }}{{ item.priceMax ? ` – $${item.priceMax}` : '' }} {{ item.priceType === 'm2' ? '/sq ft' : item.priceType === 'lft' ? '/linear ft' : item.priceType === 'm2l' ? '/sq ft (labor)' : '' }}
                   <button class="small-btn danger" @click="deletePaItem(item.id)">Видалити</button>
                 </li>
               </ul>
@@ -1035,9 +1161,18 @@ const saveWorkersToggle = async () => {
           <div class="admin-forms">
             <div class="form-block">
               <h3>Нова категорія</h3>
+              <p class="form-hint">ID категорії прив'язаний до типу кімнати в калькуляторі. Оберіть один із 4 дозволених груп.</p>
               <label>
-                ID
-                <input v-model="calACategoryForm.id" />
+                ID (кімната у калькуляторі)
+                <select v-model="calACategoryForm.id">
+                  <option value="">— оберіть —</option>
+                  <option value="kitchen">kitchen — Kitchen Service</option>
+                  <option value="bathroom">bathroom — Bathroom</option>
+                  <option value="tiles">tiles — Tiles</option>
+                  <option value="spackling-painting">spackling-painting — Spackling / Painting</option>
+                  <option value="electrical">electrical — Electrical Work</option>
+                  <option value="plumbing">plumbing — Plumbing</option>
+                </select>
               </label>
               <label>
                 Заголовок
@@ -1068,31 +1203,40 @@ const saveWorkersToggle = async () => {
                 <input v-model="calAItemForm.titleUk" />
               </label>
               <label>
-                Ціна
-                <input v-model="calAItemForm.price" />
+                Ціна від (мін)
+                <input v-model="calAItemForm.price" placeholder="900" />
+              </label>
+              <label>
+                Ціна до (макс, необов'язково)
+                <input v-model="calAItemForm.priceMax" placeholder="1500" />
               </label>
               <label>
                 Тип ціни
                 <select v-model="calAItemForm.priceType">
                   <option value="fixed">fixed</option>
-                  <option value="m2">m2</option>
+                  <option value="m2">sq ft (m2)</option>
+                  <option value="lft">linear ft (lft)</option>
+                  <option value="m2l">sq ft labor (m2l)</option>
                 </select>
               </label>
               <button class="small-btn" @click.prevent="createCalAItem">Додати елемент</button>
             </div>
           </div>
           <div class="category-list">
-            <div v-if="calACategories.length === 0">Категорій не знайдено.</div>
+            <div v-if="calACategories.length === 0">Категорій не знайдено. Створіть категорії вище з потрібними ID.</div>
             <div v-for="category in calACategories" :key="category.id" class="category-card">
               <div class="category-card-header">
-                <h4>{{ category.title }} ({{ category.id }})</h4>
+                <div>
+                  <h4>{{ category.title }} <span class="category-id-badge">{{ category.id }}</span></h4>
+                  <span class="category-rooms-hint">{{ calACategoryRoomsHint(category.id) }}</span>
+                </div>
                 <button class="small-btn danger" @click="deleteCalACategory(category.id)">Видалити</button>
               </div>
               <p>{{ category.description }}</p>
               <div v-if="category.items.length === 0">Немає елементів</div>
               <ul>
                 <li v-for="item in category.items" :key="item.id">
-                  {{ item.title }} / {{ item.titleUk }} — {{ item.price }} {{ item.priceType === 'm2' ? '/м²' : '' }}
+                  {{ item.title }} / {{ item.titleUk }} — ${{ item.price }}{{ item.priceMax ? ` – $${item.priceMax}` : '' }} {{ item.priceType === 'm2' ? '/sq ft' : item.priceType === 'lft' ? '/linear ft' : item.priceType === 'm2l' ? '/sq ft (labor)' : '' }}
                   <button class="small-btn danger" @click="deleteCalAItem(item.id)">Видалити</button>
                 </li>
               </ul>
@@ -1169,6 +1313,23 @@ const saveWorkersToggle = async () => {
           </div>
         </div>
 
+        <div class="content-section" v-if="activeSection === 'directorMesText'">
+          <div class="section-header">
+            <h2>Слова Директора — текст</h2>
+            <button class="small-btn" @click="loadDirectorMesText">Оновити</button>
+          </div>
+          <div v-if="directorMesTextLoading" class="status">Завантаження...</div>
+          <div v-if="directorMesTextError" class="error">{{ directorMesTextError }}</div>
+          <div v-if="directorMesTextSaved" class="success-text">Збережено!</div>
+          <div class="form-block" style="max-width: 720px">
+            <label>
+              Текст
+              <textarea v-model="directorMesTextValue" rows="10" placeholder="Введіть текст слів директора..."></textarea>
+            </label>
+            <button class="small-btn" style="margin-top: 12px" @click.prevent="saveDirectorMesText">Зберегти</button>
+          </div>
+        </div>
+
         <div class="content-section" v-if="activeSection === 'icons'">
           <h2>Вибір іконок для головної</h2>
           <div v-if="iconsLoading">Завантаження іконок...</div>
@@ -1191,11 +1352,11 @@ const saveWorkersToggle = async () => {
                   />
                   <img
                     v-else
-                    :src="selectedIcons[n-1].url"
-                    :alt="selectedIcons[n-1].name"
+                    :src="iconAsObject(n-1)?.url"
+                    :alt="iconAsObject(n-1)?.name"
                     style="width:48px;height:48px;object-fit:contain;background:#fff;border-radius:8px;"
                   />
-                  <div v-if="typeof selectedIcons[n-1] === 'object'" style="font-size:12px;max-width:120px;overflow-wrap:break-word;">{{ selectedIcons[n-1].name }}</div>
+                  <div v-if="typeof selectedIcons[n-1] === 'object'" style="font-size:12px;max-width:120px;overflow-wrap:break-word;">{{ iconAsObject(n-1)?.name }}</div>
                 </div>
                 <button v-if="selectedIcons[n-1]" class="small-btn danger" style="margin-top:4px;" @click="selectedIcons[n-1]=''">Очистити</button>
               </div>
@@ -1285,6 +1446,15 @@ button:hover {
 .small-btn.danger {
   background: #dc2626;
   color: white;
+}
+
+.admin-button.link {
+  background: #15803d;
+  color: white;
+}
+
+.admin-button.link:hover {
+  background: #16a34a;
 }
 
 .error-text,
@@ -1408,6 +1578,36 @@ button:hover {
   border-radius: 20px;
   background: rgba(15, 23, 42, 0.9);
   border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.form-hint {
+  margin: 0 0 12px;
+  font-size: 12px;
+  color: rgba(148, 163, 184, 0.8);
+  line-height: 1.5;
+  padding: 8px 12px;
+  background: rgba(59, 130, 246, 0.08);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  border-radius: 10px;
+}
+
+.category-id-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 6px;
+  background: rgba(59, 130, 246, 0.18);
+  color: #9ec5ff;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: monospace;
+  margin-left: 6px;
+}
+
+.category-rooms-hint {
+  display: block;
+  font-size: 12px;
+  color: rgba(148, 163, 184, 0.7);
+  margin-top: 2px;
 }
 
 .category-list {

@@ -38,6 +38,7 @@
     </div>
 
     <div v-else-if="step.key === 'services'" class="services-box">
+      <p class="services-currency-note">All prices in USD</p>
       <div
         v-for="room in draft.selectedRooms"
         :key="room"
@@ -70,7 +71,7 @@
         class="field-group"
       >
         <label class="field-group__label">
-          {{ getRoomLabel(room) }} — area, m²
+          {{ getRoomLabel(room) }} — area, sq ft
         </label>
 
         <input
@@ -98,7 +99,7 @@
         >
           <div class="receipt-room__head">
             <h3>{{ getRoomLabel(room) }}</h3>
-            <span>{{ formData.areasByRoom[room] || 0 }} m²</span>
+            <span>{{ formData.areasByRoom[room] || 0 }} sq ft</span>
           </div>
 
           <div
@@ -135,8 +136,11 @@
         </div>
 
         <div class="receipt-total">
-          <span>Grand Total</span>
-          <strong>{{ formatCurrency(grandTotal) }}</strong>
+          <span>Grand Total (USD)</span>
+          <strong v-if="hasRangeServices">
+            {{ formatCurrency(grandTotal) }} – {{ formatCurrency(grandTotalMax) }}
+          </strong>
+          <strong v-else>{{ formatCurrency(grandTotal) }}</strong>
         </div>
       </div>
     </div>
@@ -263,6 +267,32 @@ const grandTotal = computed(() =>
   props.formData.selectedRooms.reduce((acc, room) => acc + getRoomTotal(room), 0)
 )
 
+function getServiceTotalMax(roomValue: string, serviceId: string) {
+  const service = getServiceById(roomValue, serviceId)
+  if (!service) return 0
+  const area = Number(props.formData.areasByRoom[roomValue] || 0)
+  const price = (service.priceMax !== undefined && service.priceMax > service.price) ? service.priceMax : service.price
+  return (service.priceType === 'm2' || service.priceType === 'lft' || service.priceType === 'm2l') ? price * area : price
+}
+
+function getRoomTotalMax(roomValue: string) {
+  const roomServices = props.formData.servicesByRoom[roomValue] || []
+  return roomServices.reduce((sum, sid) => sum + getServiceTotalMax(roomValue, sid), 0)
+}
+
+const grandTotalMax = computed(() =>
+  props.formData.selectedRooms.reduce((acc, room) => acc + getRoomTotalMax(room), 0)
+)
+
+const hasRangeServices = computed(() =>
+  props.formData.selectedRooms.some((room) =>
+    (props.formData.servicesByRoom[room] || []).some((sid) => {
+      const s = getServiceById(room, sid)
+      return s?.priceMax !== undefined && s.priceMax > s.price
+    })
+  )
+)
+
 function getRoomLabel(roomValue: string) {
   return props.roomOptions.find((room) => room.value === roomValue)?.label || roomValue
 }
@@ -327,7 +357,7 @@ function getServiceTotal(roomValue: string, serviceId: string) {
   const service = getServiceById(roomValue, serviceId)
   if (!service) return 0
   const area = Number(props.formData.areasByRoom[roomValue] || 0)
-  return service.priceType === 'm2' ? service.price * area : service.price
+  return (service.priceType === 'm2' || service.priceType === 'lft' || service.priceType === 'm2l') ? service.price * area : service.price
 }
 
 function getServiceTotalDiscounted(roomValue: string, serviceId: string) {
@@ -341,25 +371,41 @@ function getRoomTotal(roomValue: string) {
   return roomServices.reduce((sum, serviceId) => sum + getServiceTotalDiscounted(roomValue, serviceId), 0)
 }
 
+function priceRange(service: ServiceItem) {
+  const hasMax = service.priceMax !== undefined && service.priceMax > service.price
+  return hasMax ? `$${service.price} – $${service.priceMax}` : `$${service.price}`
+}
+
 function getServiceCalculationText(roomValue: string, serviceId: string) {
   const service = getServiceById(roomValue, serviceId)
   if (!service) return ''
 
   const area = Number(props.formData.areasByRoom[roomValue] || 0)
+  const p = priceRange(service)
 
   if (service.priceType === 'm2') {
-    return `${service.price}$/м² × ${area} м²`
+    return `${p}/sq ft × ${area} sq ft`
   }
 
-  return `Фіксована ціна: ${service.price}$`//////////////////////////////////////
+  if (service.priceType === 'lft') {
+    return `${p}/linear ft × ${area} linear ft`
+  }
+
+  if (service.priceType === 'm2l') {
+    return `${p}/sq ft (labor) × ${area} sq ft`
+  }
+
+  return `Fixed price: ${p}`
 }
 
 function formatPriceLabel(service: ServiceItem) {
-  if (service.priceType === 'm2') {
-    return `${service.price}$/м²`
-  }
+  const p = priceRange(service)
 
-  return `${service.price}$`
+  if (service.priceType === 'm2') return `${p}/sq ft`
+  if (service.priceType === 'lft') return `${p}/linear ft`
+  if (service.priceType === 'm2l') return `${p}/sq ft (labor)`
+
+  return p
 }
 
 function formatCurrency(value: number) {
@@ -536,6 +582,15 @@ function handleSubmitForm(payload: ContactFormType) {
 .summary-box {
   display: grid;
   gap: 18px;
+}
+
+.services-currency-note {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: rgba(255, 255, 255, 0.4);
 }
 
 /* common card/button style */

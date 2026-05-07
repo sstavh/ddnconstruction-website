@@ -29,9 +29,9 @@ type Stat = {
 }
 
 const stats: Stat[] = [
-  { value: 1500, label: 'Клієнтів', suffix: '+' },
-  { value: 12, label: 'Років досвіду' },
-  { value: 98, label: 'Задоволених клієнтів', suffix: '%' }
+  { value: 1500, label: 'Clients', suffix: '+' },
+  { value: 12, label: 'Years of Experience' },
+  { value: 98, label: 'Satisfied Clients', suffix: '%' }
 ]
 
 const animatedValues = reactive<number[]>(stats.map(() => 0))

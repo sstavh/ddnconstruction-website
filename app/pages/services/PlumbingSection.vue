@@ -1,162 +1,53 @@
-<template>
-  <section class="contactCard">
-
-    <div class="contactList">
-      <a class="contactItem" :href="`tel:${phoneHref}`">
-        <div class="label">Phone</div>
-        <div class="value">{{ phone }}</div>
-      </a>
-
-      <a class="contactItem" :href="`mailto:${email}`">
-        <div class="label">Email</div>
-        <div class="value">{{ email }}</div>
-      </a>
-    </div>
-
-    <div class="socialBlock">
-      <div class="socialRow">
-
-        <a :href="socials.tiktok" target="_blank" class="socialBtn tg">
-          <img :src="tiktokIcon" alt="TikTok" class="socialIcon" />
-        </a>
-
-        <a :href="socials.instagram" target="_blank" class="socialBtn ig">
-          <img :src="instagramIcon" alt="Instagram" class="socialIcon" />
-        </a>
-
-        <a :href="socials.facebook" target="_blank" class="socialBtn fb">
-          <img :src="facebookIcon" alt="Facebook" class="socialIcon" />
-        </a>
-
-      </div>
-    </div>
-
-  </section>
-</template>
-
 <script setup lang="ts">
-import tiktokIcon from "~/assets/icon/free-icon-tiktok-3669950.png"
-import instagramIcon from "~/assets/icon/free-icon-instagram-1384015.png"
-import facebookIcon from "~/assets/icon/free-icon-facebook-circular-logo-20673.png"
+import HeroSECComponent from '../../components/base/DetalsServises/HeroSECComponent.vue';
+import PortofolioSec from '../../components/base/HiroPages/PortofolioSec.vue';
+import BeforAfterSecContainer from '../../components/ui/DetalsServisesComponents/beforAfterSecContainer.vue';
+import InformationCards from '../../components/ui/DetalsServisesComponents/Information-Cards.vue';
+import TextTeclolojig from '../../components/ui/DetalsServisesComponents/textTeclolojig.vue';
 
-const phone = "+12242620179"
-const email = "ddnconstruction1111@gmail.com"
+const plumbingCards = [
+  { logo: "/logo.png", title: "Construction Quality", description: "We use proven materials and follow all technological standards.", colors: ['#3b82f6', '#8b5cf6', '#22c55e'], blockColor: "#111827", section: "infoBlock1" },
+  { logo: "/logo.png", title: "Clear Deadlines", description: "We work according to an agreed schedule and complete projects on time.", colors: ['#f97316', '#eab308', '#22c55e'], blockColor: "#111827", section: "infoBlock2" },
+  { logo: "/logo.png", title: "Transparent Pricing", description: "No hidden fees — you know the project budget from the start.", colors: ['#06b6d4', '#3b82f6', '#8b5cf6'], blockColor: "#111827", section: "infoBlock3" },
+  { logo: "/logo.png", title: "Experienced Team", description: "Our specialists have practical experience with projects of various levels of complexity.", colors: ['#ec4899', '#f97316', '#eab308'], blockColor: "#111827", section: "infoBlock4" },
+  { logo: "/logo.png", title: "Work Guarantee", description: "We are confident in the quality of our work and provide a warranty on all completed services.", colors: ['#10b981', '#06b6d4', '#3b82f6'], blockColor: "#111827", section: "infoBlock5" },
+  { logo: "/logo.png", title: "Personalized Approach", description: "We select solutions based on your needs and budget.", colors: ['#8b5cf6', '#ec4899', '#f97316'], blockColor: "#111827", section: "infoBlock6" },
+];
 
-const phoneHref = phone.replace(/[^\d+]/g, "")
-
-const socials = {
-  tiktok: "https://www.tiktok.com/",
-  instagram: "https://www.instagram.com/",
-  facebook: "https://www.facebook.com/"
-}
+const beforeAfterBlocks = [
+  { leftColor: '#22c55e', rightColor: '#3b82f6', leftSection: 'plumbingBefore1', rightSection: 'plumbingAfter1' },
+  { leftColor: '#f97316', rightColor: '#6366f1', leftSection: 'plumbingBefore2', rightSection: 'plumbingAfter2' },
+  { leftColor: '#10b981', rightColor: '#ef4444', leftSection: 'plumbingBefore3', rightSection: 'plumbingAfter3' },
+];
 </script>
 
+<template>
+  <HeroSECComponent
+    title="Plumbing"
+    buttonText="Contact"
+    buttonLink="/catalog"
+    section="plumbing"
+  />
+
+  <InformationCards :cards="plumbingCards"/>
+
+  <TextTeclolojig
+    title="Our technologies"
+    text="We provide reliable plumbing services for kitchens, bathrooms, and full-home systems, handling everything from pipe installation and fixture replacement to complex rerouting and water supply upgrades. Our team works cleanly and efficiently, minimizing disruption to your daily routine.<br/><br/>Every plumbing project starts with a thorough assessment to identify the best solution for your space and budget. We use durable, tested materials and apply proven techniques to ensure leak-free connections and long-term system performance.<br/><br/>From straightforward repairs to complete plumbing installations, we bring the same level of professionalism to every job — delivering dependable results that keep your home running smoothly for years to come."
+    buttonText="View Portfolio"
+    buttonLink="/portfilio"
+  />
+
+  <BeforAfterSecContainer
+    title="Before & After — Plumbing"
+    :items="beforeAfterBlocks"
+  />
+
+  <PortofolioSec class="tt"/>
+</template>
+
 <style scoped>
-.contactCard {
-  max-width: 240px;
-}
-
-.contactList {
-  display: grid;
-  gap: 14px;
-  margin-bottom: 18px;
-}
-
-.contactItem {
-  color: var(--color-praymeri-light);
-  text-decoration: none;
-  transition: 0.25s ease;
-}
-
-.contactItem:hover {
-  opacity: 0.8;
-}
-
-.label {
-  font-size: 16px;
-  color: #ffffff;
-}
-
-.value {
-  font-size: 18px;
-  font-weight: 600;
-}
-
-.socialRow {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
-}
-
-.socialBtn {
-  width: 48px;
-  height: 48px;
-  min-width: 48px;
-  min-height: 48px;
-
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  flex-shrink: 0;
-  text-decoration: none;
-
-  transition: 0.25s ease;
-}
-
-.socialBtn:hover {
-  transform: translateY(-3px) scale(1.05);
-}
-
-.socialIcon {
-  width: 42px;
-  height: 42px;
-  min-width: 42px;
-  min-height: 42px;
-  object-fit: contain;
-  display: block;
-}
-
-.tg {
-  background: #373737;
-}
-
-.ig {
-  background: #E1306C;
-}
-
-.fb {
-  background: #1877F2;
-}
-
-.tg:hover {
-  background: #222;
-}
-
-.ig:hover {
-  background: #c1255d;
-}
-
-.fb:hover {
-  background: #155db8;
-}
-
-@media (max-width: 430px) {
-  .contactCard {
-    max-width: 100%;
-  }
-
-  .socialBtn {
-    width: 44px;
-    height: 44px;
-    min-width: 44px;
-    min-height: 44px;
-  }
-
-  .socialIcon {
-    width: 20px;
-    height: 20px;
-  }
+.tt {
+  margin-bottom: 70px;
 }
 </style>

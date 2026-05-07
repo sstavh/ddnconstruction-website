@@ -1,7 +1,4 @@
-```vue
 <script lang="ts" setup>
-console.log("good work Reviews");
-
 import { ref, computed } from "vue";
 
 import ReviewsCompTest from "~/components/ui/ReviewsCompTest.vue";
@@ -151,4 +148,3 @@ const refreshReviews = async () => {
   }
 }
 </style>
-```

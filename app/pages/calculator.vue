@@ -10,7 +10,11 @@
     />
 
     <main class="calculator-layout">
-      <CalculatorAside />
+      <CalculatorAside
+        :current-step="currentStep"
+        :form-data="calculatorForm"
+        :room-options="roomOptions"
+      />
 
       <section class="calculator-panel">
         <StepProgress
@@ -74,13 +78,12 @@ import type {
 } from "../types/calculator";
 
 const roomOptions: RoomOption[] = [
+  { value: "kitchen", label: "Kitchen Service", serviceGroup: "kitchen" },
   { value: "bathroom", label: "Bathroom", serviceGroup: "bathroom" },
-  { value: "kitchen", label: "Kitchen", serviceGroup: "kitchen" },
-  { value: "bedroom", label: "Bedroom", serviceGroup: "interior" },
-  { value: "living-room", label: "Living Room", serviceGroup: "interior" },
-  { value: "hallway", label: "Hallway", serviceGroup: "interior" },
-  { value: "office", label: "Office", serviceGroup: "interior" },
-  { value: "exterior", label: "Exterior", serviceGroup: "exterior" },
+  { value: "tiles", label: "Tiles", serviceGroup: "tiles" },
+  { value: "spackling-painting", label: "Spackling / Painting", serviceGroup: "spackling-painting" },
+  { value: "electrical", label: "Electrical Work", serviceGroup: "electrical" },
+  { value: "plumbing", label: "Plumbing", serviceGroup: "plumbing" },
 ];
 
 const serviceCatalog = ref<ServiceCatalog>({});
@@ -105,6 +108,7 @@ function mapPricingToCatalog(
       title: string;
       titleUk: string;
       price: string;
+      priceMax?: string;
       priceType?: string;
       categoryId: string;
     }>;
@@ -115,7 +119,8 @@ function mapPricingToCatalog(
       id: String(item.id),
       title: item.title,
       price: parsePrice(item.price),
-      priceType: (item.priceType === "m2" ? "m2" : "fixed") as PriceType,
+      priceMax: item.priceMax ? parsePrice(item.priceMax) : undefined,
+      priceType: (item.priceType === "m2" ? "m2" : item.priceType === "lft" ? "lft" : item.priceType === "m2l" ? "m2l" : "fixed") as PriceType,
     }));
 
     return acc;

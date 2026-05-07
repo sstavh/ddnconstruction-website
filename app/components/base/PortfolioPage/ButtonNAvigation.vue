@@ -1,31 +1,29 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 
-type BtnAction = "btn1" | "btn2" | "btn3" | "btn4" | "btn5" | "btn6";
-
 type ActionButton = {
   label: string;
-  action: BtnAction;
+  target: string;
 };
 
 const opened = ref(false);
 
 const buttons: ActionButton[] = [
-  { label: "Кнопка 1", action: "btn1" },
-  { label: "Кнопка 2", action: "btn2" },
-  { label: "Кнопка 3", action: "btn3" },
-  { label: "Кнопка 4", action: "btn4" },
-  { label: "Кнопка 5", action: "btn5" },
-  { label: "Кнопка 6", action: "btn6" }, 
-  { label: "фото", action: "btn6" },
+  { label: "Kitchen Installation",  target: "portfolio-kitchen" },
+  { label: "Bathrooms & Showers",   target: "portfolio-bathroom" },
+  { label: "Tile Work",             target: "portfolio-tiles" },
+  { label: "Interior Work",         target: "portfolio-painting" },
+  { label: "Fireplace Projects",    target: "portfolio-fireplace" },
+  { label: "Luxury Living",         target: "portfolio-luxury" },
+  { label: "Video",                 target: "portfolio-video" },
 ];
 
 function toggle() {
   opened.value = !opened.value;
 }
 
-function handleAction(action: BtnAction) {
-  console.log("clicked:", action);
+function scrollTo(target: string) {
+  document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 </script>
 
@@ -47,7 +45,7 @@ function handleAction(action: BtnAction) {
           aria-controls="actions"
         >
           <span class="btn__dot" aria-hidden="true"></span>
-          {{ opened ? "Закрити" : "Меню" }}
+          {{ opened ? "Close" : "Menu" }}
           <span class="chev" aria-hidden="true">⌄</span>
         </button>
 
@@ -55,12 +53,12 @@ function handleAction(action: BtnAction) {
         <div id="actions" class="actions" role="group" aria-label="Дії">
           <button
             v-for="(b, i) in buttons"
-            :key="b.action"
+            :key="b.target"
             class="btn btn--sub"
             :class="[opened ? 'show' : '', i % 2 === 0 ? 'from-top' : 'from-bottom']"
             :style="{ transitionDelay: opened ? `${i * 80}ms` : '0ms' }"
             type="button"
-            @click="handleAction(b.action)"
+            @click="scrollTo(b.target)"
           >
             {{ b.label }}
           </button>
@@ -120,7 +118,9 @@ function handleAction(action: BtnAction) {
 
 /* Базова кнопка */
 .btn{
-  width: 140px;
+  min-width: 130px;
+  width: auto;
+  white-space: nowrap;
   appearance: none;
   border: 0;
   cursor: pointer;
@@ -149,7 +149,7 @@ function handleAction(action: BtnAction) {
   outline-offset: 3px;
 }
 
-/* Main button: градієнт + “живий” hover */
+/* Main button: градієнт + "живий" hover */
 .btn--main{
   background-color: var(--color-praymeri-blue);
 

@@ -7,8 +7,7 @@ const defaultBg = '/images/portfolio/hero.jpg'
 
 async function fetchBackground() {
   try {
-    const response = await fetch('http://localhost:3001/section-images/section/portfolio')
-    const data = await response.json()
+    const data = await fetchSection('portfolio')
     if (data && data.length > 0) {
       backgroundImage.value = imgUrl(data[0].imageUrl)
     } else {

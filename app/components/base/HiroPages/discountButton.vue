@@ -1,267 +1,435 @@
 <template>
-  <div>
-    <button class="discount-btn" @click="openPopup">
-      Отримати знижку
-    </button>
+  <Teleport to="body">
+    <div class="discount-float">
+      <transition name="tooltip">
+        <div v-if="showTooltip && !isOpen" class="discount-tooltip">
+          Click to get a discount!
+          <button class="tooltip-close" @click.stop="dismissTooltip">×</button>
+        </div>
+      </transition>
 
-    <div v-if="isOpen" class="popup-overlay" @click.self="closePopup">
-      <div class="popup">
-        <button class="popup-close" @click="closePopup">
-          ×
-        </button>
+      <button
+        class="discount-circle"
+        :class="{ 'discount-circle--pulse': showTooltip && !isOpen }"
+        @click="openPopup"
+        aria-label="Get a discount"
+      >
+        <span class="percent">%</span>
+      </button>
+    </div>
 
-        <h2>Підпишіться та отримайте знижку</h2>
+    <transition name="popup-fade">
+      <div v-if="isOpen" class="popup-overlay" @click.self="closePopup">
+        <div class="popup">
+          <button class="popup-close" @click="closePopup">×</button>
 
-        <p class="popup-description">
-          Підпишіться хоча б на одну соціальну мережу та отримайте персональну знижку.
-          Після переходу вас автоматично перекине в калькулятор.
-        </p>
+          <div class="popup-header">
+            <div class="popup-badge">Special Offer</div>
+            <h2 class="popup-title">Subscribe & Get a Discount</h2>
+            <p class="popup-desc">
+              Follow us on social media and receive a personal discount on your next project.
+              After visiting, you'll be redirected to our calculator.
+            </p>
+          </div>
 
-        <div class="social-list">
+          <div class="social-list">
+            <a
+              v-for="item in socials"
+              :key="item.name"
+              :href="item.url"
+              target="_blank"
+              class="social-btn"
+              :class="{ 'social-btn--visited': visitedSocials.has(item.name) }"
+              @click="markVisited(item.name)"
+            >
+              <img :src="item.icon" :alt="item.name" class="social-icon" />
+              <span>{{ item.name }}</span>
+              <span v-if="visitedSocials.has(item.name)" class="social-check">✓</span>
+            </a>
+          </div>
+
+          <transition name="tooltip">
+            <p v-if="!allVisited" class="popup-hint">
+              Subscribe to all accounts to unlock the discount
+            </p>
+          </transition>
+
           <button
-            v-for="item in socials"
-            :key="item.name"
-            class="social-btn"
-            @click="goSocial(item.url)"
+            v-if="allVisited"
+            class="go-btn"
+            @click="goToCalculator"
           >
-            {{ item.name }}
+            Get Discount & Go to Calculator →
           </button>
         </div>
       </div>
-    </div>
-  </div>
+    </transition>
+  </Teleport>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import tiktokIcon from '~/assets/icon/free-icon-tiktok-3669950.png'
+import instagramIcon from '~/assets/icon/free-icon-instagram-1384015.png'
+import facebookIcon from '~/assets/icon/free-icon-facebook-circular-logo-20673.png'
 
-interface SocialItem {
-  name: string
-  url: string
-}
+const STORAGE_KEY = 'discount_visited_socials'
 
 const isOpen = ref(false)
+const showTooltip = ref(false)
+let tooltipTimer: ReturnType<typeof setTimeout> | null = null
 
-const socials: SocialItem[] = [
-  {
-    name: 'Instagram',
-    url: 'https://instagram.com'
-  },
-  {
-    name: 'Telegram',
-    url: 'https://t.me'
-  },
-  {
-    name: 'Facebook',
-    url: 'https://facebook.com'
-  }
+const socials = [
+  { name: 'TikTok',    url: 'https://www.tiktok.com/',    icon: tiktokIcon },
+  { name: 'Instagram', url: 'https://www.instagram.com/', icon: instagramIcon },
+  { name: 'Facebook',  url: 'https://www.facebook.com/',  icon: facebookIcon },
 ]
 
-const openPopup = (): void => {
-  isOpen.value = true
+const visitedSocials = ref<Set<string>>(new Set())
+
+const allVisited = computed(() => visitedSocials.value.size >= socials.length)
+
+onMounted(() => {
+  tooltipTimer = setTimeout(() => {
+    showTooltip.value = true
+  }, 4000)
+
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY)
+    if (stored) {
+      const parsed = JSON.parse(stored) as string[]
+      visitedSocials.value = new Set(parsed)
+    }
+  } catch {}
+})
+
+onBeforeUnmount(() => {
+  if (tooltipTimer) clearTimeout(tooltipTimer)
+})
+
+const dismissTooltip = () => { showTooltip.value = false }
+const openPopup = () => { isOpen.value = true; showTooltip.value = false }
+const closePopup = () => { isOpen.value = false }
+
+const markVisited = (name: string) => {
+  visitedSocials.value = new Set([...visitedSocials.value, name])
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify([...visitedSocials.value]))
+  } catch {}
 }
 
-const closePopup = (): void => {
-  isOpen.value = false
-}
-
-const goSocial = (url: string): void => {
-  window.open(url, '_blank')
+const goToCalculator = () => {
   sessionStorage.setItem('discount_active', 'true')
-
-  setTimeout(() => {
-    navigateTo('/calculator')
-  }, 1000)
+  navigateTo('/calculator')
 }
 </script>
 
 <style scoped>
-.discount-btn {
-  padding: var(--padding-size-basis);
-  border: none;
-  border-radius: 7px;
-  background: var(--color-praymeri-blue);
-  color: var(--color-praymeri-light);
-  font-family: var(--font-f-Inter);
-  font-size: var(--font-s-button);
-  font-weight: var(--font-w-button);
-  cursor: pointer;
-  transition: 0.25s ease;
-  box-shadow: 0 12px 30px rgba(59, 130, 246, 0.28);
-}
-
-.discount-btn:hover {
-  background: var(--color-praymeri-blueHover);
-  transform: translateY(-3px);
-}
-
-.popup-overlay {
+/* ── Floating wrapper ── */
+.discount-float {
   position: fixed;
-  inset: 0;
-  z-index: 999;
-  padding: 20px;
+  bottom: 32px;
+  right: 32px;
+  z-index: 9000;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(10, 10, 10, 0.72);
-  backdrop-filter: blur(8px);
-}
-
-.popup {
-  position: relative;
-  width: 100%;
-  max-width: 520px;
-  padding: 42px 34px;
-  border-radius: 30px;
-  overflow: hidden;
-  isolation: isolate;
-
-  background:
-    radial-gradient(circle at top right, rgba(59, 130, 246, 0.18), transparent 34%),
-    radial-gradient(circle at bottom left, rgba(255, 255, 255, 0.05), transparent 28%),
-    linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
-    var(--color-praymeri-bg);
-
-  border: 1px solid rgba(59, 130, 246, 0.22);
-
-  box-shadow:
-    0 30px 80px rgba(0, 0, 0, 0.45),
-    inset 0 1px 0 rgba(255,255,255,0.05),
-    inset 0 -1px 0 rgba(255,255,255,0.02);
-
-  backdrop-filter: blur(22px);
-  -webkit-backdrop-filter: blur(22px);
-}
-
-.popup::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background:
-    linear-gradient(
-      130deg,
-      rgba(255,255,255,0.08),
-      transparent 22%,
-      transparent 72%,
-      rgba(255,255,255,0.04)
-    );
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
   pointer-events: none;
 }
 
-.popup::after {
-  content: "";
-  position: absolute;
-  width: 220px;
-  height: 220px;
-  right: -80px;
-  top: -80px;
+/* ── Circle button ── */
+.discount-circle {
+  pointer-events: all;
+  width: 70px;
+  height: 70px;
   border-radius: 50%;
-  background: rgba(59, 130, 246, 0.12);
-  filter: blur(20px);
+  border: 2px solid rgba(59, 130, 246, 0.5);
+  background:
+    radial-gradient(circle at 35% 35%, rgba(99, 102, 241, 0.9), rgba(59, 130, 246, 0.85));
+  color: #fff;
+  font-size: 24px;
+  font-weight: 800;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow:
+    0 8px 28px rgba(59, 130, 246, 0.45),
+    0 2px 8px rgba(0,0,0,0.35);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.discount-circle:hover {
+  transform: scale(1.1);
+  box-shadow: 0 12px 36px rgba(59, 130, 246, 0.6);
+}
+
+.percent {
+  line-height: 1;
+  letter-spacing: -1px;
+}
+
+/* pulse when tooltip is shown */
+@keyframes float-pulse {
+  0%, 100% { box-shadow: 0 8px 28px rgba(59,130,246,0.45), 0 0 0 0 rgba(59,130,246,0.4); }
+  50% { box-shadow: 0 8px 28px rgba(59,130,246,0.45), 0 0 0 12px rgba(59,130,246,0); }
+}
+
+.discount-circle--pulse {
+  animation: float-pulse 2s ease infinite;
+}
+
+/* ── Tooltip ── */
+.discount-tooltip {
+  pointer-events: all;
+  position: relative;
+  background:
+    radial-gradient(circle at top right, rgba(59,130,246,0.2), transparent 50%),
+    rgba(15, 20, 40, 0.92);
+  border: 1px solid rgba(59,130,246,0.3);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 10px 36px 10px 14px;
+  border-radius: 14px;
+  white-space: nowrap;
+  backdrop-filter: blur(14px);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
+}
+
+.discount-tooltip::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  right: 22px;
+  width: 10px;
+  height: 10px;
+  background: rgba(15, 20, 40, 0.92);
+  border-right: 1px solid rgba(59,130,246,0.3);
+  border-bottom: 1px solid rgba(59,130,246,0.3);
+  transform: rotate(45deg);
+}
+
+.tooltip-close {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.5);
+  font-size: 16px;
+  cursor: pointer;
+  padding: 2px 4px;
+  line-height: 1;
+  transition: color 0.2s;
+}
+.tooltip-close:hover { color: #fff; }
+
+/* ── Tooltip animation ── */
+.tooltip-enter-active,
+.tooltip-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.tooltip-enter-from,
+.tooltip-leave-to {
+  opacity: 0;
+  transform: translateY(6px);
+}
+
+/* ── Popup overlay ── */
+.popup-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(2, 6, 23, 0.72);
+  backdrop-filter: blur(10px);
+}
+
+/* ── Popup card ── */
+.popup {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  padding: 40px 34px 36px;
+  border-radius: 28px;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(circle at top right, rgba(59,130,246,0.2), transparent 38%),
+    radial-gradient(circle at bottom left, rgba(99,102,241,0.12), transparent 40%),
+    rgba(13, 18, 35, 0.96);
+  border: 1px solid rgba(59,130,246,0.22);
+  box-shadow:
+    0 32px 80px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.05);
+  backdrop-filter: blur(24px);
 }
 
 .popup-close {
   position: absolute;
-  top: 18px;
-  right: 18px;
+  top: 16px;
+  right: 16px;
   z-index: 5;
-
-  width: 42px;
-  height: 42px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
   border: 1px solid rgba(255,255,255,0.08);
-
-  background: rgba(255,255,255,0.04);
-  color: var(--color-praymeri-light);
-
-  font-size: 24px;
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+  font-size: 22px;
   cursor: pointer;
   transition: 0.25s ease;
 }
-
 .popup-close:hover {
   transform: rotate(90deg) scale(1.05);
-  background: var(--color-praymeri-blue);
-  border-color: var(--color-praymeri-blue);
+  background: rgba(59,130,246,0.3);
 }
 
-.popup h2 {
-  position: relative;
-  z-index: 2;
-  margin: 0 0 14px;
-  font-family: var(--font-f-Rudik);
-  font-size: var(--font-s-h3);
-  font-weight: var(--font-w-h3);
-  line-height: 1.15;
-  color: var(--color-praymeri-light);
+.popup-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 30px;
+  background: rgba(59,130,246,0.18);
+  border: 1px solid rgba(59,130,246,0.3);
+  color: rgba(147, 197, 253, 1);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 14px;
 }
 
-.popup-description {
-  position: relative;
-  z-index: 2;
+.popup-title {
+  margin: 0 0 12px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+}
+
+.popup-desc {
   margin-bottom: 28px;
-  font-family: var(--font-f-Inter);
-  font-size: var(--font-s-text);
-  color: rgba(255,255,255,0.72);
+  font-size: 14px;
+  color: rgba(255,255,255,0.6);
   line-height: 1.6;
 }
 
+/* ── Social buttons ── */
 .social-list {
-  position: relative;
-  z-index: 2;
   display: grid;
-  gap: 14px;
+  gap: 12px;
 }
 
 .social-btn {
-  padding: 17px 20px;
-  border-radius: 18px;
-  border: 1px solid rgba(255,255,255,0.06);
-
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02));
-
-  color: var(--color-praymeri-light);
-  font-family: var(--font-f-Inter);
-  font-size: var(--font-s-navigation);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 18px;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.07);
+  background: rgba(255,255,255,0.04);
+  color: #fff;
+  font-size: 15px;
   font-weight: 600;
-
+  text-decoration: none;
   cursor: pointer;
-  transition: 0.28s ease;
-
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,0.04),
-    0 12px 24px rgba(0,0,0,0.22);
+  transition: 0.25s ease;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
 }
-
 .social-btn:hover {
-  transform: translateY(-3px);
-  background: var(--color-praymeri-blue);
-  border-color: var(--color-praymeri-blue);
-  box-shadow:
-    0 16px 30px rgba(59,130,246,0.28);
+  transform: translateX(5px);
+  background: rgba(59,130,246,0.18);
+  border-color: rgba(59,130,246,0.35);
 }
 
-@media (max-width: 768px) {
+.social-icon {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.social-btn--visited {
+  background: rgba(34, 197, 94, 0.1);
+  border-color: rgba(34, 197, 94, 0.35);
+}
+
+.social-check {
+  margin-left: auto;
+  color: #4ade80;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.popup-hint {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.go-btn {
+  margin-top: 20px;
+  width: 100%;
+  padding: 16px;
+  border-radius: 16px;
+  border: none;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.9), rgba(99, 102, 241, 0.9));
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.25s ease;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.35);
+}
+
+.go-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(59, 130, 246, 0.5);
+}
+
+/* ── Popup animation ── */
+.popup-fade-enter-active,
+.popup-fade-leave-active {
+  transition: opacity 0.25s ease;
+}
+.popup-fade-enter-active .popup,
+.popup-fade-leave-active .popup {
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+.popup-fade-enter-from,
+.popup-fade-leave-to {
+  opacity: 0;
+}
+.popup-fade-enter-from .popup,
+.popup-fade-leave-to .popup {
+  transform: scale(0.92) translateY(16px);
+  opacity: 0;
+}
+
+/* ── Mobile ── */
+@media (max-width: 430px) {
+  .discount-float {
+    bottom: 20px;
+    right: 20px;
+  }
+  .discount-circle {
+    width: 52px;
+    height: 52px;
+    font-size: 20px;
+  }
   .popup {
-    padding: 32px 22px;
-    border-radius: 24px;
+    padding: 32px 20px 28px;
+    border-radius: 20px;
   }
-
-  .popup h2 {
-    font-size: var(--font-s-Mobalh3);
-  }
-
-  .popup-description {
-    font-size: var(--font-s-MobalText);
-  }
-
-  .discount-btn {
-    width: 100%;
-  }
-
-  .social-btn {
-    padding: 15px 16px;
+  .popup-title {
+    font-size: 20px;
   }
 }
 </style>

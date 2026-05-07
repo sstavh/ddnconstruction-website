@@ -5,13 +5,13 @@
       <div class="about-video__content">
 
         <h3 class="about-video__title">
-          Ми створюємо ремонт, у якому хочеться жити
+          We create spaces that inspire
         </h3>
 
         <p>
-          Наша команда виконує ремонт квартир, будинків та комерційних приміщень.
-          Ми працюємо акуратно, дотримуємось термінів та створюємо простір,
-          який виглядає сучасно, дорого і комфортно.
+          Our team performs renovations of apartments, houses and commercial spaces.
+          We work carefully, adhere to deadlines and create a space
+          that looks modern, expensive and comfortable.
         </p>
       </div>
 

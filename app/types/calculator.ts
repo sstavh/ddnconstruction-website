@@ -33,15 +33,16 @@ export interface CalculatorData {
 export interface RoomOption {
   value: string
   label: string
-  serviceGroup: 'bathroom' | 'kitchen' | 'interior' | 'exterior'
+  serviceGroup: 'kitchen' | 'bathroom' | 'tiles' | 'spackling-painting' | 'electrical' | 'plumbing'
 }
 
-export type PriceType = 'fixed' | 'm2'
+export type PriceType = 'fixed' | 'm2' | 'lft' | 'm2l'
 
 export interface ServiceItem {
   id: string
   title: string
   price: number
+  priceMax?: number
   priceType: PriceType
 }
 

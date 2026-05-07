@@ -1,11 +1,17 @@
 <script setup lang="ts">
-import Button from '../../ui/Button.vue';
+import { ref } from 'vue';
 import ImdSwicher from '../../ui/bagFons/ImgSwitcher.vue';
-import TypeTextt  from '../../ui/TypedText.vue';
-console.log("hiro work");
-import discountButton from './discountButton.vue';
+import TypeTextt from '../../ui/TypedText.vue';
+import BaseModalTest from '../../ui/BaseModalTest.vue';
+import FormСontact from '../../ui/FormsComponents/FormСontact.vue';
 
+const open = ref(false);
+const origin = ref<{ x: number; y: number } | null>(null);
 
+const openFromClick = (e: MouseEvent) => {
+  origin.value = { x: e.clientX, y: e.clientY };
+  open.value = true;
+};
 </script>
 
 
@@ -16,20 +22,20 @@ import discountButton from './discountButton.vue';
         <div class="hiro-container">
             <div class="hero-container__box">
                 <h1 class="hero-box__logo">
-                      <TypeTextt text="Текст слого для компанії з ефектом написаня " />
+                      <TypeTextt text="We Build Spaces You're Proud to Live In." />
                 </h1>
-                <p  data-aos="fade-right" class="hero-box__pidtext">підтекст для розумуня для чого це все і. прощо компанія короткий не велий</p>
-                <div data-aos="fade-up" data-aos-duration="10500">
-                    <Button ext="Button"
-  link="/catalog" />
+                <p data-aos="fade-right" class="hero-box__pidtext">Full-service renovation — kitchens, bathrooms, electrical, plumbing, tiles & painting. Quality work, transparent pricing, on-time delivery.</p>
 
-                </div>
-                
-  <discountButton data-aos="fade-up" data-aos-duration="10500" class="discountButton" />
+                <button data-aos="fade-up" class="hero-contact-btn" @click="openFromClick">
+                  Contact Us
+                </button>
             </div>
         </div>
     </div>
 
+    <BaseModalTest :open="open" :origin="origin" @close="open = false">
+      <FormСontact />
+    </BaseModalTest>
 </section>
 </template>
 
@@ -47,9 +53,29 @@ import discountButton from './discountButton.vue';
 }
 
 .hero-box__pidtext{
-    color: var( --color-praymeri-blekText);
+    color: var(--color-praymeri-light);
     max-width: 440px;
-    margin-bottom: 15px;
+    margin-bottom: 24px;
+}
+
+.hero-contact-btn {
+    padding: 14px 32px;
+    border: none;
+    border-radius: 10px;
+    background: var(--color-praymeri-blue);
+    color: #fff;
+    font-family: var(--font-f-Inter);
+    font-size: var(--font-s-button);
+    font-weight: var(--font-w-button);
+    cursor: pointer;
+    transition: 0.25s ease;
+    box-shadow: 0 12px 30px rgba(59, 130, 246, 0.3);
+}
+
+.hero-contact-btn:hover {
+    background: var(--color-praymeri-blueHover);
+    transform: translateY(-3px);
+    box-shadow: 0 16px 36px rgba(59, 130, 246, 0.42);
 }
  @media (max-width: 430px) {
     .hiro-container{
