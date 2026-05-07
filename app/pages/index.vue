@@ -26,7 +26,7 @@ const showDirectorMes = computed(() => {
 
 <template>
     <section class="home">
-      <QuickChatWidget/>
+
       <Hero />
       <OurProcess />
       <DirectorMes v-if="showDirectorMes" />

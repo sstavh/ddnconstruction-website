@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from "vue"
+import { fetchSection, imgUrl } from '~/composables/useApi'
 
 const props = defineProps<{
   colors?: string[]
@@ -14,11 +15,9 @@ async function fetchPhotos() {
   const results: string[] = []
   for (const section of props.sections) {
     try {
-      const res = await fetch(`http://localhost:3001/section-images/section/${section}`)
-      const data = await res.json()
+      const data = await fetchSection(section)
       if (Array.isArray(data) && data.length > 0) {
-        const url = data[0].imageUrl
-        results.push(url.startsWith('http') ? url : `http://localhost:3001/${url}`)
+        results.push(imgUrl(data[0].imageUrl))
       }
     } catch (e) {}
   }

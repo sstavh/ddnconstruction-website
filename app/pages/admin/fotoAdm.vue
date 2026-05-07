@@ -93,7 +93,7 @@
               style="background:#1e293b;border-radius:12px;padding:14px;display:flex;gap:14px;align-items:center"
             >
               <video
-                :src="`http://localhost:3001/${pv.imageUrl}`"
+                :src="`${apiBase}/${pv.imageUrl}`"
                 muted
                 preload="metadata"
                 style="width:140px;height:90px;border-radius:8px;object-fit:cover;flex-shrink:0"
@@ -120,6 +120,9 @@
           <label>Секція:</label>
           <select v-model="form.section" required>
             <option value="">Оберіть секцію</option>
+            <optgroup label="--- Info Cards (ImgCloud) ---">
+              <option value="imgCloud">🖼 ImgCloud — одне фото для всіх Info Cards</option>
+            </optgroup>
             <optgroup label="--- Головна ---">
               <option value="headerLogo">🔷 Header Logo (логотип у шапці)</option>
               <option value="hero">Hero (Головна)</option>
@@ -133,7 +136,9 @@
               <option value="about">About Hero</option>
               <option value="generalHero">General Hero (About)</option>
               <option value="generalHeroSide">General Hero - Фото поруч з текстом</option>
-              <option value="history">History Work</option>
+              <option value="historyWork1">📸 History Work - Блок 1</option>
+              <option value="historyWork2">📸 History Work - Блок 2</option>
+              <option value="historyWork3">📸 History Work - Блок 3</option>
               <option value="difficulties">Difficulties (фон)</option>
               <option value="difficulties1">👷 Працівник 1 (Difficulties)</option>
               <option value="difficulties2">👷 Працівник 2 (Difficulties)</option>
@@ -157,20 +162,20 @@
               <option value="paintingPhoto1">🎨 Painting - Велике фото 1</option>
               <option value="paintingPhoto2">🎨 Painting - Велике фото 2</option>
               <option value="paintingPhoto3">🎨 Painting - Велике фото 3</option>
-              <option value="electricPhoto1">⚡ Electric - Велике фото 1</option>
-              <option value="electricPhoto2">⚡ Electric - Велике фото 2</option>
-              <option value="electricPhoto3">⚡ Electric - Велике фото 3</option>
-              <option value="plumbingPhoto1">🔧 Plumbing - Велике фото 1</option>
-              <option value="plumbingPhoto2">🔧 Plumbing - Велике фото 2</option>
-              <option value="plumbingPhoto3">🔧 Plumbing - Велике фото 3</option>
+              <option value="fireplacePhoto1">🔥 Fireplace - Велике фото 1</option>
+              <option value="fireplacePhoto2">🔥 Fireplace - Велике фото 2</option>
+              <option value="fireplacePhoto3">🔥 Fireplace - Велике фото 3</option>
+              <option value="luxuryPhoto1">✨ Luxury Living - Велике фото 1</option>
+              <option value="luxuryPhoto2">✨ Luxury Living - Велике фото 2</option>
+              <option value="luxuryPhoto3">✨ Luxury Living - Велике фото 3</option>
             </optgroup>
             <optgroup label="--- Карусель (Portfolio) ---">
               <option value="kitchenCarousel">🍳 Kitchen - Карусель</option>
               <option value="bathroomCarousel">🚿 Bathroom - Карусель</option>
               <option value="tilesCarousel">🔲 Tiles - Карусель</option>
               <option value="paintingCarousel">🎨 Painting - Карусель</option>
-              <option value="electricCarousel">⚡ Electric - Карусель</option>
-              <option value="plumbingCarousel">🔧 Plumbing - Карусель</option>
+              <option value="fireplaceCarousel">🔥 Fireplace - Карусель</option>
+              <option value="luxuryCarousel">✨ Luxury Living - Карусель</option>
             </optgroup>
             <optgroup label="--- Before/After (Сервіси) ---">
               <option value="kitchenBefore1">🍳 Kitchen — До 1</option>
@@ -197,36 +202,53 @@
               <option value="paintingAfter2">🎨 Painting — Після 2</option>
               <option value="paintingBefore3">🎨 Painting — До 3</option>
               <option value="paintingAfter3">🎨 Painting — Після 3</option>
-              <option value="electricBefore1">⚡ Electric — До 1</option>
-              <option value="electricAfter1">⚡ Electric — Після 1</option>
-              <option value="electricBefore2">⚡ Electric — До 2</option>
-              <option value="electricAfter2">⚡ Electric — Після 2</option>
-              <option value="electricBefore3">⚡ Electric — До 3</option>
-              <option value="electricAfter3">⚡ Electric — Після 3</option>
-              <option value="plumbingBefore1">🔧 Plumbing — До 1</option>
-              <option value="plumbingAfter1">🔧 Plumbing — Після 1</option>
-              <option value="plumbingBefore2">🔧 Plumbing — До 2</option>
-              <option value="plumbingAfter2">🔧 Plumbing — Після 2</option>
-              <option value="plumbingBefore3">🔧 Plumbing — До 3</option>
-              <option value="plumbingAfter3">🔧 Plumbing — Після 3</option>
+              <option value="fireplaceBefore1">🔥 Fireplace — До 1</option>
+              <option value="fireplaceAfter1">🔥 Fireplace — Після 1</option>
+              <option value="fireplaceBefore2">🔥 Fireplace — До 2</option>
+              <option value="fireplaceAfter2">🔥 Fireplace — Після 2</option>
+              <option value="fireplaceBefore3">🔥 Fireplace — До 3</option>
+              <option value="fireplaceAfter3">🔥 Fireplace — Після 3</option>
+              <option value="luxuryBefore1">✨ Luxury Living — До 1</option>
+              <option value="luxuryAfter1">✨ Luxury Living — Після 1</option>
+              <option value="luxuryBefore2">✨ Luxury Living — До 2</option>
+              <option value="luxuryAfter2">✨ Luxury Living — Після 2</option>
+              <option value="luxuryBefore3">✨ Luxury Living — До 3</option>
+              <option value="luxuryAfter3">✨ Luxury Living — Після 3</option>
             </optgroup>
             <optgroup label="--- Сервіси ---">
               <option value="services">Services Hero</option>
-              <option value="collectedServices">Collected Services (картки)</option>
+              <option value="collectedServices">Collected Services (всі картки — старе)</option>
+              <option value="collectedKitchen">🍳 Collected — Kitchen</option>
+              <option value="collectedBathroom">🚿 Collected — Bathroom</option>
+              <option value="collectedTiles">🔲 Collected — Tiles</option>
+              <option value="collectedPainting">🎨 Collected — Spackling / Painting</option>
+              <option value="collectedElectrical">⚡ Collected — Electrical Work</option>
+              <option value="collectedPlumbing">🔧 Collected — Plumbing</option>
               <option value="kitchen">Kitchen Service</option>
               <option value="bathroom">Bathroom Service</option>
               <option value="tiles">Tiles Service</option>
               <option value="painting">Spackling / Painting Service</option>
-              <option value="electric">Electrical Work Service</option>
-              <option value="plumbing">Plumbing Service</option>
+              <option value="fireplace">Fireplace Projects Service</option>
+              <option value="luxury">Luxury Living Service</option>
+            </optgroup>
+            <optgroup label="--- Info Cards (ImgCloud) ---">
+              <option value="imgCloud">🖼 ImgCloud — одне фото для всіх Info Cards</option>
+            </optgroup>
+            <optgroup label="--- Info Cards (всі сторінки) ---">
+              <option value="infoBlock1">📌 Info Block 1 — Construction Quality</option>
+              <option value="infoBlock2">📌 Info Block 2 — Clear Deadlines</option>
+              <option value="infoBlock3">📌 Info Block 3 — Transparent Pricing</option>
+              <option value="infoBlock4">📌 Info Block 4 — Experienced Team</option>
+              <option value="infoBlock5">📌 Info Block 5 — Work Guarantee</option>
+              <option value="infoBlock6">📌 Info Block 6 — Personalized Approach</option>
             </optgroup>
             <optgroup label="--- Інформаційний блок (DetalsInformation) ---">
-              <option value="fotoImgTest">Foto Img Test</option>
+              <option value="fotoImgTest">Foto</option>
               <option value="infoportfolio">Portfolio картка</option>
               <option value="carousel">Carousel (слайдер)</option>
               <option value="beforeAfterLeft">Before/After - Ліво</option>
               <option value="beforeAfterRight">Before/After - Право</option>
-              <option value="imgsBlocFoto">Imgs Bloc Foto (форма)</option>
+              <option value="imgsBlocFoto">Коттакна форма фото</option>
             </optgroup>
           </select>
         </div>
@@ -255,7 +277,7 @@
           <!-- При редагуванні показуємо поточне фото якщо нового не вибрано -->
           <div v-if="editingId && form.currentImageUrl && !previewUrl" class="current-photo">
             <p class="current-label">Поточне фото:</p>
-            <img :src="`http://localhost:3001/${form.currentImageUrl}`" alt="current" class="current-img" />
+            <img :src="`${apiBase}/${form.currentImageUrl}`" alt="current" class="current-img" />
             <p class="current-hint">Завантаж нове фото щоб замінити</p>
           </div>
         </div>
@@ -293,23 +315,38 @@
         </div>
       </div>
 
-      <!-- Список фото по секціях -->
+      <!-- Галерея з фільтром і групуванням -->
+      <div class="gallery-filter-bar">
+        <input
+          v-model="gallerySearch"
+          class="gallery-search"
+          type="text"
+          placeholder="Пошук по секції або назві фото..."
+        />
+        <span class="gallery-total">{{ filteredImagesTotal }} фото</span>
+      </div>
+
       <div class="sections-list">
-        <div v-for="section in sections" :key="section.name" class="section-block">
+        <div
+          v-for="group in groupedImages"
+          :key="group.section"
+          class="section-block"
+        >
           <h3 class="section-title">
             <span class="section-title__bar"></span>
-            {{ section.label }}
+            {{ getSectionLabel(group.section) }}
+            <span class="section-count">{{ group.images.length }}</span>
           </h3>
 
-          <div v-if="imagesBySection[section.name]?.length" class="images-grid">
+          <div class="images-grid">
             <div
-              v-for="img in imagesBySection[section.name]"
+              v-for="img in group.images"
               :key="img.id"
               class="image-card"
               :class="{ inactive: !img.isActive }"
             >
               <div class="image-preview">
-                <img :src="`http://localhost:3001/${img.imageUrl}`" :alt="img.title || 'Image'" />
+                <img :src="`${apiBase}/${img.imageUrl}`" :alt="img.title || 'Image'" />
                 <span v-if="!img.isActive" class="inactive-badge">Неактивне</span>
               </div>
               <div class="image-info">
@@ -323,23 +360,37 @@
               </div>
             </div>
           </div>
-          <p v-else class="no-images">Немає зображень для цієї секції</p>
         </div>
+
+        <p v-if="images.length && !groupedImages.length" class="no-images">
+          Нічого не знайдено по запиту "{{ gallerySearch }}"
+        </p>
+        <p v-if="!images.length" class="no-images">Немає зображень</p>
       </div>
     </div>
   </div>
 </template>
 
 
+<script setup>
+definePageMeta({ middleware: 'admin-auth' })
+const _runtimeConfig = useRuntimeConfig()
+_moduleApiBase = _runtimeConfig.public.apiUrl || 'http://127.0.0.1:3001'
+</script>
+
 <script>
-import ButtonBlef from '../components/ui/ButtonBlef.vue'
+import ButtonBlef from '~/components/ui/ButtonBlef.vue'
+
+let _moduleApiBase = 'http://127.0.0.1:3001'
 
 export default {
   name: 'fotoAdm',
   components: { ButtonBlef },
   data() {
     return {
+      apiBase: _moduleApiBase,
       images: [],
+      gallerySearch: '',
       editingId: null,
       saving: false,
       uploadError: '',
@@ -368,6 +419,7 @@ export default {
         currentImageUrl: '',
       },
       sections: [
+        { name: 'imgCloud', label: '🖼 ImgCloud — одне фото для всіх Info Cards' },
         { name: 'headerLogo', label: '🔷 Header Logo (логотип у шапці)' },
         { name: 'hero', label: 'Hero (Головна)' },
         { name: 'directorMes', label: '🧑‍💼 DirectorMes (фото директора)' },
@@ -375,10 +427,13 @@ export default {
         { name: 'ourProcess1', label: 'Our Process - Картка 1' },
         { name: 'ourProcess2', label: 'Our Process - Картка 2' },
         { name: 'ourProcess3', label: 'Our Process - Картка 3' },
+         { name: 'fotoImgTest', label: 'Foto Img Test' },
         { name: 'about', label: 'About Hero' },
         { name: 'generalHero', label: 'General Hero (About)' },
         { name: 'generalHeroSide', label: 'General Hero - Фото поруч з текстом' },
-        { name: 'history', label: 'History Work' },
+        { name: 'historyWork1', label: 'History Work - Блок 1' },
+        { name: 'historyWork2', label: 'History Work - Блок 2' },
+        { name: 'historyWork3', label: 'History Work - Блок 3' },
         { name: 'difficulties', label: 'Difficulties (фон)' },
         { name: 'difficulties1', label: '👷 Працівник 1 (Difficulties)' },
         { name: 'difficulties2', label: '👷 Працівник 2 (Difficulties)' },
@@ -400,18 +455,18 @@ export default {
         { name: 'paintingPhoto1', label: '🎨 Painting - Велике фото 1' },
         { name: 'paintingPhoto2', label: '🎨 Painting - Велике фото 2' },
         { name: 'paintingPhoto3', label: '🎨 Painting - Велике фото 3' },
-        { name: 'electricPhoto1', label: '⚡ Electric - Велике фото 1' },
-        { name: 'electricPhoto2', label: '⚡ Electric - Велике фото 2' },
-        { name: 'electricPhoto3', label: '⚡ Electric - Велике фото 3' },
-        { name: 'plumbingPhoto1', label: '🔧 Plumbing - Велике фото 1' },
-        { name: 'plumbingPhoto2', label: '🔧 Plumbing - Велике фото 2' },
-        { name: 'plumbingPhoto3', label: '🔧 Plumbing - Велике фото 3' },
+        { name: 'fireplacePhoto1', label: '🔥 Fireplace - Велике фото 1' },
+        { name: 'fireplacePhoto2', label: '🔥 Fireplace - Велике фото 2' },
+        { name: 'fireplacePhoto3', label: '🔥 Fireplace - Велике фото 3' },
+        { name: 'luxuryPhoto1', label: '✨ Luxury Living - Велике фото 1' },
+        { name: 'luxuryPhoto2', label: '✨ Luxury Living - Велике фото 2' },
+        { name: 'luxuryPhoto3', label: '✨ Luxury Living - Велике фото 3' },
         { name: 'kitchenCarousel', label: '🍳 Kitchen - Карусель' },
         { name: 'bathroomCarousel', label: '🚿 Bathroom - Карусель' },
         { name: 'tilesCarousel', label: '🔲 Tiles - Карусель' },
         { name: 'paintingCarousel', label: '🎨 Painting - Карусель' },
-        { name: 'electricCarousel', label: '⚡ Electric - Карусель' },
-        { name: 'plumbingCarousel', label: '🔧 Plumbing - Карусель' },
+        { name: 'fireplaceCarousel', label: '🔥 Fireplace - Карусель' },
+        { name: 'luxuryCarousel', label: '✨ Luxury Living - Карусель' },
         { name: 'kitchenBefore1', label: '🍳 Kitchen — До 1' },
         { name: 'kitchenAfter1', label: '🍳 Kitchen — Після 1' },
         { name: 'kitchenBefore2', label: '🍳 Kitchen — До 2' },
@@ -436,27 +491,69 @@ export default {
         { name: 'paintingAfter2', label: '🎨 Painting — Після 2' },
         { name: 'paintingBefore3', label: '🎨 Painting — До 3' },
         { name: 'paintingAfter3', label: '🎨 Painting — Після 3' },
-        { name: 'electricBefore1', label: '⚡ Electric — До 1' },
-        { name: 'electricAfter1', label: '⚡ Electric — Після 1' },
-        { name: 'electricBefore2', label: '⚡ Electric — До 2' },
-        { name: 'electricAfter2', label: '⚡ Electric — Після 2' },
-        { name: 'electricBefore3', label: '⚡ Electric — До 3' },
-        { name: 'electricAfter3', label: '⚡ Electric — Після 3' },
-        { name: 'plumbingBefore1', label: '🔧 Plumbing — До 1' },
-        { name: 'plumbingAfter1', label: '🔧 Plumbing — Після 1' },
-        { name: 'plumbingBefore2', label: '🔧 Plumbing — До 2' },
-        { name: 'plumbingAfter2', label: '🔧 Plumbing — Після 2' },
-        { name: 'plumbingBefore3', label: '🔧 Plumbing — До 3' },
-        { name: 'plumbingAfter3', label: '🔧 Plumbing — Після 3' },
+        { name: 'fireplaceBefore1', label: '🔥 Fireplace — До 1' },
+        { name: 'fireplaceAfter1', label: '🔥 Fireplace — Після 1' },
+        { name: 'fireplaceBefore2', label: '🔥 Fireplace — До 2' },
+        { name: 'fireplaceAfter2', label: '🔥 Fireplace — Після 2' },
+        { name: 'fireplaceBefore3', label: '🔥 Fireplace — До 3' },
+        { name: 'fireplaceAfter3', label: '🔥 Fireplace — Після 3' },
+        { name: 'luxuryBefore1', label: '✨ Luxury Living — До 1' },
+        { name: 'luxuryAfter1', label: '✨ Luxury Living — Після 1' },
+        { name: 'luxuryBefore2', label: '✨ Luxury Living — До 2' },
+        { name: 'luxuryAfter2', label: '✨ Luxury Living — Після 2' },
+        { name: 'luxuryBefore3', label: '✨ Luxury Living — До 3' },
+        { name: 'luxuryAfter3', label: '✨ Luxury Living — Після 3' },
         { name: 'services', label: 'Services Hero' },
-        { name: 'collectedServices', label: 'Collected Services (картки)' },
+        { name: 'collectedServices', label: 'Collected Services (всі картки — старе)' },
+        { name: 'collectedKitchen', label: '🍳 Collected — Kitchen' },
+        { name: 'collectedBathroom', label: '🚿 Collected — Bathroom' },
+        { name: 'collectedTiles', label: '🔲 Collected — Tiles' },
+        { name: 'collectedPainting', label: '🎨 Collected — Spackling / Painting' },
+        { name: 'collectedElectrical', label: '⚡ Collected — Electrical Work' },
+        { name: 'collectedPlumbing', label: '🔧 Collected — Plumbing' },
         { name: 'kitchen', label: 'Kitchen Service' },
         { name: 'bathroom', label: 'Bathroom Service' },
         { name: 'tiles', label: 'Tiles Service' },
         { name: 'painting', label: 'Spackling / Painting Service' },
-        { name: 'electric', label: 'Electrical Work Service' },
-        { name: 'plumbing', label: 'Plumbing Service' },
-        { name: 'fotoImgTest', label: 'Foto Img Test' },
+        { name: 'fireplace', label: 'Fireplace Projects Service' },
+        { name: 'luxury', label: 'Luxury Living Service' },
+       
+        { name: 'kitchenInfo1', label: '🍳 Kitchen — Design Planning' },
+        { name: 'kitchenInfo2', label: '🍳 Kitchen — Cabinet Installation' },
+        { name: 'kitchenInfo3', label: '🍳 Kitchen — Countertops' },
+        { name: 'kitchenInfo4', label: '🍳 Kitchen — Appliance Integration' },
+        { name: 'kitchenInfo5', label: '🍳 Kitchen — Lighting & Electrical' },
+        { name: 'kitchenInfo6', label: '🍳 Kitchen — Final Finishing' },
+        { name: 'bathroomInfo1', label: '🚿 Bathroom — Design & Layout' },
+        { name: 'bathroomInfo2', label: '🚿 Bathroom — Tile Installation' },
+        { name: 'bathroomInfo3', label: '🚿 Bathroom — Plumbing Fixtures' },
+        { name: 'bathroomInfo4', label: '🚿 Bathroom — Waterproofing' },
+        { name: 'bathroomInfo5', label: '🚿 Bathroom — Lighting' },
+        { name: 'bathroomInfo6', label: '🚿 Bathroom — Final Finishing' },
+        { name: 'tilesInfo1', label: '🔲 Tiles — Floor Tiling' },
+        { name: 'tilesInfo2', label: '🔲 Tiles — Wall Tiling' },
+        { name: 'tilesInfo3', label: '🔲 Tiles — Backsplash' },
+        { name: 'tilesInfo4', label: '🔲 Tiles — Grout & Sealing' },
+        { name: 'tilesInfo5', label: '🔲 Tiles — Substrate Prep' },
+        { name: 'tilesInfo6', label: '🔲 Tiles — Pattern Layouts' },
+        { name: 'paintingInfo1', label: '🎨 Painting — Surface Prep' },
+        { name: 'paintingInfo2', label: '🎨 Painting — Interior Painting' },
+        { name: 'paintingInfo3', label: '🎨 Painting — Exterior Painting' },
+        { name: 'paintingInfo4', label: '🎨 Painting — Spackling & Skim Coat' },
+        { name: 'paintingInfo5', label: '🎨 Painting — Texture Finishes' },
+        { name: 'paintingInfo6', label: '🎨 Painting — Color Consultation' },
+        { name: 'electricInfo1', label: '⚡ Electric — Panel Upgrades' },
+        { name: 'electricInfo2', label: '⚡ Electric — Wiring & Rewiring' },
+        { name: 'electricInfo3', label: '⚡ Electric — Outlet & Switch Install' },
+        { name: 'electricInfo4', label: '⚡ Electric — Lighting Systems' },
+        { name: 'electricInfo5', label: '⚡ Electric — Safety Inspections' },
+        { name: 'electricInfo6', label: '⚡ Electric — Code Compliance' },
+        { name: 'plumbingInfo1', label: '🔧 Plumbing — Pipe Installation' },
+        { name: 'plumbingInfo2', label: '🔧 Plumbing — Fixture Replacement' },
+        { name: 'plumbingInfo3', label: '🔧 Plumbing — Leak Repair' },
+        { name: 'plumbingInfo4', label: '🔧 Plumbing — Drain Cleaning' },
+        { name: 'plumbingInfo5', label: '🔧 Plumbing — Water Heaters' },
+        { name: 'plumbingInfo6', label: '🔧 Plumbing — Full Renovations' },
         { name: 'infoportfolio', label: 'Portfolio картка (DetalsInfo)' },
         { name: 'carousel', label: 'Carousel (слайдер)' },
         { name: 'beforeAfterLeft', label: 'Before/After - Ліво' },
@@ -466,12 +563,26 @@ export default {
     }
   },
   computed: {
-    imagesBySection() {
-      const grouped = {}
-      this.sections.forEach((s) => {
-        grouped[s.name] = this.images.filter((img) => img.section === s.name)
+    groupedImages() {
+      const search = this.gallerySearch.toLowerCase().trim()
+      const filtered = this.images.filter(img => {
+        if (!search) return true
+        const label = this.getSectionLabel(img.section).toLowerCase()
+        const title = (img.title || '').toLowerCase()
+        const section = (img.section || '').toLowerCase()
+        return label.includes(search) || title.includes(search) || section.includes(search)
       })
-      return grouped
+      const grouped = {}
+      for (const img of filtered) {
+        if (!grouped[img.section]) grouped[img.section] = []
+        grouped[img.section].push(img)
+      }
+      return Object.entries(grouped)
+        .map(([section, images]) => ({ section, images }))
+        .sort((a, b) => a.section.localeCompare(b.section))
+    },
+    filteredImagesTotal() {
+      return this.groupedImages.reduce((sum, g) => sum + g.images.length, 0)
     },
   },
   async mounted() {
@@ -480,6 +591,10 @@ export default {
     await this.fetchPortfolioVideos()
   },
   methods: {
+    authHeaders() {
+      const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : ''
+      return token ? { Authorization: `Bearer ${token}` } : {}
+    },
     onVideoFileChange(e) {
       const file = e.target.files[0]
       if (!file) return
@@ -501,14 +616,14 @@ export default {
         formData.append('order', '0')
 
         const url = this.videoSavedId
-          ? `http://localhost:3001/section-images/upload/${this.videoSavedId}`
-          : 'http://localhost:3001/section-images/upload'
+          ? `${this.apiBase}/section-images/upload/${this.videoSavedId}`
+          : `${this.apiBase}/section-images/upload`
 
-        const res = await fetch(url, { method: this.videoSavedId ? 'PUT' : 'POST', body: formData })
+        const res = await fetch(url, { method: this.videoSavedId ? 'PUT' : 'POST', headers: this.authHeaders(), body: formData })
         if (!res.ok) throw new Error('Помилка завантаження')
         const saved = await res.json()
         this.videoSavedId = saved.id
-        this.videoUrl = `http://localhost:3001/${saved.imageUrl}`
+        this.videoUrl = `${this.apiBase}/${saved.imageUrl}`
         this.videoFile = null
         this.videoFileName = ''
         if (this.$refs.videoFileRef) this.$refs.videoFileRef.value = ''
@@ -520,18 +635,18 @@ export default {
     },
     async fetchVideoSection() {
       try {
-        const res = await fetch('http://localhost:3001/section-images/section/videoSection')
+        const res = await fetch(`${this.apiBase}/section-images/section/videoSection`)
         const data = await res.json()
         if (Array.isArray(data) && data.length > 0) {
           const raw = data[0].imageUrl || ''
-          this.videoUrl = raw.startsWith('http') ? raw : `http://localhost:3001/${raw}`
+          this.videoUrl = raw.startsWith('http') ? raw : `${this.apiBase}/${raw}`
           this.videoSavedId = data[0].id
         }
       } catch {}
     },
     async fetchPortfolioVideos() {
       try {
-        const res = await fetch('http://localhost:3001/section-images/section/videoPortfolio')
+        const res = await fetch(`${this.apiBase}/section-images/section/videoPortfolio`)
         const data = await res.json()
         if (Array.isArray(data)) {
           this.portfolioVideos = data.slice().sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
@@ -558,7 +673,7 @@ export default {
         formData.append('description', this.pvCategory || '')
         formData.append('order', String(this.pvOrder || 0))
         formData.append('isActive', 'true')
-        const res = await fetch('http://localhost:3001/section-images/upload', { method: 'POST', body: formData })
+        const res = await fetch(`${this.apiBase}/section-images/upload`, { method: 'POST', headers: this.authHeaders(), body: formData })
         if (!res.ok) throw new Error('Помилка завантаження')
         this.pvFile = null
         this.pvFileName = ''
@@ -576,7 +691,7 @@ export default {
     async deletePortfolioVideo(id) {
       if (!confirm('Видалити це відео?')) return
       try {
-        await fetch(`http://localhost:3001/section-images/${id}`, { method: 'DELETE' })
+        await fetch(`${this.apiBase}/section-images/${id}`, { method: 'DELETE', headers: this.authHeaders() })
         await this.fetchPortfolioVideos()
       } catch {}
     },
@@ -609,7 +724,7 @@ export default {
     },
     async fetchImages() {
       try {
-        const response = await fetch('http://localhost:3001/section-images')
+        const response = await fetch(`${this.apiBase}/section-images`, { headers: this.authHeaders() })
         this.images = await response.json()
       } catch (error) {
         console.error('Помилка завантаження:', error)
@@ -638,11 +753,12 @@ export default {
         formData.append('isActive', String(this.form.isActive))
 
         const url = this.editingId
-          ? `http://localhost:3001/section-images/upload/${this.editingId}`
-          : 'http://localhost:3001/section-images/upload'
+          ? `${this.apiBase}/section-images/upload/${this.editingId}`
+          : `${this.apiBase}/section-images/upload`
 
         const response = await fetch(url, {
           method: this.editingId ? 'PUT' : 'POST',
+          headers: this.authHeaders(),
           body: formData,
         })
 
@@ -678,7 +794,7 @@ export default {
     async deleteImage(id) {
       if (!confirm('Видалити це фото?')) return
       try {
-        await fetch(`http://localhost:3001/section-images/${id}`, { method: 'DELETE' })
+        await fetch(`${this.apiBase}/section-images/${id}`, { method: 'DELETE', headers: this.authHeaders() })
         await this.fetchImages()
       } catch (error) {
         console.error('Помилка видалення:', error)
@@ -701,6 +817,10 @@ export default {
         currentImageUrl: '',
       }
       if (this.$refs.fileInputRef) this.$refs.fileInputRef.value = ''
+    },
+    getSectionLabel(sectionName) {
+      const section = this.sections.find(s => s.name === sectionName)
+      return section ? section.label : sectionName
     },
   },
 }
@@ -1036,6 +1156,56 @@ export default {
 .btn-cancel {
   background: #475569;
   color: white;
+}
+
+/* ══════════════════════════════════════════
+   GALLERY FILTER
+══════════════════════════════════════════ */
+.gallery-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.gallery-search {
+  flex: 1;
+  padding: 12px 18px;
+  background: #1e293b;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+  border-radius: 12px;
+  color: #e2e8f0;
+  font-size: 14px;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.gallery-search::placeholder {
+  color: #64748b;
+}
+
+.gallery-search:focus {
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+.gallery-total {
+  white-space: nowrap;
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+  min-width: 60px;
+  text-align: right;
+}
+
+.section-count {
+  margin-left: auto;
+  background: rgba(59, 130, 246, 0.15);
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  color: #93c5fd;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
 }
 
 /* ══════════════════════════════════════════

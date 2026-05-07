@@ -1,4 +1,5 @@
 <script setup lang="ts">
+definePageMeta({ middleware: 'admin-auth' })
 import { onMounted, ref } from 'vue'
 
 type CalculatorLead = {
@@ -43,7 +44,7 @@ function formatServices(servicesByRoom: Record<string, string[]>) {
 
 function formatAreas(areasByRoom: Record<string, number>) {
   return Object.entries(areasByRoom)
-    .map(([room, area]) => `${room}: ${area} м²`)
+    .map(([room, area]) => `${room}: ${area} sq ft`)
     .join(' | ')
 }
 </script>

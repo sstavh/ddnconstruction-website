@@ -40,6 +40,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { fetchSection, imgUrl } from '~/composables/useApi'
 
 type SlideItem = {
   color?: string
@@ -115,11 +116,10 @@ function onWipeEnd() {
 async function fetchFromDb() {
   if (!props.section) return
   try {
-    const res = await fetch(`http://localhost:3001/section-images/section/${props.section}`)
-    const data = await res.json()
+    const data = await fetchSection(props.section)
     if (Array.isArray(data) && data.length > 0) {
       dbSlides.value = data.map((item: any) => ({
-        imageUrl: item.imageUrl.startsWith('http') ? item.imageUrl : `http://localhost:3001/${item.imageUrl}`,
+        imageUrl: imgUrl(item.imageUrl),
         title: item.title || '',
         text: item.description || '',
       }))

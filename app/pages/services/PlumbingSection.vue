@@ -6,12 +6,12 @@ import InformationCards from '../../components/ui/DetalsServisesComponents/Infor
 import TextTeclolojig from '../../components/ui/DetalsServisesComponents/textTeclolojig.vue';
 
 const plumbingCards = [
-  { logo: "/logo.png", title: "Pipe Installation", description: "New plumbing pipe runs for kitchens, bathrooms, and whole-home systems.", colors: ['#3b82f6', '#8b5cf6', '#22c55e'], blockColor: "#111827" },
-  { logo: "/logo.png", title: "Fixture Replacement", description: "Faucets, sinks, toilets, and showers swapped out quickly and cleanly.", colors: ['#f97316', '#eab308', '#22c55e'], blockColor: "#111827" },
-  { logo: "/logo.png", title: "Leak Repair", description: "Fast diagnosis and repair of leaks before they cause serious damage.", colors: ['#06b6d4', '#3b82f6', '#8b5cf6'], blockColor: "#111827" },
-  { logo: "/logo.png", title: "Drain Cleaning", description: "Professional drain clearing and hydro-jetting for stubborn blockages.", colors: ['#ec4899', '#f97316', '#eab308'], blockColor: "#111827" },
-  { logo: "/logo.png", title: "Water Heaters", description: "Water heater installation, replacement, and maintenance.", colors: ['#10b981', '#06b6d4', '#3b82f6'], blockColor: "#111827" },
-  { logo: "/logo.png", title: "Full Renovations", description: "Complete plumbing rough-in for full bathroom and kitchen remodels.", colors: ['#8b5cf6', '#ec4899', '#f97316'], blockColor: "#111827" },
+  { logo: "/logo.png", title: "Construction Quality", description: "We use proven materials and follow all technological standards.", colors: ['#3b82f6', '#8b5cf6', '#22c55e'], blockColor: "#111827", section: "infoBlock1" },
+  { logo: "/logo.png", title: "Clear Deadlines", description: "We work according to an agreed schedule and complete projects on time.", colors: ['#f97316', '#eab308', '#22c55e'], blockColor: "#111827", section: "infoBlock2" },
+  { logo: "/logo.png", title: "Transparent Pricing", description: "No hidden fees — you know the project budget from the start.", colors: ['#06b6d4', '#3b82f6', '#8b5cf6'], blockColor: "#111827", section: "infoBlock3" },
+  { logo: "/logo.png", title: "Experienced Team", description: "Our specialists have practical experience with projects of various levels of complexity.", colors: ['#ec4899', '#f97316', '#eab308'], blockColor: "#111827", section: "infoBlock4" },
+  { logo: "/logo.png", title: "Work Guarantee", description: "We are confident in the quality of our work and provide a warranty on all completed services.", colors: ['#10b981', '#06b6d4', '#3b82f6'], blockColor: "#111827", section: "infoBlock5" },
+  { logo: "/logo.png", title: "Personalized Approach", description: "We select solutions based on your needs and budget.", colors: ['#8b5cf6', '#ec4899', '#f97316'], blockColor: "#111827", section: "infoBlock6" },
 ];
 
 const beforeAfterBlocks = [
@@ -24,7 +24,7 @@ const beforeAfterBlocks = [
 <template>
   <HeroSECComponent
     title="Plumbing"
-    buttonText="Переглянути каталог"
+    buttonText="Contact"
     buttonLink="/catalog"
     section="plumbing"
   />
@@ -32,12 +32,14 @@ const beforeAfterBlocks = [
   <InformationCards :cards="plumbingCards"/>
 
   <TextTeclolojig
-    title="Наші технології"
-    text="Ми використовуємо сучасні матеріали та обладнання для забезпечення найвищої якості кожного проекту. Від планування до фінального результату — кожен крок продуманий."
+    title="Our technologies"
+    text="We provide reliable plumbing services for kitchens, bathrooms, and full-home systems, handling everything from pipe installation and fixture replacement to complex rerouting and water supply upgrades. Our team works cleanly and efficiently, minimizing disruption to your daily routine.<br/><br/>Every plumbing project starts with a thorough assessment to identify the best solution for your space and budget. We use durable, tested materials and apply proven techniques to ensure leak-free connections and long-term system performance.<br/><br/>From straightforward repairs to complete plumbing installations, we bring the same level of professionalism to every job — delivering dependable results that keep your home running smoothly for years to come."
+    buttonText="View Portfolio"
+    buttonLink="/portfilio"
   />
 
   <BeforAfterSecContainer
-    title="Before & After — Сантехніка"
+    title="Before & After — Plumbing"
     :items="beforeAfterBlocks"
   />
 

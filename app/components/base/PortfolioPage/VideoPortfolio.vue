@@ -3,9 +3,9 @@
     <div class="container">
       <div class="portfolio-video__head">
 
-        <h3>Наші роботи у відео форматі</h3>
+        <h3>Our works in video format</h3>
         <p>
-          Натисніть на будь-яке відео, щоб переглянути роботу на весь екран.
+          Click on any video to view the work in full screen.
         </p>
       </div>
 
@@ -173,7 +173,7 @@ onBeforeUnmount(() => {
 .video-card {
   position: relative;
   overflow: hidden;
-  min-height: 430px;
+  min-height: 230px;
   padding: 0;
   border: none;
   border-radius: 28px;
@@ -195,7 +195,8 @@ onBeforeUnmount(() => {
 .video-card video {
   width: 100%;
   height: 100%;
-  min-height: 430px;
+  height: 430px;
+
   object-fit: cover;
   transform: scale(1.02);
   transition: 0.4s ease;

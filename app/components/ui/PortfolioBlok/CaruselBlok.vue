@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { fetchSection, imgUrl } from '~/composables/useApi'
 
 type Slide = {
   id: number | string;
@@ -52,15 +53,14 @@ watch(
 async function fetchFromApi() {
   if (!props.sectionKey) return
   try {
-    const res = await fetch(`http://localhost:3001/section-images/section/${props.sectionKey}`)
-    const data = await res.json()
+    const data = await fetchSection(props.sectionKey)
     if (Array.isArray(data) && data.length > 0) {
       items.value = data
         .slice()
         .sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0))
         .map((item: any) => ({
           id: item.id,
-          imageUrl: item.imageUrl?.startsWith('http') ? item.imageUrl : `http://localhost:3001/${item.imageUrl}`,
+          imageUrl: imgUrl(item.imageUrl ?? ''),
           title: item.title || '',
           subtitle: item.description || '',
         }))
@@ -207,7 +207,7 @@ onBeforeUnmount(() => {
           <div class="cardInner" :style="s.imageUrl
             ? { backgroundImage: `url(${s.imageUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' }
             : { background: s.color || '#333' }">
-            <div class="overlay always-visible">
+            <div class="overlay">
               <h3>{{ s.title }}</h3>
               <p>{{ s.subtitle }}</p>
             </div>
@@ -281,11 +281,6 @@ onBeforeUnmount(() => {
 .cardInner:hover .overlay {
   opacity: 1;
   background: rgba(0,0,0,0.4);
-}
-
-.overlay.always-visible {
-  opacity: 1;
-  background: linear-gradient(to top, rgba(0,0,0,0.55) 0%, transparent 60%);
 }
 
 /* NAV */

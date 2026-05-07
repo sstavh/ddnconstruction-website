@@ -7,6 +7,7 @@ interface Card {
   description: string
   colors: string[]
   blockColor: string
+  section?: string
 }
 
 const props = defineProps<{
@@ -27,6 +28,7 @@ const props = defineProps<{
           :description="card.description"
           :colors="card.colors"
           :blockColor="card.blockColor"
+          :section="card.section"
         />
 
       </div>

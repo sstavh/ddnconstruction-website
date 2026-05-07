@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ref, onMounted } from 'vue'
+import { fetchSection, imgUrl } from '~/composables/useApi'
 
 const props = withDefaults(defineProps<{
   text?: string
@@ -11,21 +12,19 @@ const logoUrl = ref('')
 
 onMounted(async () => {
   try {
-    const res = await fetch('http://localhost:3001/section-images/section/headerLogo')
-    const data = await res.json()
+    const data = await fetchSection('headerLogo')
     if (Array.isArray(data) && data.length > 0) {
-      const url = data[0].imageUrl
-      logoUrl.value = url?.startsWith('http') ? url : `http://localhost:3001/${url}`
+      logoUrl.value = imgUrl(data[0].imageUrl ?? '')
     }
   } catch {}
 })
 </script>
 
 <template>
-  <div class="buttonBlef" :class="{ 'buttonBlef--img': logoUrl }">
+  <NuxtLink to="/" class="buttonBlef" :class="{ 'buttonBlef--img': logoUrl }">
     <img v-if="logoUrl" :src="logoUrl" alt="Logo" class="logo-img" />
     <p v-else>{{ props.text }}</p>
-  </div>
+  </NuxtLink>
 </template>
 
 <style scoped>
@@ -39,19 +38,20 @@ onMounted(async () => {
   font-weight: 600;
   font-size: 13px;
   border-radius: 8px;
+  text-decoration: none;
 }
 
 .buttonBlef--img {
   padding: 0;
   border: none;
   background-color: transparent;
-  max-width: 160px;
+  max-width: 210px;
 }
 
 .logo-img {
   display: block;
-  max-height: 44px;
-  max-width: 160px;
+  max-height: 64px;
+  max-width: 210px;
   width: auto;
   height: auto;
   object-fit: contain;

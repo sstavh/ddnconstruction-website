@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+definePageMeta({ middleware: 'admin-auth' })
+import { onMounted, reactive, ref } from 'vue'
 
 type PricingItem = {
   id: number
   title: string
   titleUk: string
   price: string
+  priceMax?: string
+  priceType: string
   categoryId: string
 }
+
 
 type PricingCategory = {
   id: string
@@ -18,40 +22,58 @@ type PricingCategory = {
 
 const apiUrl = useRuntimeConfig().public.apiUrl
 const baseUrl = `${apiUrl}/pricing`
+
 const categories = ref<PricingCategory[]>([])
 const selectedCategoryId = ref('')
 const loading = ref(false)
 const errorMessage = ref('')
 
-const categoryForm = ref({
+const globalDiscount = ref(0)
+
+const loadDiscounts = async () => {
+  try {
+    const res = await fetch(`${apiUrl}/discounts/global`)
+    if (res.ok) {
+      const val = await res.json()
+      globalDiscount.value = typeof val === 'number' ? val : 0
+    }
+  } catch {}
+}
+
+const discountedPrice = (price: string): string => {
+  if (!globalDiscount.value) return price
+  const num = parseFloat(price.replace(/[^\d.]/g, ''))
+  if (isNaN(num)) return price
+  return Math.round(num * (1 - globalDiscount.value / 100)).toString()
+}
+
+const categoryForm = reactive({
   id: '',
   title: '',
   description: '',
 })
 
-const itemForm = ref({
+const itemForm = reactive({
   categoryId: '',
   title: '',
   titleUk: '',
   price: '',
+  priceMax: '',
+  priceType: 'fixed',
 })
-
-const selectedCategory = computed(() =>
-  categories.value.find((category) => category.id === selectedCategoryId.value),
-)
 
 const loadCategories = async () => {
   loading.value = true
   errorMessage.value = ''
   try {
     const response = await fetch(baseUrl)
-    if (!response.ok) throw new Error('Failed to load categories')
-    categories.value = await response.json()
-    if (!selectedCategoryId.value && categories.value.length > 0) {
-      selectedCategoryId.value = categories.value[0].id
-    }
-    if (!itemForm.value.categoryId && categories.value.length > 0) {
-      itemForm.value.categoryId = categories.value[0].id
+    if (!response.ok) throw new Error('Не вдалося завантажити категорії')
+    const data = await response.json()
+    categories.value = data
+    const firstCategory = categories.value[0]
+    if (!selectedCategoryId.value && firstCategory) {
+      selectedCategoryId.value = firstCategory.id
+      itemForm.categoryId = firstCategory.id
     }
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : String(error)
@@ -61,27 +83,26 @@ const loadCategories = async () => {
 }
 
 const createCategory = async () => {
-  if (!categoryForm.value.id || !categoryForm.value.title || !categoryForm.value.description) {
-    errorMessage.value = 'Заповніть всі поля категорії'
+  if (!categoryForm.id || !categoryForm.title || !categoryForm.description) {
+    errorMessage.value = 'Заповніть усі поля для категорії'
     return
   }
-
   loading.value = true
   errorMessage.value = ''
-
   try {
     const response = await fetch(`${baseUrl}/category`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(categoryForm.value),
+      body: JSON.stringify(categoryForm),
     })
-    if (!response.ok) {
-      throw new Error('Не вдалося створити категорію')
-    }
+    if (!response.ok) throw new Error('Не вдалося створити категорію')
     const created = await response.json()
     categories.value.push({ ...created, items: [] })
     selectedCategoryId.value = created.id
-    categoryForm.value = { id: '', title: '', description: '' }
+    itemForm.categoryId = created.id
+    categoryForm.id = ''
+    categoryForm.title = ''
+    categoryForm.description = ''
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : String(error)
   } finally {
@@ -91,10 +112,8 @@ const createCategory = async () => {
 
 const deleteCategory = async (id: string) => {
   if (!confirm('Видалити категорію?')) return
-
   loading.value = true
   errorMessage.value = ''
-
   try {
     const response = await fetch(`${baseUrl}/category/${id}`, {
       method: 'DELETE',
@@ -102,10 +121,9 @@ const deleteCategory = async (id: string) => {
     if (!response.ok) throw new Error('Не вдалося видалити категорію')
     categories.value = categories.value.filter((category) => category.id !== id)
     if (selectedCategoryId.value === id) {
-      selectedCategoryId.value = categories.value.length > 0 ? categories.value[0].id : ''
-    }
-    if (itemForm.value.categoryId === id) {
-      itemForm.value.categoryId = categories.value.length > 0 ? categories.value[0].id : ''
+      const firstCategory = categories.value[0]
+      selectedCategoryId.value = firstCategory?.id ?? ''
+      itemForm.categoryId = selectedCategoryId.value
     }
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : String(error)
@@ -115,29 +133,30 @@ const deleteCategory = async (id: string) => {
 }
 
 const createItem = async () => {
-  if (!itemForm.value.categoryId || !itemForm.value.title || !itemForm.value.titleUk || !itemForm.value.price) {
-    errorMessage.value = 'Заповніть всі поля елемента'
+  if (!itemForm.categoryId || !itemForm.title || !itemForm.titleUk || !itemForm.price) {
+    errorMessage.value = 'Заповніть усі поля для елемента'
     return
   }
-
   loading.value = true
   errorMessage.value = ''
-
   try {
     const response = await fetch(`${baseUrl}/item`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(itemForm.value),
+      body: JSON.stringify(itemForm),
     })
     if (!response.ok) throw new Error('Не вдалося створити елемент')
+
     const created = await response.json()
-    const category = categories.value.find((cat) => cat.id === created.categoryId)
+    const category = categories.value.find((category) => category.id === created.categoryId)
     if (category) {
       category.items.push(created)
     }
-    itemForm.value.title = ''
-    itemForm.value.titleUk = ''
-    itemForm.value.price = ''
+    itemForm.title = ''
+    itemForm.titleUk = ''
+    itemForm.price = ''
+    itemForm.priceMax = ''
+    itemForm.priceType = 'fixed'
   } catch (error) {
     errorMessage.value = error instanceof Error ? error.message : String(error)
   } finally {
@@ -146,8 +165,7 @@ const createItem = async () => {
 }
 
 const deleteItem = async (id: number) => {
-  if (!confirm('Видалити елемент прайсу?')) return
-
+  if (!confirm('Видалити елемент?')) return
   loading.value = true
   errorMessage.value = ''
   try {
@@ -164,23 +182,23 @@ const deleteItem = async (id: number) => {
   }
 }
 
-onMounted(loadCategories)
+onMounted(() => { loadCategories(); loadDiscounts() })
 </script>
 
 <template>
   <section class="pricing-admin">
-    <h1>Адмінка прайсів</h1>
+    <h1>Каталог послуг</h1>
 
     <div class="form-row">
       <div class="form-block">
         <h2>Нова категорія</h2>
         <label>
           ID
-          <input v-model="categoryForm.id" placeholder="roofing" />
+          <input v-model="categoryForm.id" placeholder="bathroom" />
         </label>
         <label>
           Заголовок
-          <input v-model="categoryForm.title" placeholder="Roofing Services" />
+          <input v-model="categoryForm.title" placeholder="Bathroom Services" />
         </label>
         <label>
           Опис
@@ -200,16 +218,29 @@ onMounted(loadCategories)
           </select>
         </label>
         <label>
-          Назва
-          <input v-model="itemForm.title" placeholder="Roof inspection" />
+          Назва EN
+          <input v-model="itemForm.title" placeholder="Shower installation" />
         </label>
         <label>
-          Назва українською
-          <input v-model="itemForm.titleUk" placeholder="Огляд даху" />
+          Назва UK
+          <input v-model="itemForm.titleUk" placeholder="Встановлення душу" />
         </label>
         <label>
-          Ціна
-          <input v-model="itemForm.price" placeholder="$120" />
+          Ціна від (мін)
+          <input v-model="itemForm.price" placeholder="900" />
+        </label>
+        <label>
+          Ціна до (макс, необов'язково)
+          <input v-model="itemForm.priceMax" placeholder="1500" />
+        </label>
+        <label>
+          Тип ціни
+          <select v-model="itemForm.priceType">
+            <option value="fixed">fixed</option>
+            <option value="m2">sq ft (m2)</option>
+            <option value="lft">linear ft (lft)</option>
+            <option value="m2l">sq ft labor (m2l)</option>
+          </select>
         </label>
         <button @click.prevent="createItem" :disabled="loading">Додати елемент</button>
       </div>
@@ -219,21 +250,33 @@ onMounted(loadCategories)
     <div v-if="loading" class="status">Завантаження...</div>
 
     <div class="categories-list">
-      <h2>Категорії прайсів</h2>
-      <div v-if="categories.length === 0">Категорії не знайдені.</div>
+      <h2>Категорії</h2>
+      <div v-if="categories.length === 0">Категорій не знайдено.</div>
       <div v-for="category in categories" :key="category.id" class="category-card">
         <div class="category-header">
-          <h3>{{ category.title }} ({{ category.id }})</h3>
-          <button @click="deleteCategory(category.id)" :disabled="loading">Видалити категорію</button>
+          <div>
+            <h3>{{ category.title }} <small>({{ category.id }})</small></h3>
+            <p>{{ category.description }}</p>
+          </div>
+          <button @click.prevent="deleteCategory(category.id)" :disabled="loading">Видалити</button>
         </div>
-        <p>{{ category.description }}</p>
+
         <div class="items-block">
           <h4>Елементи</h4>
           <div v-if="category.items.length === 0">Немає елементів</div>
           <ul>
             <li v-for="item in category.items" :key="item.id">
-              <span>{{ item.title }} / {{ item.titleUk }} — {{ item.price }}</span>
-              <button @click="deleteItem(item.id)" :disabled="loading">Видалити</button>
+              <span>
+                {{ item.title }} / {{ item.titleUk }} —
+                <template v-if="globalDiscount > 0">
+                  <s class="price-original">${{ item.price }}</s>
+                  <strong class="price-discounted">${{ discountedPrice(item.price) }}</strong>
+                  <span class="price-badge">−{{ globalDiscount }}%</span>
+                </template>
+                <template v-else>${{ item.price }}{{ item.priceMax ? ` – $${item.priceMax}` : '' }}</template>
+                {{ item.priceType === 'm2' ? '/sq ft' : item.priceType === 'lft' ? '/linear ft' : item.priceType === 'm2l' ? '/sq ft (labor)' : '' }}
+              </span>
+              <button @click.prevent="deleteItem(item.id)" :disabled="loading">Видалити</button>
             </li>
           </ul>
         </div>
@@ -244,10 +287,9 @@ onMounted(loadCategories)
 
 <style scoped>
 .pricing-admin {
-  max-width: 960px;
+  max-width: 1080px;
   margin: 0 auto;
   padding: 24px;
-  font-family: sans-serif;
 }
 
 .form-row {
@@ -259,13 +301,9 @@ onMounted(loadCategories)
 
 .form-block {
   padding: 18px;
-  border: 1px solid #b35858;
-  border-radius: 14px;
-  background: #7a5353;
-}
-
-.form-block h2 {
-  margin-top: 0;
+  border: 1px solid rgba(148, 163, 184, 0.4);
+  border-radius: 18px;
+  background: rgba(15, 23, 42, 0.8);
 }
 
 label {
@@ -278,55 +316,58 @@ input,
 textarea,
 select {
   width: 100%;
-  padding: 10px;
-  margin-top: 6px;
-  border: 1px solid #482828;
-  border-radius: 8px;
+  padding: 10px 12px;
+  margin-top: 8px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: 12px;
+  background: rgba(255,255,255,0.05);
+  color: #fff;
 }
 
 button {
   margin-top: 12px;
   padding: 10px 16px;
   border: none;
+  border-radius: 12px;
   background: #2563eb;
-  color: #fff;
-  border-radius: 8px;
+  color: white;
   cursor: pointer;
 }
 
 button:disabled {
   opacity: 0.6;
-  cursor: default;
+  cursor: not-allowed;
 }
 
 .error {
-  color: #b91c1c;
+  color: #f87171;
   margin-bottom: 16px;
 }
 
 .status {
   margin-bottom: 16px;
-  color: #2563eb;
+  color: #38bdf8;
 }
 
 .category-card {
   margin-bottom: 18px;
   padding: 18px;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
-  background: #a03a3a;
+  border-radius: 18px;
+  background: rgba(30, 41, 59, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.2);
 }
 
 .category-header {
   display: flex;
   justify-content: space-between;
-  gap: 12px;
-  align-items: center;
+  align-items: flex-start;
+  gap: 16px;
 }
 
 .items-block ul {
   list-style: none;
   padding-left: 0;
+  margin: 12px 0 0;
 }
 
 .items-block li {
@@ -335,10 +376,28 @@ button:disabled {
   align-items: center;
   gap: 12px;
   padding: 10px 0;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.1);
 }
 
-.items-block li:last-child {
-  border-bottom: none;
+.price-original {
+  color: rgba(255, 255, 255, 0.4);
+  text-decoration: line-through;
+  margin-right: 4px;
+}
+
+.price-discounted {
+  color: #34d399;
+  margin-right: 4px;
+}
+
+.price-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: rgba(34, 197, 94, 0.15);
+  color: #34d399;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid rgba(34, 197, 94, 0.3);
 }
 </style>

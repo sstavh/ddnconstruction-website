@@ -1,5 +1,6 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { fetchSection, imgUrl } from '~/composables/useApi'
 
 const slides = ref([])
 const defaultSlides = [
@@ -46,12 +47,11 @@ const onTransitionEnd = async () => {
 
 async function fetchImages() {
   try {
-    const response = await fetch('http://localhost:3001/section-images/section/hero')
-    const data = await response.json()
+    const data = await fetchSection('hero')
     if (data && data.length > 0) {
       slides.value = data.map((item) => ({
         ...item,
-        imageUrl: item.imageUrl.startsWith('http') ? item.imageUrl : `http://localhost:3001/${item.imageUrl}`,
+        imageUrl: imgUrl(item.imageUrl),
       }))
     } else {
       slides.value = defaultSlides

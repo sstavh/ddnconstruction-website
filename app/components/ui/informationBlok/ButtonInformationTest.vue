@@ -1,13 +1,11 @@
-<script setup lang="ts">
-console.log("ButtonInformationTest component loaded");
-</script>
-
 <template>
-   <button class="button-information-test">Learn More &rarr; </button>
+   <NuxtLink to="/portfilio" class="button-information-test">Learn More &rarr; </NuxtLink>
 </template>
 
 <style scoped>
 .button-information-test{
+    display: flex;
+    align-items: flex-start;
     width: 270px;
     height: 350px;
     padding: 20px;
@@ -15,11 +13,9 @@ console.log("ButtonInformationTest component loaded");
     color: var(--color-praymeri-light);
     font-size: 34px;
     font-weight: 500;
-    border: none;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    text-align: start;
-    align-items: start;
+    text-decoration: none;
     border-radius: 20px;
 }
 .button-information-test:hover{

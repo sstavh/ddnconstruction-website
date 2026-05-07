@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import { imgUrl } from '~/composables/useApi'
+import { imgUrl, fetchSection } from '~/composables/useApi'
 
 const props = withDefaults(defineProps<{
   leftColor?: string
@@ -26,15 +26,13 @@ const rightImage = ref('')
 async function fetchImages() {
   if (props.leftSection) {
     try {
-      const res = await fetch(`http://localhost:3001/section-images/section/${props.leftSection}`)
-      const data = await res.json()
+      const data = await fetchSection(props.leftSection)
       if (Array.isArray(data) && data.length > 0) leftImage.value = imgUrl(data[0].imageUrl)
     } catch (e) {}
   }
   if (props.rightSection) {
     try {
-      const res = await fetch(`http://localhost:3001/section-images/section/${props.rightSection}`)
-      const data = await res.json()
+      const data = await fetchSection(props.rightSection)
       if (Array.isArray(data) && data.length > 0) rightImage.value = imgUrl(data[0].imageUrl)
     } catch (e) {}
   }

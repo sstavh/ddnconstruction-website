@@ -16,29 +16,25 @@
             class="slide"
           >
             <article class="card">
+              <div class="card-photo">
+                <img v-if="r.photo" :src="r.photo" class="work-img" />
+                <div v-else class="photo-placeholder" :style="{ background: r.workFallbackColor || '#1e293b' }">
+                  <span class="photo-icon">🏠</span>
+                </div>
+              </div>
 
-              <!-- ❌ ВИДАЛИЛИ БЛОК work -->
-
-              <div class="info">
-                <div class="top">
-                  <div class="avatar">
-                    <img v-if="r.photo" :src="r.photo" class="avatar-img" />
-                    <div v-else class="avatar-fallback" :style="{ background: r.avatarColor }">
-                      {{ initials(r.name) }}
-                    </div>
-                  </div>
-
-                  <div>
-                    <div class="name">{{ r.name }}</div>
-                    <div class="stars">
-                      <span v-for="i in 5" :key="i" class="star" :class="{ on: i <= r.rating }">★</span>
-                    </div>
+              <div class="card-body">
+                <div class="card-meta">
+                  <div class="name">{{ r.name }}</div>
+                  <div class="stars">
+                    <span v-for="i in 5" :key="i" class="star" :class="{ on: i <= r.rating }">★</span>
                   </div>
                 </div>
 
-                <p class="text">“{{ r.text }}”</p>
+                <div class="text-wrap">
+                  <p class="text">"{{ r.text }}"</p>
+                </div>
               </div>
-
             </article>
           </div>
         </div>
@@ -183,7 +179,7 @@ onBeforeUnmount(() => {
 
 /* VIEWPORT */
 .viewport {
-  height: 390px;
+  height: 370px;
   overflow: hidden;
   border-radius: 18px;
 }
@@ -196,19 +192,109 @@ onBeforeUnmount(() => {
 /* SLIDE */
 .slide {
   flex: 0 0 33.333%;
-  padding: 10px;
+  padding: 8px;
 }
 
 /* CARD */
 .card {
-  height: 320px;
-  border-radius: 20px;
-  overflow: hidden;
+  height: 354px;
+  border-radius: 16px;
   background: rgba(17, 24, 39, 0.92);
   border: 1px solid rgba(255,255,255,0.12);
   color: #fff;
-  display: grid;
-  grid-template-rows: 160px 1fr;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* WORK PHOTO */
+.card-photo {
+  width: 100%;
+  height: 160px;
+  flex-shrink: 0;
+  overflow: hidden;
+  background: #1e293b;
+}
+
+.work-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.photo-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.photo-icon {
+  font-size: 36px;
+  opacity: 0.4;
+}
+
+/* CARD BODY */
+.card-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  padding: 14px 16px;
+  overflow: hidden;
+}
+
+.card-meta {
+  flex-shrink: 0;
+  margin-bottom: 10px;
+}
+
+.name {
+  font-weight: 600;
+  font-size: 14px;
+  color: #f1f5f9;
+  margin-bottom: 4px;
+}
+
+.stars {
+  display: flex;
+  gap: 1px;
+}
+
+.star {
+  font-size: 16px;
+  color: rgba(255,255,255,0.25);
+}
+
+.star.on {
+  color: #fbbf24;
+}
+
+/* TEXT (scrollable) */
+.text-wrap {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.15) transparent;
+}
+
+.text-wrap::-webkit-scrollbar {
+  width: 4px;
+}
+
+.text-wrap::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.18);
+  border-radius: 4px;
+}
+
+.text {
+  font-size: var(--font-s-MobalSmoll);
+  line-height: 1.6;
+  color: #cbd5e1;
+  margin: 0;
 }
 
 /* NAV */
@@ -221,44 +307,18 @@ onBeforeUnmount(() => {
   color: #fff;
   cursor: pointer;
 }
-.text{
-  margin-top: 15px;
-  font-size: var( --font-s-MobalSmoll);
-  margin-bottom: 10px;
-}
-
-.stars{
-  margin-top: 10px;
-}
-
-.star {
-  border: 0;
-  background: transparent;
-  font-size: 26px;
-  cursor: pointer;
-  color: rgba(255,255,255,0.25);
-  transition: 0.2s;
-}
-
-.star.on {
-  color: #fbbf24;
-}
 
 /* TABLET */
 @media (max-width: 1024px) {
-
-
   .slide { flex: 0 0 50%; }
 }
 
 @media (max-width: 768px) {
   .slide { flex: 0 0 50%; }
-
- }
+}
 
 /* MOBILE */
 @media (max-width: 430px) {
-
   .wrap {
     grid-template-columns: 1fr;
   }

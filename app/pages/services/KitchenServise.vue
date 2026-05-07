@@ -12,12 +12,12 @@ import { imgUrl, fetchSection } from '~/composables/useApi';
 
 // ─── InformationCards per service ─────────────────────────────────────────────
 const kitchenCards = [
-  { logo: "/logo.png", title: "Design Planning", description: "Custom kitchen layout design tailored to your space and lifestyle.", colors: ['#3b82f6', '#8b5cf6', '#22c55e'], blockColor: "#111827" },
-  { logo: "/logo.png", title: "Cabinet Installation", description: "Premium cabinets installed with precision and care.", colors: ['#f97316', '#eab308', '#22c55e'], blockColor: "#111827" },
-  { logo: "/logo.png", title: "Countertops", description: "Stone, quartz, and laminate countertop options to fit your budget.", colors: ['#06b6d4', '#3b82f6', '#8b5cf6'], blockColor: "#111827" },
-  { logo: "/logo.png", title: "Appliance Integration", description: "Seamless integration of appliances into your new kitchen layout.", colors: ['#ec4899', '#f97316', '#eab308'], blockColor: "#111827" },
-  { logo: "/logo.png", title: "Lighting & Electrical", description: "Under-cabinet lighting, pendants, and full electrical work.", colors: ['#10b981', '#06b6d4', '#3b82f6'], blockColor: "#111827" },
-  { logo: "/logo.png", title: "Final Finishing", description: "Backsplash, trim, and final touches that complete your kitchen.", colors: ['#8b5cf6', '#ec4899', '#f97316'], blockColor: "#111827" },
+  { logo: "/logo.png", title: "Construction Quality", description: "We use proven materials and follow all technological standards.", colors: ['#3b82f6', '#8b5cf6', '#22c55e'], blockColor: "#111827", section: "infoBlock1" },
+  { logo: "/logo.png", title: "Clear Deadlines", description: "We work according to an agreed schedule and complete projects on time.", colors: ['#f97316', '#eab308', '#22c55e'], blockColor: "#111827", section: "infoBlock2" },
+  { logo: "/logo.png", title: "Transparent Pricing", description: "No hidden fees — you know the project budget from the start.", colors: ['#06b6d4', '#3b82f6', '#8b5cf6'], blockColor: "#111827", section: "infoBlock3" },
+  { logo: "/logo.png", title: "Experienced Team", description: "Our specialists have practical experience with projects of various levels of complexity.", colors: ['#ec4899', '#f97316', '#eab308'], blockColor: "#111827", section: "infoBlock4" },
+  { logo: "/logo.png", title: "Work Guarantee", description: "We are confident in the quality of our work and provide a warranty on all completed services.", colors: ['#10b981', '#06b6d4', '#3b82f6'], blockColor: "#111827", section: "infoBlock5" },
+  { logo: "/logo.png", title: "Personalized Approach", description: "We select solutions based on your needs and budget.", colors: ['#8b5cf6', '#ec4899', '#f97316'], blockColor: "#111827", section: "infoBlock6" },
 ];
 
 // ─── Before/After blocks (3) ────────────────────────────────────────────────
@@ -92,7 +92,7 @@ function getImg(section: string, index: number): string {
   <!-- ── Hero ─────────────────────────────────────────────────────────────── -->
   <HeroSECComponent
     title="Kitchen Service"
-    buttonText="Переглянути каталог"
+    buttonText="Contact"
     buttonLink="/catalog"
     section="kitchen"
   />
@@ -102,13 +102,19 @@ function getImg(section: string, index: number): string {
 
   <!-- ── Technology text ──────────────────────────────────────────────────── -->
   <TextTeclolojig
-    title="Наші технології"
-    text="Ми використовуємо сучасні матеріали та обладнання для забезпечення найвищої якості кожного проекту. Від планування до фінального результату — кожен крок продуманий."
+    title="Our technologies"
+    text="Elevate your kitchen with cutting-edge installation techniques and time-tested craftsmanship that guarantee unparalleled quality and enduring performance. Our seasoned professionals blend decades of expertise with meticulous attention to every detail, ensuring flawless execution from concept to completion.<br/><br/>
+
+Every phase of your project—from visionary design to exquisite finishing—is orchestrated with precision and passion, upholding the highest industry benchmarks. We prioritize seamless functionality, robust durability, and timeless aesthetics to craft culinary spaces that inspire both practicality and elegance.<br/><br/>
+
+Embracing a diverse palette of premium materials and innovative layouts, we tailor each transformation to harmonize perfectly with your unique lifestyle and aspirations. Our unwavering commitment is to create a culinary haven that dazzles the senses and stands the test of time, delivering joy and reliability for generations."
+    buttonText="View Portfolio"
+    buttonLink="/portfilio"
   />
 
   <!-- ── Before/After #1 ──────────────────────────────────────────────────── -->
   <BeforAfterSecContainer
-    title="Before & After — Кухні"
+    title="Before & After — Kitchen Service"
     :items="beforeAfterBlocks1"
   />
 

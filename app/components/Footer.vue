@@ -74,7 +74,7 @@ const menu = [
     linear-gradient(135deg, rgb(24, 29, 120), rgb(18, 22, 80));
 }
 
-/* “Скляна” картка */
+/* "Скляна" картка */
 .footer-card {
   backdrop-filter: blur(10px);
 }
@@ -195,7 +195,7 @@ const menu = [
   padding: 0;
 }
 
-/* Трохи “дрібної” типографіки всередині */
+/* Трохи "дрібної" типографіки всередині */
 .bottom :deep(*) {
   color: rgba(255, 255, 255, 0.78);
 }

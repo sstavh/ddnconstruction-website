@@ -9,13 +9,13 @@ type ActionButton = {
 const opened = ref(false);
 
 const buttons: ActionButton[] = [
-  { label: "Kitchen",   target: "portfolio-kitchen" },
-  { label: "Bathroom",  target: "portfolio-bathroom" },
-  { label: "Tiles",     target: "portfolio-tiles" },
-  { label: "Painting",  target: "portfolio-painting" },
-  { label: "Electrical",target: "portfolio-electric" },
-  { label: "Plumbing",  target: "portfolio-plumbing" },
-  { label: "Відео",     target: "portfolio-video" },
+  { label: "Kitchen Installation",  target: "portfolio-kitchen" },
+  { label: "Bathrooms & Showers",   target: "portfolio-bathroom" },
+  { label: "Tile Work",             target: "portfolio-tiles" },
+  { label: "Interior Work",         target: "portfolio-painting" },
+  { label: "Fireplace Projects",    target: "portfolio-fireplace" },
+  { label: "Luxury Living",         target: "portfolio-luxury" },
+  { label: "Video",                 target: "portfolio-video" },
 ];
 
 function toggle() {
@@ -45,7 +45,7 @@ function scrollTo(target: string) {
           aria-controls="actions"
         >
           <span class="btn__dot" aria-hidden="true"></span>
-          {{ opened ? "Закрити" : "Меню" }}
+          {{ opened ? "Close" : "Menu" }}
           <span class="chev" aria-hidden="true">⌄</span>
         </button>
 
@@ -118,7 +118,9 @@ function scrollTo(target: string) {
 
 /* Базова кнопка */
 .btn{
-  width: 140px;
+  min-width: 130px;
+  width: auto;
+  white-space: nowrap;
   appearance: none;
   border: 0;
   cursor: pointer;
@@ -147,7 +149,7 @@ function scrollTo(target: string) {
   outline-offset: 3px;
 }
 
-/* Main button: градієнт + “живий” hover */
+/* Main button: градієнт + "живий" hover */
 .btn--main{
   background-color: var(--color-praymeri-blue);
 

@@ -11,52 +11,52 @@ import PortfolioContainer from '../components/base/PortfolioPage/PortfolioContai
     <GeneralHeroPortfolio/>
     <ButtonNAvigation/>
 
-    <!-- Kitchen Service -->
+    <!-- Kitchen Installation -->
     <PortfolioContainer
       id="portfolio-kitchen"
-      title="Kitchen Service"
+      title="Kitchen Installation"
       service-slug="kitchen"
-      text="We design and renovate kitchens with premium materials and precise craftsmanship. From layout planning to final installation — every detail matters."
+      text="We provide kitchen cabinet installation, backsplash tile work, countertop installation, and detailed finishing. Clean work and attention to every detail."
     />
 
-    <!-- Bathroom -->
+    <!-- Bathrooms & Showers -->
     <PortfolioContainer
       id="portfolio-bathroom"
-      title="Bathroom"
+      title="Bathrooms & Showers"
       service-slug="bathroom"
-      text="Complete bathroom renovations: tile work, plumbing fixtures, waterproofing, and modern finishes. We transform bathrooms into relaxing, functional spaces."
+      text="We create modern and functional bathrooms with attention to every detail. Full remodeling: tile work, walk-in showers, plumbing, vanities, and lighting."
     />
 
-    <!-- Tiles -->
+    <!-- Tile Work -->
     <PortfolioContainer
       id="portfolio-tiles"
-      title="Tiles"
+      title="Tile Work"
       service-slug="tiles"
-      text="Expert tile installation for floors, walls, and backsplashes. We work with all tile types — ceramic, porcelain, natural stone — with precision and care."
+      text="Tile installation for any size and style. From small tiles to large formats, we ensure clean work, strong results, and a flawless finish every time."
     />
 
-    <!-- Spackling / Painting -->
+    <!-- Interior Work -->
     <PortfolioContainer
       id="portfolio-painting"
-      title="Spackling / Painting"
+      title="Interior Work"
       service-slug="painting"
-      text="Smooth, flawless wall preparation and professional painting. We deliver crisp lines, even coats, and lasting results for any interior or exterior surface."
+      text="Full interior solutions, from flooring to final details — delivered with precision and care."
     />
 
-    <!-- Electrical Work -->
+    <!-- Fireplace Projects -->
     <PortfolioContainer
-      id="portfolio-electric"
-      title="Electrical Work"
-      service-slug="electric"
-      text="Safe and code-compliant electrical installations, upgrades, and repairs. Our licensed electricians handle everything from panel upgrades to lighting design."
+      id="portfolio-fireplace"
+      title="Fireplace Projects"
+      service-slug="fireplace"
+      text="From classic stone fireplaces to modern feature walls, we create spaces that feel warm, elegant, and built to last. Every project is tailored to your style."
     />
 
-    <!-- Plumbing -->
+    <!-- Luxury Living -->
     <PortfolioContainer
-      id="portfolio-plumbing"
-      title="Plumbing"
-      service-slug="plumbing"
-      text="Reliable plumbing services including pipe installation, fixture replacement, and leak repairs. We keep your systems flowing efficiently and safely."
+      id="portfolio-luxury"
+      title="Luxury Living"
+      service-slug="luxury"
+      text="From demolition to final details — we take care of everything. Clean work, reliable timelines, and results you can trust."
     />
 
     <!-- Video Portfolio -->

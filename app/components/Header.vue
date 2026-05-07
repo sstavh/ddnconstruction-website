@@ -122,10 +122,14 @@ onBeforeUnmount(() => {
                 @mouseenter="openServices"
                 @mouseleave="closeServices"
               >
-                <button class="nav-link nav-link--button" @click="toggleMobileServices">
-                  {{ item.title }}
-                  <span class="chev" :class="{ 'chev--open': isServicesOpen }">▾</span>
-                </button>
+                <div class="nav-link nav-link--button">
+                  <NuxtLink :to="item.link" class="nav-link__text" @click="closeMobileMenu">
+                    {{ item.title }}
+                  </NuxtLink>
+                  <button class="chev-btn" @click="toggleMobileServices">
+                    <span class="chev" :class="{ 'chev--open': isServicesOpen }">▾</span>
+                  </button>
+                </div>
 
                 <transition name="dd">
                   <div v-show="isServicesOpen" class="dropdown-panel glass--strong">
@@ -256,12 +260,37 @@ onBeforeUnmount(() => {
 }
 
 .nav-link--button {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.nav-link__text {
+  text-decoration: none;
+  color: rgba(245,245,245,0.9);
+  font-family: var(--font-f-Inter);
+  font-size: var(--font-s-navigation);
+  font-weight: 500;
+  transition: 0.25s ease;
+}
+
+.nav-link__text:hover {
+  color: var(--color-praymeri-blue);
+}
+
+.chev-btn {
   border: none;
   background: transparent;
   cursor: pointer;
+  padding: 2px 4px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  color: rgba(245,245,245,0.9);
+  transition: 0.25s ease;
+}
+
+.chev-btn:hover {
+  color: var(--color-praymeri-blue);
 }
 
 .chev {
@@ -477,6 +506,25 @@ onBeforeUnmount(() => {
     color: #fff;
     background: rgba(59,130,246,0.2);
     transform: translateX(4px);
+  }
+
+  .nav-link--button {
+    padding: 0;
+    background: rgba(255,255,255,0.035);
+    border: 1px solid rgba(255,255,255,0.055);
+    border-radius: 16px;
+  }
+
+  .nav-link__text {
+    flex: 1;
+    padding: 16px 16px;
+    font-size: 17px;
+    color: rgba(245,245,245,0.9);
+  }
+
+  .chev-btn {
+    padding: 16px 14px 16px 0;
+    color: rgba(245,245,245,0.9);
   }
 
   .dropdown-panel {

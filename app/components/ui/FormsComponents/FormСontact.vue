@@ -1,4 +1,3 @@
-```vue
 <template>
   <form class="form" @submit.prevent="handleSubmit">
     <div class="grid">
@@ -101,7 +100,7 @@
       <h3 class="subtitle">Area (sq ft)</h3>
 
       <div v-if="!form.jobs.length" class="empty">
-        First select a service type in the “Select Services” section.
+        First select a service type in the "Select Services" section.
       </div>
 
       <div v-else class="areasGrid">
@@ -593,4 +592,3 @@ async function handleSubmit() {
   }
 }
 </style>
-```
