@@ -22,8 +22,9 @@ console.log("TextBlok component loaded")
 
 <style scoped>
 .textBlok-container {
-  width: 270px;
-  height: 350px;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
   padding: 20px;
   background-color: rgb(79, 64, 37);
   color: var(--color-praymeri-light);
@@ -35,6 +36,7 @@ console.log("TextBlok component loaded")
   text-align: start;
   align-items: start;
   border-radius: 20px;
+  box-sizing: border-box;
 }
 
 .textBlok-container__text {

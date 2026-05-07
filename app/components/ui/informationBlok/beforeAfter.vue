@@ -117,8 +117,9 @@ function onUp() { dragging.value = false }
 <style scoped>
 .slider {
   position: relative;
-  width: 470px;
-  height: 350px;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
   border-radius: 16px;
   overflow: hidden;
   cursor: ew-resize;

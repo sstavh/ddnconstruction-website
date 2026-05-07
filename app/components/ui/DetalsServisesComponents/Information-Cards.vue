@@ -38,7 +38,7 @@ const props = defineProps<{
 
 <style scoped>
 .infoCard-container {
-    margin-top: 130px;
+  margin-top: 130px;
   display: flex;
   flex-wrap: wrap;
   gap: 24px;
@@ -49,14 +49,28 @@ const props = defineProps<{
 }
 
 @media (max-width: 1024px) {
+  .infoCard-container {
+    margin-top: 90px;
+  }
   .infoCard-container :deep(.smart-card) {
     flex: 0 0 calc(50% - 12px);
   }
 }
 
 @media (max-width: 768px) {
+  .infoCard-container {
+    margin-top: 60px;
+    gap: 16px;
+  }
   .infoCard-container :deep(.smart-card) {
     flex: 0 0 100%;
+  }
+}
+
+@media (max-width: 430px) {
+  .infoCard-container {
+    margin-top: 48px;
+    gap: 12px;
   }
 }
 </style>

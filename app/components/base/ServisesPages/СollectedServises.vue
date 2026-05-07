@@ -34,7 +34,7 @@ onMounted(() => {
 </script>
 
 <template>
-    <section>
+    <section class="collected-section">
         <div class="container">
             <div class="collected-contaoner">
                 <h3 class="collected-title">
@@ -112,6 +112,10 @@ Our team carefully manages each stage of the work — from planning to final tou
 <style scoped>
 
 /* ====== BASE ====== */
+.collected-section {
+    overflow-x: hidden;
+}
+
 .collected-contaoner{
     margin-top: 130px;
 }
@@ -127,6 +131,9 @@ Our team carefully manages each stage of the work — from planning to final tou
     justify-content: center;
     gap: 15px;
     margin-bottom: 150px;
+    overflow: hidden;
+    width: 100%;
+    max-width: 100%;
 }
 
 /* великі кастомні блоки */
@@ -159,34 +166,49 @@ Our team carefully manages each stage of the work — from planning to final tou
 /* ====== 1024px ====== */
 @media (max-width: 1024px) {
 
-    .ttt-text{
-        height: 450px;
-    }
+  .ttt-text {
+    height: 450px;
+    width: 100% !important;
+    max-width: 100%;
+  }
+
+  .ttt {
+    width: 100% !important;
+    max-width: 100%;
+    height: 350px;
+  }
+
   .container {
     max-width: 960px;
   }
 
   .collected-box {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 20px;
     align-items: stretch;
   }
 
-  /* всі елементи займають всю ширину колонки */
   .collected-box > * {
     width: 100% !important;
+    max-width: 100%;
+    min-width: 0;
   }
 
-  /* 🔥 ПЕРШИЙ ВЕЛИКИЙ БЛОК РОЗТЯГУЄМО */
   .collected-box > :first-child {
     grid-column: span 2;
     width: 100% !important;
   }
 
-  /* текстовий блок теж акуратно центруємо */
-  .ttt-text {
+  .collected-box :deep(.promo-card) {
     width: 100% !important;
+    max-width: 100%;
+  }
+
+  .before-after-wrap {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
   }
 }
 
@@ -197,46 +219,94 @@ Our team carefully manages each stage of the work — from planning to final tou
     max-width: 720px;
   }
 
+  .collected-contaoner {
+    margin-top: 80px;
+  }
+
+  .collected-title {
+    margin-bottom: 60px;
+  }
+
   .collected-box {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 15px;
   }
 
-  /* великий блок все ще на всю ширину */
+  .collected-box > * {
+    width: 100% !important;
+    max-width: 100%;
+    min-width: 0;
+  }
+
   .collected-box > :first-child {
     grid-column: span 2;
+  }
+
+  .ttt {
+    width: 100% !important;
+    max-width: 100%;
+    height: 280px;
+  }
+
+  .before-after-wrap {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .collected-box :deep(.promo-card) {
+    width: 100% !important;
+    max-width: 100%;
   }
 }
 
 
 /* ====== 430px ====== */
 @media (max-width: 430px) {
-  .container {
-    max-width: 360px;
-  }
-
-  .collected-contaoner{
+  .collected-contaoner {
     margin-top: 70px;
   }
 
-  .collected-title{
+  .collected-title {
     margin-bottom: 40px;
   }
 
   .collected-box {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
     gap: 20px;
     margin-bottom: 80px;
   }
 
-  /* все в одну колонку */
   .collected-box > * {
     width: 100% !important;
+    max-width: 100%;
+    min-width: 0;
   }
 
-  /* великий блок також не ламає сітку */
   .collected-box > :first-child {
     grid-column: span 1;
+  }
+
+  .ttt {
+    width: 100% !important;
+    max-width: 100%;
+    height: 240px;
+  }
+
+  .ttt-text {
+    width: 100% !important;
+    max-width: 100%;
+    height: auto;
+    min-height: 200px;
+  }
+
+  .before-after-wrap {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .collected-box :deep(.promo-card) {
+    width: 100% !important;
+    max-width: 100%;
   }
 }
 </style>

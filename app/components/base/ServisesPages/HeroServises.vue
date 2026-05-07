@@ -109,13 +109,29 @@ onMounted(async () => {
     }
 }
 
+@media (max-width: 768px) {
+  .heroAbout-box__title {
+    padding-top: 150px;
+  }
+  .heroAbaut-section {
+    height: 430px;
+  }
+  .hero-subtitle {
+    font-size: 15px;
+  }
+}
+
 @media (max-width: 430px){
     .heroAbout-box__title{
-        padding-top: 140px;
-        font-size: var(  --font-s-Mobalh1);
+        padding-top: 120px;
+        font-size: var(--font-s-Mobalh1);
     }
     .heroAbaut-section{
         height: 330px;
+    }
+    .hero-subtitle {
+      font-size: 14px;
+      padding: 0 10px;
     }
   }
 </style>

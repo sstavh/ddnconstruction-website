@@ -56,8 +56,10 @@ onMounted(async () => {
 
   <div v-if="showModal" class="popup-overlay" @click.self="showModal = false">
     <div class="popup">
-      <button class="popup-close" @click="showModal = false">×</button>
-      <FormСontact />
+      <div class="popup-head">
+        <button class="popup-close" @click="showModal = false">×</button>
+      </div>
+      <FormСontact class="ttr" />
     </div>
   </div>
 </template>
@@ -158,8 +160,9 @@ onMounted(async () => {
   position: relative;
   width: 100%;
   max-width: 620px;
+  max-height: 90vh;
+  overflow-y: auto;
   border-radius: 30px;
-  overflow: hidden;
   background:
     radial-gradient(circle at top right, rgba(59, 130, 246, 0.18), transparent 34%),
     linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015)),
@@ -169,11 +172,18 @@ onMounted(async () => {
   backdrop-filter: blur(22px);
 }
 
-.popup-close {
-  position: absolute;
-  top: 16px;
-  right: 16px;
+.popup-head {
+  position: sticky;
+  top: 0;
   z-index: 10;
+  display: flex;
+  justify-content: flex-end;
+  padding: 12px 12px 0;
+  pointer-events: none;
+}
+
+.popup-close {
+  pointer-events: all;
   width: 42px;
   height: 42px;
   border-radius: 50%;
@@ -199,6 +209,19 @@ onMounted(async () => {
 
   .heroAbaut-section {
     height: 330px;
+  }
+}
+
+.ttr {
+  border: none;
+  box-shadow: none;
+  padding-left: 60px;
+}
+
+@media (max-width: 720px) {
+  .ttr {
+    padding-left: 0;
+    margin-top: 0;
   }
 }
 </style>

@@ -31,8 +31,9 @@ onMounted(fetchImage)
 <style scoped>
 .foto-img-test {
   border-radius: 20px;
-  width: 270px;
-  height: 350px;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
   background-color: #2a2a2a;
   border: 1px solid #444;
   position: relative;

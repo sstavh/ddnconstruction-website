@@ -556,7 +556,7 @@ async function handleSubmit() {
 
 @media (max-width: 430px) {
   .form {
-    width: 360px;
+    width: 100%;
     margin-top: 24px;
     padding: 16px;
     border-radius: 16px;
