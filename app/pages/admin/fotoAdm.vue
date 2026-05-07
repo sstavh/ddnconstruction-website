@@ -725,6 +725,16 @@ export default {
     async fetchImages() {
       try {
         const response = await fetch(`${this.apiBase}/section-images`, { headers: this.authHeaders() })
+        if (response.status === 401) {
+          localStorage.removeItem('adminLogged')
+          localStorage.removeItem('adminToken')
+          window.location.href = '/admin/adm'
+          return
+        }
+        if (!response.ok) {
+          console.error('Помилка завантаження фото:', response.status)
+          return
+        }
         this.images = await response.json()
       } catch (error) {
         console.error('Помилка завантаження:', error)
