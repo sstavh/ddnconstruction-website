@@ -3,47 +3,35 @@ import { ref, onMounted, onBeforeUnmount, nextTick, computed } from 'vue'
 import { fetchSection, imgUrl } from '~/composables/useApi'
 
 const slides = ref([])
-const defaultSlides = [
-  { imageUrl: '/images/hero/hero1.jpg' },
-  { imageUrl: '/images/hero/hero2.jpg' },
-  { imageUrl: '/images/hero/hero3.jpg' },
-]
-
-// [cloneLast, ...real, cloneFirst]
 const extended = ref([])
-
-const index = ref(1) // стартуємо з першого реального
+const index = ref(1)
 const transitioning = ref(true)
 let timer = null
 
-// Завантажувати background тільки для current ± 1
-const shouldLoadBg = computed(() => (i) => {
+// Рендеримо <img> тільки для current ± 1 щоб не грузити всі одразу
+const shouldRender = computed(() => (i) => {
   const total = extended.value.length
   if (total === 0) return false
   const diff = Math.abs(i - index.value)
   return diff <= 1 || diff >= total - 1
 })
 
-// РУХ ЗЛІВА -> ВПРАВО: зменшуємо індекс (translateX стає "менш мінус" => їде вправо)
 const prev = () => {
-  index.value -= 1
+  if (extended.value.length > 0) index.value -= 1
 }
 
 const onTransitionEnd = async () => {
   const slidesLen = slides.value.length
   if (slidesLen === 0) return
-  
-  // якщо доїхали до cloneLast (зліва)
+
   if (index.value === 0) {
     transitioning.value = false
-    index.value = slidesLen // останній реальний
+    index.value = slidesLen
     await nextTick()
-    // force reflow щоб браузер точно застосував transition: none
     void document.body.offsetHeight
     transitioning.value = true
   }
 
-  // (на всякий випадок) якщо колись підеш в іншу сторону і дійдеш до cloneFirst
   if (index.value === extended.value.length - 1) {
     transitioning.value = false
     index.value = 1
@@ -51,6 +39,10 @@ const onTransitionEnd = async () => {
     void document.body.offsetHeight
     transitioning.value = true
   }
+}
+
+function buildExtended(arr) {
+  return [arr[arr.length - 1], ...arr, arr[0]]
 }
 
 async function fetchImages() {
@@ -61,25 +53,19 @@ async function fetchImages() {
         ...item,
         imageUrl: imgUrl(item.imageUrl),
       }))
-    } else {
-      slides.value = defaultSlides
+      extended.value = buildExtended(slides.value)
+      index.value = 1
     }
   } catch (error) {
     console.error('Error fetching hero images:', error)
-    slides.value = defaultSlides
-  }
-  
-  // Побудова extended масиву з клонами
-  if (slides.value.length > 0) {
-    extended.value = [slides.value[slides.value.length - 1], ...slides.value, slides.value[0]]
-  } else {
-    extended.value = [...defaultSlides]
   }
 }
 
-onMounted(async () => {
-  await fetchImages()
+onMounted(() => {
+  // Таймер стартує одразу — не чекаємо API
   timer = setInterval(prev, 3000)
+  // Фото підтягуються у фоні
+  fetchImages()
 })
 
 onBeforeUnmount(() => {
@@ -99,8 +85,17 @@ onBeforeUnmount(() => {
         v-for="(s, i) in extended"
         :key="i"
         class="slide"
-        :style="{ backgroundImage: shouldLoadBg(i) ? `url(${s.imageUrl})` : 'none' }"
-      />
+      >
+        <img
+          v-if="s.imageUrl && shouldRender(i)"
+          :src="s.imageUrl"
+          :fetchpriority="i === 1 ? 'high' : 'auto'"
+          loading="eager"
+          decoding="async"
+          class="slide-img"
+          alt=""
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -108,11 +103,12 @@ onBeforeUnmount(() => {
 <style scoped>
 .slider {
   margin-top: -95px;
-z-index: -50;
+  z-index: -50;
   width: 100%;
   height: 830px;
   overflow: hidden;
   position: absolute;
+  background: #0f172a;
 }
 
 .track {
@@ -129,17 +125,23 @@ z-index: -50;
 .slide {
   flex: 0 0 100%;
   height: 100%;
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  position: relative;
+  overflow: hidden;
+}
 
-  /* затемнення */
+.slide-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
   filter: brightness(0.6);
 }
 
- @media (max-width: 430px) {
-  .slider{
+@media (max-width: 430px) {
+  .slider {
     height: 600px;
   }
- }
+}
 </style>
