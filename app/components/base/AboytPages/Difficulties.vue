@@ -67,8 +67,7 @@ onMounted(async () => {
                     <p class="diffic-box__pidtext">We understand that every renovation project comes with unique challenges and unexpected situations. Our team is experienced in solving complex construction issues while maintaining quality, efficiency, and attention to detail.
 From uneven surfaces and outdated systems to custom design requirements, we carefully evaluate every stage of the work to find the best solution. We use proven techniques, modern tools, and professional planning to ensure smooth execution and reliable results.
 No matter the difficulty, we focus on delivering durable, clean, and high-quality workmanship that meets the highest standards.</p>
-
-                   <ul v-if="workersVisible" class="diffic-box__ul">
+<!--    <ul v-if="workersVisible" class="diffic-box__ul">
                         <li data-aos="fade-right" class="diffic-ul__li">
                             <div
                               class="test-img"
@@ -93,7 +92,8 @@ No matter the difficulty, we focus on delivering durable, clean, and high-qualit
                             <h4>{{ workers[2].name || 'Імя прізвище' }}</h4>
                             <p class="diffic-li-text">{{ workers[2].specialty || 'коротка спеціальність' }}</p>
                         </li>
-                    </ul> 
+                    </ul> -->
+                
                 </div> 
             </div>
         </div>

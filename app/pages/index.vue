@@ -29,7 +29,7 @@ const showDirectorMes = computed(() => {
 
       <Hero />
       <OurProcess />
-      <DirectorMes v-if="showDirectorMes" />
+     <!-- <DirectorMes v-if="showDirectorMes" /> -->
       <DetalsInformation />
         <VideoSection />
      <PortofolioSec />
