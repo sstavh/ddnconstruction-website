@@ -24,6 +24,7 @@ const isHovered = ref(false)
 const randomVisible = ref(false)
 const dbImages = ref<{ imageUrl: string; title: string }[]>([])
 const currentImageIndex = ref(0)
+const cardRef = ref<HTMLElement | null>(null)
 
 const textVisible = computed(() => isHovered.value || randomVisible.value)
 
@@ -93,15 +94,24 @@ async function fetchFromDb() {
   }
 }
 
-onMounted(async () => {
-  await fetchFromDb()
-  scheduleRandomShow()
-  const cycleSec = props.cycleSeconds || 9
-  if (activeImages.value.length > 1) {
-    cycleTimer = setInterval(() => {
-      currentImageIndex.value = (currentImageIndex.value + 1) % activeImages.value.length
-    }, cycleSec * 1000)
-  }
+onMounted(() => {
+  const observer = new IntersectionObserver(
+    async (entries) => {
+      if (entries[0].isIntersecting) {
+        observer.disconnect()
+        await fetchFromDb()
+        scheduleRandomShow()
+        const cycleSec = props.cycleSeconds || 9
+        if (activeImages.value.length > 1) {
+          cycleTimer = setInterval(() => {
+            currentImageIndex.value = (currentImageIndex.value + 1) % activeImages.value.length
+          }, cycleSec * 1000)
+        }
+      }
+    },
+    { threshold: 0.05, rootMargin: '200px' }
+  )
+  if (cardRef.value) observer.observe(cardRef.value)
 })
 
 onBeforeUnmount(() => {
@@ -113,6 +123,7 @@ onBeforeUnmount(() => {
 
 <template>
   <div
+    ref="cardRef"
     class="card"
     :class="{ 'image-mode': useImageMode }"
     :style="cardStyle"

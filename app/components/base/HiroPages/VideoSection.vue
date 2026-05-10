@@ -17,13 +17,13 @@
 
       <div class="about-video__media">
         <video
-          :key="videoSrc"
+          ref="videoRef"
           controls
-          autoplay
           muted
           loop
           playsinline
-          poster="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1400"
+          preload="none"
+          poster="https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=800"
         >
           <source :src="videoSrc" type="video/mp4" />
         </video>
@@ -34,13 +34,28 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, watch, nextTick } from 'vue'
 import { imgUrl } from '~/composables/useApi'
 
 const apiUrl = useRuntimeConfig().public.apiUrl
 const videoSrc = ref('https://www.w3schools.com/html/mov_bbb.mp4')
+const videoRef = ref<HTMLVideoElement | null>(null)
+let isVisible = false
 
 onMounted(async () => {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      if (entries[0].isIntersecting && !isVisible) {
+        isVisible = true
+        videoRef.value?.load()
+        videoRef.value?.play().catch(() => {})
+        observer.disconnect()
+      }
+    },
+    { threshold: 0.15 }
+  )
+  if (videoRef.value) observer.observe(videoRef.value)
+
   try {
     const res = await fetch(`${apiUrl}/section-images/section/videoSection`)
     const data = await res.json()
@@ -48,6 +63,14 @@ onMounted(async () => {
       videoSrc.value = imgUrl(data[0].imageUrl)
     }
   } catch {}
+})
+
+watch(videoSrc, async () => {
+  if (isVisible && videoRef.value) {
+    await nextTick()
+    videoRef.value.load()
+    videoRef.value.play().catch(() => {})
+  }
 })
 </script>
 

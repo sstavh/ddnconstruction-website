@@ -17,7 +17,7 @@
           >
             <article class="card">
               <div class="card-photo">
-                <img v-if="r.photo" :src="r.photo" class="work-img" />
+                <img v-if="r.photo" :src="r.photo" class="work-img" loading="lazy" decoding="async" />
                 <div v-else class="photo-placeholder" :style="{ background: r.workFallbackColor || '#1e293b' }">
                   <span class="photo-icon">🏠</span>
                 </div>

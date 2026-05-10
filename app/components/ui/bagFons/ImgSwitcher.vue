@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, onBeforeUnmount, nextTick } from 'vue'
+import { ref, onMounted, onBeforeUnmount, nextTick, computed } from 'vue'
 import { fetchSection, imgUrl } from '~/composables/useApi'
 
 const slides = ref([])
@@ -15,6 +15,14 @@ const extended = ref([])
 const index = ref(1) // стартуємо з першого реального
 const transitioning = ref(true)
 let timer = null
+
+// Завантажувати background тільки для current ± 1
+const shouldLoadBg = computed(() => (i) => {
+  const total = extended.value.length
+  if (total === 0) return false
+  const diff = Math.abs(i - index.value)
+  return diff <= 1 || diff >= total - 1
+})
 
 // РУХ ЗЛІВА -> ВПРАВО: зменшуємо індекс (translateX стає "менш мінус" => їде вправо)
 const prev = () => {
@@ -91,7 +99,7 @@ onBeforeUnmount(() => {
         v-for="(s, i) in extended"
         :key="i"
         class="slide"
-        :style="{ backgroundImage: `url(${s.imageUrl})` }"
+        :style="{ backgroundImage: shouldLoadBg(i) ? `url(${s.imageUrl})` : 'none' }"
       />
     </div>
   </div>

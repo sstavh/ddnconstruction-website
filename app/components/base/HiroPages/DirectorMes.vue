@@ -34,7 +34,7 @@ Director's words</h3>
             <div class="directorMes-box">
                <div data-aos="fade-up-right">
                 <div data-aos="zoom-out-right" class="img-cont">
-                  <img v-if="directorImgUrl" :src="directorImgUrl" alt="Директор" class="director-img" />
+                  <img v-if="directorImgUrl" :src="directorImgUrl" alt="Директор" class="director-img" loading="lazy" decoding="async" />
                 </div>
                </div>
 

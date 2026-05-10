@@ -346,7 +346,7 @@
               :class="{ inactive: !img.isActive }"
             >
               <div class="image-preview">
-                <img :src="`${apiBase}/${img.imageUrl}`" :alt="img.title || 'Image'" />
+                <img :src="`${apiBase}/${img.imageUrl}?t=${imageTimestamps[img.id] || 0}`" :alt="img.title || 'Image'" />
                 <span v-if="!img.isActive" class="inactive-badge">Неактивне</span>
               </div>
               <div class="image-info">
@@ -356,6 +356,8 @@
               </div>
               <div class="image-actions">
                 <button @click="editImage(img)" class="btn-edit">✏️ Редагувати</button>
+                <button @click="rotateImage(img.id, 'ccw')" class="btn-rotate" title="Повернути ліво">↺</button>
+                <button @click="rotateImage(img.id, 'cw')" class="btn-rotate" title="Повернути право">↻</button>
                 <button @click="deleteImage(img.id)" class="btn-delete">🗑 Видалити</button>
               </div>
             </div>
@@ -390,6 +392,7 @@ export default {
     return {
       apiBase: _moduleApiBase,
       images: [],
+      imageTimestamps: {},
       gallerySearch: '',
       editingId: null,
       saving: false,
@@ -800,6 +803,20 @@ export default {
       this.previewUrl = ''
       this.uploadError = ''
       window.scrollTo({ top: 0, behavior: 'smooth' })
+    },
+    async rotateImage(id, direction) {
+      try {
+        const res = await fetch(`${this.apiBase}/section-images/${id}/rotate`, {
+          method: 'POST',
+          headers: { ...this.authHeaders(), 'Content-Type': 'application/json' },
+          body: JSON.stringify({ direction }),
+        })
+        if (!res.ok) throw new Error()
+        this.imageTimestamps[id] = Date.now()
+        await this.fetchImages()
+      } catch {
+        alert('Помилка повороту фото')
+      }
     },
     async deleteImage(id) {
       if (!confirm('Видалити це фото?')) return
@@ -1361,6 +1378,24 @@ export default {
 .btn-edit {
   background: #2563eb;
   color: white;
+}
+
+.btn-rotate {
+  flex: 0 0 auto;
+  padding: 9px 10px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  background: #0f766e;
+  color: white;
+  transition: opacity 0.2s, transform 0.15s;
+}
+
+.btn-rotate:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
 }
 
 .btn-delete {

@@ -22,7 +22,7 @@ const openFromClick = (e: MouseEvent) => {
         <div class="hiro-container">
             <div class="hero-container__box">
                 <h1 class="hero-box__logo">
-                      <TypeTextt text="We Build Spaces You're Proud to Live In." />
+                      <TypeTextt text="Interior Remodeling You Can Trust" />
                 </h1>
                 <p data-aos="fade-right" class="hero-box__pidtext">Full-service renovation — kitchens, bathrooms, electrical, plumbing, tiles & painting. Quality work, transparent pricing, on-time delivery.</p>
 

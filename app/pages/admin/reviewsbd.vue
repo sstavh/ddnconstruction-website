@@ -87,6 +87,31 @@ const refreshReviews = async () => {
   closeModal()
 }
 
+const rotatingId = ref<number | null>(null)
+const imageTimestamps = ref<Record<number, number>>({})
+
+const rotateReview = async (id: number, direction: 'cw' | 'ccw') => {
+  try {
+    rotatingId.value = id
+    const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : ''
+    const res = await fetch(`${apiUrl}/reviews/${id}/rotate`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ direction }),
+    })
+    if (!res.ok) throw new Error()
+    imageTimestamps.value[id] = Date.now()
+    await loadReviews()
+  } catch {
+    alert('Помилка повороту фото')
+  } finally {
+    rotatingId.value = null
+  }
+}
+
 const deleteReview = async (id: number) => {
   const confirmed = window.confirm('Видалити цей відгук?')
   if (!confirmed) return
@@ -177,7 +202,7 @@ onMounted(() => {
               <td>
                 <img
                   v-if="review.photo"
-                  :src="review.photo.startsWith('http') ? review.photo : `${apiUrl}/${String(review.photo).replace(/^\/+/, '')}`"
+                  :src="(review.photo.startsWith('http') ? review.photo : `${apiUrl}/${String(review.photo).replace(/^\/+/, '')}`) + `?t=${imageTimestamps[review.id] || 0}`"
                   alt="review photo"
                   class="thumb"
                 />
@@ -189,13 +214,27 @@ onMounted(() => {
               </td>
 
               <td>
-                <button
-                  class="delete-btn"
-                  :disabled="deletingId === review.id"
-                  @click="deleteReview(review.id)"
-                >
-                  {{ deletingId === review.id ? 'Видалення...' : 'Видалити' }}
-                </button>
+                <div class="action-btns">
+                  <button
+                    class="rotate-btn"
+                    :disabled="rotatingId === review.id"
+                    title="Повернути ліво"
+                    @click="rotateReview(review.id, 'ccw')"
+                  >↺</button>
+                  <button
+                    class="rotate-btn"
+                    :disabled="rotatingId === review.id"
+                    title="Повернути право"
+                    @click="rotateReview(review.id, 'cw')"
+                  >↻</button>
+                  <button
+                    class="delete-btn"
+                    :disabled="deletingId === review.id"
+                    @click="deleteReview(review.id)"
+                  >
+                    {{ deletingId === review.id ? 'Видалення...' : 'Видалити' }}
+                  </button>
+                </div>
               </td>
             </tr>
           </tbody>
@@ -273,6 +312,33 @@ onMounted(() => {
   height: 64px;
   object-fit: cover;
   border-radius: 8px;
+}
+
+.action-btns {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.rotate-btn {
+  border: none;
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  background: #0f766e;
+  color: white;
+  transition: opacity 0.2s;
+}
+
+.rotate-btn:hover {
+  opacity: 0.85;
+}
+
+.rotate-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 .add-btn,
