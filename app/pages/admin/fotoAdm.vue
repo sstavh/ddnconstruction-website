@@ -812,8 +812,9 @@ export default {
           body: JSON.stringify({ direction }),
         })
         if (!res.ok) throw new Error()
-        this.imageTimestamps[id] = Date.now()
-        await this.fetchImages()
+        const data = await res.json()
+        const img = this.images.find(i => i.id === id)
+        if (img && data.imageUrl) img.imageUrl = data.imageUrl
       } catch {
         alert('Помилка повороту фото')
       }

@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount, nextTick, computed } from 'vue'
-import { fetchSection, imgUrl } from '~/composables/useApi'
+import { fetchSection, imgUrl, thumbUrl } from '~/composables/useApi'
 
 const slides = ref([])
 const extended = ref([])
@@ -49,10 +49,10 @@ async function fetchImages() {
   try {
     const data = await fetchSection('hero')
     if (data && data.length > 0) {
-      slides.value = data.map((item) => ({
-        ...item,
-        imageUrl: imgUrl(item.imageUrl),
-      }))
+      slides.value = data.map((item) => {
+        const full = imgUrl(item.imageUrl)
+        return { ...item, imageUrl: full, thumb900: thumbUrl(full, 900) }
+      })
       extended.value = buildExtended(slides.value)
       index.value = 1
     }
@@ -89,6 +89,8 @@ onBeforeUnmount(() => {
         <img
           v-if="s.imageUrl && shouldRender(i)"
           :src="s.imageUrl"
+          :srcset="s.thumb900 ? `${s.thumb900} 900w, ${s.imageUrl} 1920w` : undefined"
+          sizes="(max-width: 900px) 900px, 1920px"
           :fetchpriority="i === 1 ? 'high' : 'auto'"
           loading="eager"
           decoding="async"

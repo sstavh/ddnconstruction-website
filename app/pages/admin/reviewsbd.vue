@@ -103,8 +103,9 @@ const rotateReview = async (id: number, direction: 'cw' | 'ccw') => {
       body: JSON.stringify({ direction }),
     })
     if (!res.ok) throw new Error()
-    imageTimestamps.value[id] = Date.now()
-    await loadReviews()
+    const data = await res.json()
+    const review = reviews.value.find(r => r.id === id)
+    if (review && data.photo) review.photo = data.photo
   } catch {
     alert('Помилка повороту фото')
   } finally {

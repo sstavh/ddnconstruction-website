@@ -15,6 +15,16 @@ export function imgUrl(path: string): string {
   return `${getApiBase()}/${path}`
 }
 
+export function thumbUrl(imageUrl: string, width: number): string {
+  if (!imageUrl) return ''
+  const base = getApiBase()
+  const prefix = `${base}/uploads/`
+  if (imageUrl.startsWith(prefix)) {
+    return `${base}/img/${imageUrl.slice(prefix.length)}?w=${width}`
+  }
+  return imageUrl
+}
+
 export async function fetchSection(section: string) {
   const res = await fetch(`${getApiBase()}/section-images/section/${section}`)
   return res.json()
