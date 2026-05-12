@@ -811,12 +811,16 @@ export default {
           headers: { ...this.authHeaders(), 'Content-Type': 'application/json' },
           body: JSON.stringify({ direction }),
         })
-        if (!res.ok) throw new Error()
+        if (!res.ok) {
+          const text = await res.text().catch(() => '')
+          alert(`Помилка повороту фото (${res.status}): ${text}`)
+          return
+        }
         const data = await res.json()
         const img = this.images.find(i => i.id === id)
         if (img && data.imageUrl) img.imageUrl = data.imageUrl
-      } catch {
-        alert('Помилка повороту фото')
+      } catch (e) {
+        alert(`Помилка повороту фото: ${e?.message || e}`)
       }
     },
     async deleteImage(id) {

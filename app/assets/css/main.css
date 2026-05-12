@@ -6,6 +6,7 @@
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -13,6 +14,7 @@ body {
   background-color: var( --color-praymeri-bg);
   font-family: var( --font-f-Inter);
   font-weight: 400;
+  overflow-x: hidden;
 }
 
 a {

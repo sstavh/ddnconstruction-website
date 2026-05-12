@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
-import { fetchSection, imgUrl } from '~/composables/useApi'
+import { fetchSection, imgUrl, thumbUrl } from '~/composables/useApi'
 
 type Slide = {
   id: number | string;
@@ -58,12 +58,15 @@ async function fetchFromApi() {
       items.value = data
         .slice()
         .sort((a: any, b: any) => (a.order ?? 0) - (b.order ?? 0))
-        .map((item: any) => ({
-          id: item.id,
-          imageUrl: imgUrl(item.imageUrl ?? ''),
-          title: item.title || '',
-          subtitle: item.description || '',
-        }))
+        .map((item: any) => {
+          const full = imgUrl(item.imageUrl ?? '')
+          return {
+            id: item.id,
+            imageUrl: thumbUrl(full, 600),
+            title: item.title || '',
+            subtitle: item.description || '',
+          }
+        })
       position.value = 1
     }
   } catch {}

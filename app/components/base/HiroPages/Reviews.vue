@@ -5,6 +5,7 @@ import ReviewsCompTest from "~/components/ui/ReviewsCompTest.vue";
 import ReviewsButtonTest from "~/components/ui/ReviewsButtonTest.vue";
 import ReviewsFormaTest from "~/components/ui/ReviewsFormaTest.vue";
 import BaseModalTest from "~/components/ui/BaseModalTest.vue";
+import { imgUrl, thumbUrl } from "~/composables/useApi";
 
 type Review = {
   id: number;
@@ -38,7 +39,7 @@ const {
         name: `${item.firstName ?? ""} ${item.lastName ?? ""}`.trim(),
         rating: Number(item.rating) || 0,
         text: item.message ?? "",
-        photo: item.photo ? `${apiUrl}/${item.photo}` : '',
+        photo: item.photo ? thumbUrl(imgUrl(item.photo), 300) : '',
         avatarColor: "#3b82f6",
         workFallbackColor: "#374151",
       })),

@@ -102,12 +102,16 @@ const rotateReview = async (id: number, direction: 'cw' | 'ccw') => {
       },
       body: JSON.stringify({ direction }),
     })
-    if (!res.ok) throw new Error()
+    if (!res.ok) {
+      const text = await res.text().catch(() => '')
+      alert(`Помилка повороту фото (${res.status}): ${text}`)
+      return
+    }
     const data = await res.json()
     const review = reviews.value.find(r => r.id === id)
     if (review && data.photo) review.photo = data.photo
-  } catch {
-    alert('Помилка повороту фото')
+  } catch (e: any) {
+    alert(`Помилка повороту фото: ${e?.message || e}`)
   } finally {
     rotatingId.value = null
   }

@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
-import { fetchSection, imgUrl } from '~/composables/useApi'
+import { fetchSection, imgUrl, thumbUrl } from '~/composables/useApi'
 
 const props = withDefaults(defineProps<{
   text?: string
@@ -84,10 +84,10 @@ async function fetchFromDb() {
   try {
     const data = await fetchSection(props.section)
     if (Array.isArray(data) && data.length > 0) {
-      dbImages.value = data.map((item: { imageUrl: string; title: string }) => ({
-        imageUrl: imgUrl(item.imageUrl),
-        title: item.title || '',
-      }))
+      dbImages.value = data.map((item: { imageUrl: string; title: string }) => {
+        const full = imgUrl(item.imageUrl)
+        return { imageUrl: thumbUrl(full, 600), title: item.title || '' }
+      })
     }
   } catch (e) {
     console.error('FotosPortaolio fetch error:', e)

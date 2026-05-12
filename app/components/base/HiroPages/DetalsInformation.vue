@@ -171,6 +171,7 @@ onMounted(async () => {
 /* ================= */
 
 @media (max-width: 1060px) {
+  
   .group__ul {
     grid-template-columns: repeat(3, 340px);
   }
@@ -182,7 +183,7 @@ onMounted(async () => {
 
   .info-container {
     padding: 24px;
-    margin: 100px 0;
+    margin: 250px 0;
   }
 }
 
