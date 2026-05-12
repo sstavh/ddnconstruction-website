@@ -183,7 +183,7 @@ onMounted(async () => {
 
   .info-container {
     padding: 24px;
-    margin: 100px 0;
+    margin: 250px 0;
   }
 }
 
