@@ -176,6 +176,7 @@ import ButtonNextPort from '~/components/ui/ButtonNextPort.vue'
 .box-galeri__button {
   display: flex;
   justify-content: center;
+  width: 100%;
 }
 
 /* ===================== */
