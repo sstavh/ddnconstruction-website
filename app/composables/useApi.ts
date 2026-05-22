@@ -17,6 +17,11 @@ export function imgUrl(path: string): string {
 
 export function thumbUrl(imageUrl: string, width: number): string {
   if (!imageUrl) return ''
+  // Cloudinary URL — використовуємо трансформації Cloudinary
+  if (imageUrl.includes('res.cloudinary.com')) {
+    return imageUrl.replace('/upload/', `/upload/w_${width},c_limit,q_auto,f_auto/`)
+  }
+  // Старі локальні URL (зворотна сумісність)
   const base = getApiBase()
   const prefix = `${base}/uploads/`
   if (imageUrl.startsWith(prefix)) {
