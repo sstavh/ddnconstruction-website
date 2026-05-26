@@ -93,7 +93,7 @@
               style="background:#1e293b;border-radius:12px;padding:14px;display:flex;gap:14px;align-items:center"
             >
               <video
-                :src="`${apiBase}/${pv.imageUrl}`"
+                :src="resolveUrl(pv.imageUrl)"
                 muted
                 preload="metadata"
                 style="width:140px;height:90px;border-radius:8px;object-fit:cover;flex-shrink:0"
@@ -277,7 +277,7 @@
           <!-- При редагуванні показуємо поточне фото якщо нового не вибрано -->
           <div v-if="editingId && form.currentImageUrl && !previewUrl" class="current-photo">
             <p class="current-label">Поточне фото:</p>
-            <img :src="`${apiBase}/${form.currentImageUrl}`" alt="current" class="current-img" />
+            <img :src="resolveUrl(form.currentImageUrl)" alt="current" class="current-img" />
             <p class="current-hint">Завантаж нове фото щоб замінити</p>
           </div>
         </div>
@@ -346,7 +346,7 @@
               :class="{ inactive: !img.isActive }"
             >
               <div class="image-preview">
-                <img :src="`${apiBase}/${img.imageUrl}?t=${imageTimestamps[img.id] || 0}`" :alt="img.title || 'Image'" />
+                <img :src="resolveUrlTs(img.imageUrl, imageTimestamps[img.id])" :alt="img.title || 'Image'" />
                 <span v-if="!img.isActive" class="inactive-badge">Неактивне</span>
               </div>
               <div class="image-info">
@@ -594,6 +594,16 @@ export default {
     await this.fetchPortfolioVideos()
   },
   methods: {
+    resolveUrl(url) {
+      if (!url) return ''
+      if (url.startsWith('http') || url.startsWith('/')) return url
+      return `${this.apiBase}/${url}`
+    },
+    resolveUrlTs(url, ts) {
+      if (!url) return ''
+      if (url.startsWith('http')) return url
+      return `${this.apiBase}/${url}?t=${ts || 0}`
+    },
     authHeaders() {
       const token = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : ''
       return token ? { Authorization: `Bearer ${token}` } : {}
@@ -626,7 +636,7 @@ export default {
         if (!res.ok) throw new Error('Помилка завантаження')
         const saved = await res.json()
         this.videoSavedId = saved.id
-        this.videoUrl = `${this.apiBase}/${saved.imageUrl}`
+        this.videoUrl = this.resolveUrl(saved.imageUrl)
         this.videoFile = null
         this.videoFileName = ''
         if (this.$refs.videoFileRef) this.$refs.videoFileRef.value = ''
@@ -641,8 +651,7 @@ export default {
         const res = await fetch(`${this.apiBase}/section-images/section/videoSection`)
         const data = await res.json()
         if (Array.isArray(data) && data.length > 0) {
-          const raw = data[0].imageUrl || ''
-          this.videoUrl = raw.startsWith('http') ? raw : `${this.apiBase}/${raw}`
+          this.videoUrl = this.resolveUrl(data[0].imageUrl || '')
           this.videoSavedId = data[0].id
         }
       } catch {}
