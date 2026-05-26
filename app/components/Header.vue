@@ -85,7 +85,7 @@ watch(isMobileMenuOpen, (value) => {
     document.body.style.width = "";
     window.scrollTo(0, savedScrollY);
   }
-});
+}, { flush: 'sync' });
 
 onMounted(() => {
   onScroll();
