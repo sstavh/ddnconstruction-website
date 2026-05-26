@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
-
-const apiUrl = useRuntimeConfig().public.apiUrl
+import { imgUrl, getApiBase } from '~/composables/useApi'
 
 const img1 = ref('')
 const img2 = ref('')
@@ -9,9 +8,9 @@ const img3 = ref('')
 
 async function loadImg(section: string): Promise<string> {
   try {
-    const res = await fetch(`${apiUrl}/section-images/section/${section}`)
+    const res = await fetch(`${getApiBase()}/section-images/section/${section}`)
     const data = await res.json()
-    if (data && data.length > 0) return `${apiUrl}/${data[0].imageUrl}`
+    if (data && data.length > 0) return imgUrl(data[0].imageUrl)
   } catch { /* fallback to lime block */ }
   return ''
 }

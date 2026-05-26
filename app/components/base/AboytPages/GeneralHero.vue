@@ -1,20 +1,20 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted } from "vue";
 import FormСontact from '~/components/ui/FormsComponents/FormСontact.vue'
+import { imgUrl, getApiBase } from '~/composables/useApi'
 
-const apiUrl = useRuntimeConfig().public.apiUrl
-
-const backgroundImage = ref('')
-const sideImage = ref('')
 const defaultBg = '/images/about/generalHero.jpg'
 const showModal = ref(false)
 
+const backgroundImage = ref('')
+const sideImage = ref('')
+
 async function fetchBackground() {
   try {
-    const response = await fetch(`${apiUrl}/section-images/section/generalHero`)
+    const response = await fetch(`${getApiBase()}/section-images/section/generalHero`)
     const data = await response.json()
     if (data && data.length > 0) {
-      backgroundImage.value = `${apiUrl}/${data[0].imageUrl}`
+      backgroundImage.value = imgUrl(data[0].imageUrl)
     } else {
       backgroundImage.value = defaultBg
     }
@@ -25,10 +25,10 @@ async function fetchBackground() {
 
 async function fetchSideImage() {
   try {
-    const response = await fetch(`${apiUrl}/section-images/section/generalHeroSide`)
+    const response = await fetch(`${getApiBase()}/section-images/section/generalHeroSide`)
     const data = await response.json()
     if (data && data.length > 0) {
-      sideImage.value = `${apiUrl}/${data[0].imageUrl}`
+      sideImage.value = imgUrl(data[0].imageUrl)
     }
   } catch {
     // fallback to purple block
