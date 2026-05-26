@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted, onBeforeUnmount, watch } from "vue";
+import { ref, onMounted, onBeforeUnmount } from "vue";
 import Button from "./ui/Button.vue";
 import ButtonBlef from "./ui/ButtonBlef.vue";
 import BaseModalTest from "./ui/BaseModalTest.vue";
@@ -47,13 +47,37 @@ const closeServices = () => {
   }, 140);
 };
 
+const lockBody = () => {
+  if (typeof document === "undefined") return;
+  savedScrollY = window.scrollY;
+  document.body.style.position = "fixed";
+  document.body.style.top = `-${savedScrollY}px`;
+  document.body.style.width = "100%";
+};
+
+const unlockBody = () => {
+  if (typeof document === "undefined") return;
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.width = "";
+  window.scrollTo(0, savedScrollY);
+};
+
 const toggleMobileMenu = () => {
-  isMobileMenuOpen.value = !isMobileMenuOpen.value;
+  if (isMobileMenuOpen.value) {
+    isMobileMenuOpen.value = false;
+    isServicesOpen.value = false;
+    unlockBody();
+  } else {
+    isMobileMenuOpen.value = true;
+    lockBody();
+  }
 };
 
 const closeMobileMenu = () => {
   isMobileMenuOpen.value = false;
   isServicesOpen.value = false;
+  unlockBody();
 };
 
 const toggleMobileServices = () => {
@@ -71,21 +95,6 @@ const onKeydown = (e: KeyboardEvent) => {
 };
 
 let savedScrollY = 0;
-
-watch(isMobileMenuOpen, (value) => {
-  if (typeof document === "undefined") return;
-  if (value) {
-    savedScrollY = window.scrollY;
-    document.body.style.position = "fixed";
-    document.body.style.top = `-${savedScrollY}px`;
-    document.body.style.width = "100%";
-  } else {
-    document.body.style.position = "";
-    document.body.style.top = "";
-    document.body.style.width = "";
-    window.scrollTo(0, savedScrollY);
-  }
-}, { flush: 'sync' });
 
 onMounted(() => {
   onScroll();

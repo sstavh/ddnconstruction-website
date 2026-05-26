@@ -5,7 +5,7 @@ import ReviewsCompTest from "~/components/ui/ReviewsCompTest.vue";
 import ReviewsButtonTest from "~/components/ui/ReviewsButtonTest.vue";
 import ReviewsFormaTest from "~/components/ui/ReviewsFormaTest.vue";
 import BaseModalTest from "~/components/ui/BaseModalTest.vue";
-import { imgUrl, thumbUrl } from "~/composables/useApi";
+import { imgUrl, thumbUrl, getApiBase } from "~/composables/useApi";
 
 type Review = {
   id: number;
@@ -20,14 +20,13 @@ type Review = {
 const open = ref(false);
 const origin = ref<{ x: number; y: number } | null>(null);
 
-const apiUrl = useRuntimeConfig().public.apiUrl;
-
 const {
   data: reviewsData,
   pending: loading,
   refresh: refreshReviewsFetch,
   error: loadError,
-} = useFetch(`${apiUrl}/reviews`, {
+} = useFetch(() => `${getApiBase()}/reviews`, {
+  server: false,
   transform: (data: any) =>
     [...data]
       .sort(
