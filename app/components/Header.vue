@@ -70,9 +70,20 @@ const onKeydown = (e: KeyboardEvent) => {
   if (e.key === "Escape") closeMobileMenu();
 };
 
+let savedScrollY = 0;
+
 watch(isMobileMenuOpen, (value) => {
-  if (typeof document !== "undefined") {
-    document.body.style.overflow = value ? "hidden" : "";
+  if (typeof document === "undefined") return;
+  if (value) {
+    savedScrollY = window.scrollY;
+    document.body.style.position = "fixed";
+    document.body.style.top = `-${savedScrollY}px`;
+    document.body.style.width = "100%";
+  } else {
+    document.body.style.position = "";
+    document.body.style.top = "";
+    document.body.style.width = "";
+    window.scrollTo(0, savedScrollY);
   }
 });
 
@@ -85,7 +96,9 @@ onMounted(() => {
 onBeforeUnmount(() => {
   window.removeEventListener("scroll", onScroll);
   window.removeEventListener("keydown", onKeydown);
-  document.body.style.overflow = "";
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.width = "";
   if (closeTimer) window.clearTimeout(closeTimer);
 });
 </script>
@@ -353,7 +366,7 @@ onBeforeUnmount(() => {
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   cursor: pointer;
-  z-index: 3001;
+  z-index: 9200;
   transition: 0.25s ease;
 }
 
@@ -483,7 +496,7 @@ onBeforeUnmount(() => {
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: 3000;
+    z-index: 9100;
     padding: 28px 22px 40px;
     overflow-y: auto;
     flex-direction: column;
@@ -525,6 +538,8 @@ onBeforeUnmount(() => {
     border: 1px solid rgba(255,255,255,0.07);
     font-size: 17px;
     transition: 0.2s ease;
+    touch-action: manipulation;
+    cursor: pointer;
   }
 
   .nav-link:hover {
@@ -545,6 +560,8 @@ onBeforeUnmount(() => {
     padding: 16px 18px;
     font-size: 17px;
     color: rgba(245,245,245,0.9);
+    touch-action: manipulation;
+    cursor: pointer;
   }
 
   .chev-btn {

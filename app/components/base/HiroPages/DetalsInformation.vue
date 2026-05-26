@@ -58,7 +58,7 @@ onMounted(async () => {
 })
 </script>
 
-<template>
+<template class="detals-information">
   <div class="container">
     <div class="info-container">
       <div class="info-container__box">
@@ -244,6 +244,10 @@ onMounted(async () => {
 }
 
 @media (max-width: 440px) {
+
+.detals-information{
+  margin-top: 80px;
+}
   .group__ul {
     grid-template-columns: repeat(1, 300px);
     gap: 10px;
@@ -267,7 +271,7 @@ onMounted(async () => {
   .info-container {
     padding: 16px;
     border-radius: 18px;
-    margin: 60px 0;
+    margin: 120px 0;
   }
 }
 </style>
