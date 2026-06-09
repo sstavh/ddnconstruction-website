@@ -13,6 +13,18 @@ export default defineNuxtConfig({
   app: {
     head: {
       title: 'DDN Construction',
+      script: [
+        {
+          src: 'https://www.googletagmanager.com/gtag/js?id=AW-18182753889',
+          async: true,
+        },
+        {
+          innerHTML: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'AW-18182753889');`,
+        },
+      ],
       meta: [
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         { name: 'theme-color', content: '#1a3a6b' },
